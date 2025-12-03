@@ -6,7 +6,7 @@
 
 **A narrative graph engine used to generate, track, and visualize fictional worlds using LLMs.**
 
-[History graph viewer](assets/graph.gif)
+[History graph viewer](assets/graph.png)
 
 ## 📖 Overview
 
@@ -86,7 +86,7 @@ The engine comes with a HTML visualizers.
 3.  Upload the JSON export of your world (generated via the `get_world_metadata` or export tools).
 4.  **Explore:** Drag nodes, filter by factions, and use the **Timeline Slider** at the bottom to replay history.
 
-[Templates AI generator](assets/templates)
+[Templates AI generator](assets/templates.png)
 
 ## ⚙️ Configuration & Templates
 
