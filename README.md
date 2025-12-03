@@ -1,2 +1,5 @@
-# world-history-engine
-MSP server and GUI for fact checking, generate and looking after graph-based history of (not only!) fantasy world
+# Структура
+Mermaid diagram в cheme.txt
+
+# Disclaimer
+в src/models/mechanics модели для будущего движка, не использующиеся в сервисах инициализации мира и генерации нарратива

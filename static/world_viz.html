@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>World Graph Explorer</title>
+  <script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
+  <style>
+    body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; }
+    #cy { width: 100vw; height: 100vh; background: #f0f2f5; }
+    
+    /* Общие стили панелей */
+    .overlay-panel {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(5px);
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      z-index: 10;
+    }
+
+    /* Верхняя левая панель (Загрузка и фильтры) */
+    #controls { 
+      top: 10px; 
+      left: 10px; 
+      width: 250px; 
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    /* Правая панель (Детали) */
+    #details { 
+      top: 10px; 
+      right: 10px; 
+      width: 300px; 
+      display: none; 
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    /* НИЖНЯЯ ПАНЕЛЬ (Таймлайн) */
+    #timeline-panel {
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%); /* Центрирование */
+      width: 60%;
+      min-width: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    h3, h4 { margin: 0 0 10px 0; color: #333; }
+    .btn { background: #4A90E2; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 5px;}
+    .btn:hover { background: #357ABD; }
+    .btn-small { width: auto; margin: 0; padding: 5px 15px; }
+    
+    /* Filters */
+    .filter-item { display: flex; align-items: center; margin-bottom: 5px; font-size: 13px; cursor: pointer; }
+    .color-box { width: 12px; height: 12px; margin-right: 8px; border-radius: 2px; border: 1px solid rgba(0,0,0,0.1); }
+    
+    /* Timeline specific */
+    .timeline-row { width: 100%; display: flex; align-items: center; gap: 10px; margin-top: 5px; }
+    #ageDisplay { font-weight: bold; color: #4A90E2; }
+    
+    /* JSON viewer */
+    pre { white-space: pre-wrap; word-wrap: break-word; font-size: 11px; background: #eee; padding: 10px; border-radius: 4px; margin: 0;}
+  </style>
+</head>
+<body>
+
+  <div id="controls" class="overlay-panel">
+    <h3>🌍 World Explorer</h3>
+    <input type="file" id="file" accept=".json" style="margin-bottom: 10px; width: 100%;" />
+    <div id="status" style="font-size: 12px; color: #666; margin-bottom: 10px;">Ожидание файла...</div>
+    
+    <button class="btn" onclick="forceLayout()">Перестроить граф</button>
+    
+    <div style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 10px;">
+      <h4>Фильтры</h4>
+      <div id="nodeFilters"></div>
+    </div>
+  </div>
+
+  <div id="details" class="overlay-panel">
+    <h3 id="detail-title">Details</h3>
+    <div id="detail-content"></div>
+  </div>
+
+  <div id="timeline-panel" class="overlay-panel">
+    <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+        <h4 style="margin:0;">⏳ Хронология</h4>
+        <span style="font-size: 14px;">Эпоха: <span id="ageDisplay">0</span></span>
+    </div>
+    
+    <input type="range" id="timeSlider" min="0" max="100" value="0" style="width: 100%; cursor: pointer;" disabled />
+    
+    <div class="timeline-row" style="justify-content: center;">
+        <button class="btn btn-small" id="playBtn" onclick="togglePlay()">▶ Play</button>
+        <label style="font-size: 12px; display: flex; align-items: center; cursor: pointer;">
+            <input type="checkbox" id="lockOld" checked style="margin-right: 5px;"> Lock Old Nodes
+        </label>
+    </div>
+  </div>
+
+  <div id="cy"></div>
+
+  <script>
+    // --- КОНФИГУРАЦИЯ ---
+    const typeToColor = {
+      'Biome': '#a8dadc',
+      'Location': '#457b9d',
+      'Faction': '#e63946',
+      'Character': '#f4a261',
+      'Resource': '#2a9d8f',
+      'Event': '#1d3557',
+      'Conflict': '#d62828',
+      'Item': '#ffd700',
+      'Ritual': '#9b5de5',
+      'Belief': '#00bbf9'
+    };
+
+    // --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ---
+    let cyCore = null; // Переименовали переменную, чтобы не конфликтовала с div id="cy"
+    let fullData = null;
+    let currentEpoch = 0;
+    let maxEpoch = 0;
+    let playInterval = null;
+
+    // --- ЗАГРУЗКА ФАЙЛА ---
+    document.getElementById('file').addEventListener('change', async (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      document.getElementById('status').textContent = 'Парсинг...';
+      
+      try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+        
+        // 1. Подготовка данных
+        fullData = prepareData(data);
+        maxEpoch = getMaxEpoch(fullData);
+        
+        // 2. Настройка UI
+        const slider = document.getElementById('timeSlider');
+        slider.max = maxEpoch;
+        slider.value = 0;
+        slider.disabled = false;
+        
+        document.getElementById('status').textContent = `Узлов: ${fullData.nodes.length}. Эпох: ${maxEpoch}`;
+        generateFilters(data);
+
+        // 3. Инициализация
+        initCy(); 
+        updateGraphToEpoch(0);
+        
+      } catch (err) {
+        console.error(err);
+        document.getElementById('status').textContent = 'Ошибка JSON';
+      }
+    });
+
+    // --- ПОДГОТОВКА ДАННЫХ ---
+    function getMaxEpoch(data) {
+      let max = 0;
+      data.nodes.forEach(n => {
+        if (n.data.created_at > max) max = n.data.created_at;
+      });
+      return max;
+    }
+
+    function prepareData(json) {
+      const nodes = Object.values(json.graph.entities).map(e => ({
+        group: 'nodes',
+        data: { 
+          id: e.id, 
+          label: e.name || e.id, 
+          type: e.type, 
+          created_at: e.created_at || 0,
+          parent_id: e.parent_id,
+          raw: e
+        }
+      }));
+
+      const edges = [];
+      json.graph.relations.forEach((r, i) => {
+        edges.push({
+          group: 'edges',
+          data: {
+            id: `rel_${i}`,
+            source: r.from_entity.id,
+            target: r.to_entity.id,
+            label: r.relation_type.id,
+            type: 'relation'
+          }
+        });
+      });
+
+      nodes.forEach(n => {
+        if (n.data.parent_id) {
+          edges.push({
+            group: 'edges',
+            data: {
+              id: `hier_${n.data.id}_${n.data.parent_id}`,
+              source: n.data.id,
+              target: n.data.parent_id,
+              type: 'hierarchy'
+            }
+          });
+        }
+      });
+
+      return { nodes, edges };
+    }
+
+    // --- ИНИЦИАЛИЗАЦИЯ CYTOSCAPE ---
+    function initCy() {
+      // Важно: обращаемся к переменной cyCore
+      if (cyCore) {
+          cyCore.destroy();
+          cyCore = null;
+      }
+      
+      const container = document.getElementById('cy');
+      
+      cyCore = cytoscape({
+        container: container,
+        elements: [], // Начинаем с пустого
+        style: [
+          {
+            selector: 'node',
+            style: {
+              'background-color': ele => typeToColor[ele.data('type')] || '#999',
+              'label': 'data(label)',
+              'color': '#333',
+              'font-size': '10px',
+              'text-valign': 'center',
+              'text-halign': 'center',
+              'width': 20,
+              'height': 20,
+              'text-outline-color': '#fff',
+              'text-outline-width': 1
+            }
+          },
+          {
+            selector: 'node[type="Biome"]',
+            style: { 'width': 60, 'height': 60, 'font-size': '14px', 'opacity': 0.5, 'z-index': -1 }
+          },
+          {
+            selector: 'node[type="Faction"]',
+            style: { 'width': 35, 'height': 35, 'font-weight': 'bold' }
+          },
+          {
+            selector: 'edge[type="relation"]',
+            style: {
+              'width': 1,
+              'line-color': '#bbb',
+              'target-arrow-color': '#bbb',
+              'target-arrow-shape': 'triangle',
+              'curve-style': 'bezier',
+              'label': 'data(label)',
+              'font-size': 6,
+              'text-rotation': 'autorotate'
+            }
+          },
+          {
+            selector: 'edge[type="hierarchy"]',
+            style: {
+              'width': 1,
+              'line-color': '#ddd',
+              'line-style': 'dashed',
+              'curve-style': 'straight',
+              'target-arrow-shape': 'none'
+            }
+          },
+          {
+            selector: ':selected',
+            style: {
+              'border-width': 3,
+              'border-color': '#333',
+              'line-color': '#333',
+              'target-arrow-color': '#333'
+            }
+          }
+        ],
+        layout: { name: 'preset' }
+      });
+
+      // Обработчик клика
+      cyCore.on('tap', 'node', evt => showDetails(evt.target.data('raw')));
+    }
+
+    // --- ОБНОВЛЕНИЕ ПО ЭПОХАМ ---
+    function updateGraphToEpoch(epoch) {
+      if (!cyCore || !fullData) return;
+      
+      currentEpoch = parseInt(epoch);
+      document.getElementById('ageDisplay').textContent = currentEpoch;
+
+      const nodesToShow = fullData.nodes.filter(n => n.data.created_at <= currentEpoch);
+      const nodeIds = new Set(nodesToShow.map(n => n.data.id));
+      const edgesToShow = fullData.edges.filter(e => 
+        nodeIds.has(e.data.source) && nodeIds.has(e.data.target)
+      );
+
+      // Используем batch для производительности
+      cyCore.batch(() => {
+        // 1. Удаление "гостей из будущего" (если ползунок назад)
+        const existingNodes = cyCore.nodes();
+        existingNodes.forEach(node => {
+          if (node.data('created_at') > currentEpoch) {
+            cyCore.remove(node);
+          }
+        });
+
+        // 2. Добавление новых
+        const newElements = [];
+        
+        nodesToShow.forEach(n => {
+          if (cyCore.getElementById(n.data.id).empty()) {
+            // Умное позиционирование рядом с родителем
+            let position = undefined;
+            if (n.data.parent_id) {
+               const parent = cyCore.getElementById(n.data.parent_id);
+               if (parent.nonempty()) {
+                 const pp = parent.position();
+                 // Небольшой разброс
+                 position = { 
+                    x: pp.x + (Math.random()-0.5)*100, 
+                    y: pp.y + (Math.random()-0.5)*100 
+                 };
+               }
+            }
+            newElements.push({ ...n, position: position });
+          }
+        });
+        
+        edgesToShow.forEach(e => {
+          if (cyCore.getElementById(e.data.id).empty()) {
+            newElements.push(e);
+          }
+        });
+
+        if (newElements.length > 0) {
+          cyCore.add(newElements);
+          runIncrementalLayout();
+        }
+      });
+    }
+
+    function runIncrementalLayout() {
+      if (!cyCore) return;
+      const shouldLock = document.getElementById('lockOld').checked;
+      
+      let lockedNodes = cyCore.collection();
+      if (shouldLock && currentEpoch > 0) {
+         lockedNodes = cyCore.nodes().filter(n => n.data('created_at') < currentEpoch);
+         lockedNodes.lock();
+      }
+
+      cyCore.layout({
+        name: 'cose',
+        animate: true,
+        animationDuration: 800,
+        fit: false, // Не зумить каждый раз
+        padding: 30,
+        randomize: false, // Ключевое: не перемешивать существующее
+        nodeRepulsion: 400000,
+        idealEdgeLength: 100,
+        nodeOverlap: 20,
+        componentSpacing: 60,
+        refresh: 20,
+        stop: function() {
+          if (shouldLock) lockedNodes.unlock();
+        }
+      }).run();
+    }
+
+    // Принудительная полная перераскладка
+    function forceLayout() {
+        if (!cyCore) return;
+        cyCore.layout({
+            name: 'cose',
+            animate: true,
+            animationDuration: 1000,
+            fit: true,
+            randomize: true
+        }).run();
+    }
+
+    // --- UI HELPERS ---
+    document.getElementById('timeSlider').addEventListener('input', (e) => {
+      updateGraphToEpoch(e.target.value);
+    });
+
+    function togglePlay() {
+      const btn = document.getElementById('playBtn');
+      if (playInterval) {
+        clearInterval(playInterval);
+        playInterval = null;
+        btn.textContent = "▶ Play";
+      } else {
+        btn.textContent = "⏸ Pause";
+        playInterval = setInterval(() => {
+          let val = parseInt(document.getElementById('timeSlider').value);
+          if (val >= maxEpoch) {
+            clearInterval(playInterval);
+            playInterval = null;
+            btn.textContent = "▶ Play";
+          } else {
+            val++;
+            document.getElementById('timeSlider').value = val;
+            updateGraphToEpoch(val);
+          }
+        }, 800); // Скорость воспроизведения
+      }
+    }
+
+    function generateFilters(data) {
+      const container = document.getElementById('nodeFilters');
+      container.innerHTML = '';
+      const types = new Set(Object.values(data.graph.entities).map(e => e.type));
+      
+      types.forEach(type => {
+        const div = document.createElement('div');
+        div.className = 'filter-item';
+        div.innerHTML = `
+          <div class="color-box" style="background-color: ${typeToColor[type] || '#999'}"></div>
+          <input type="checkbox" checked id="filter-${type}" />
+          <span style="margin-left: 5px">${type}</span>
+        `;
+        
+        div.querySelector('input').addEventListener('change', (e) => {
+          if(!cyCore) return;
+          const isVisible = e.target.checked;
+          cyCore.nodes(`[type="${type}"]`).style('display', isVisible ? 'element' : 'none');
+        });
+        container.appendChild(div);
+      });
+    }
+
+    function showDetails(entity) {
+      const container = document.getElementById('details');
+      const content = document.getElementById('detail-content');
+      document.getElementById('detail-title').textContent = entity.name || entity.id;
+      const jsonStr = JSON.stringify(entity, null, 2);
+      content.innerHTML = `<pre>${jsonStr}</pre>`;
+      container.style.display = 'block';
+    }
+  </script>
+</body>
+</html>

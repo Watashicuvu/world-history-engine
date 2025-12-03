@@ -1,0 +1,372 @@
+from typing import List, Optional, Dict, Any
+import uuid
+
+# Убедитесь, что Entity и EntityType импортированы корректно
+from src.models.generation import Entity, EntityType, World
+
+class WorldQueryService:
+    def __init__(self, world: World):
+        self.world = world
+        self.graph = world.graph
+
+    # === READ (Навигация) ===
+
+    def get_entity(self, entity_id: str) -> Optional[Entity]:
+        if not entity_id: return None
+        return self.graph.entities.get(entity_id)
+
+    def get_biome(self, location: Entity) -> Optional[Entity]:
+        """Рекурсивно ищет родительский биом для любой сущности."""
+        if not location: return None
+        current_id = location.parent_id
+        depth = 0
+        while current_id and depth < 5:
+            parent = self.get_entity(current_id)
+            if not parent:
+                return None
+            if parent.type == EntityType.BIOME:
+                return parent
+            current_id = parent.parent_id
+            depth += 1
+        return None
+    
+    def get_belief(self, faction: Entity) -> Optional[Entity]:
+        """Находит религию фракции."""
+        if not faction: return None
+        # Ищем связь "believes_in" (from FACTION -> to BELIEF)
+        # Примечание: в твоем графе связи направленные.
+        # Если faction believes_in Belief, то faction=from, belief=to
+        for r in self.graph.relations:
+            if r.from_entity.id == faction.id:
+                 # Проверка типа связи (учитывая твой фикс с строками/объектами)
+                 r_type = r.relation_type.id if hasattr(r.relation_type, 'id') else str(r.relation_type)
+                 if r_type == "believes_in":
+                     return r.to_entity
+        return None
+
+    def get_factions_by_belief(self, belief_id: str) -> List[Entity]:
+        """Возвращает всех последователей веры."""
+        factions = []
+        for r in self.graph.relations:
+            r_type = r.relation_type.id if hasattr(r.relation_type, 'id') else str(r.relation_type)
+            if r_type == "believes_in" and r.to_entity.id == belief_id:
+                factions.append(r.from_entity)
+        return factions
+
+    # === ANALYTICS & CONTEXT TOOLS (Для MCP) ===
+
+    def get_world_metadata(self) -> Dict[str, List[str]]:
+        """
+        Возвращает "словарь" мира: какие теги и типы связей вообще существуют.
+        Нужно, чтобы LLM знала, как правильно фильтровать (какие теги использовать).
+        """
+        all_tags = set()
+        for entity in self.graph.entities.values():
+            all_tags.update(entity.tags)
+        
+        # Собираем ID типов связей
+        rel_types = set(self.graph.relation_types.keys())
+        # Также сканируем живые связи, на случай если есть динамические
+        for r in self.graph.relations:
+            r_id = r.relation_type.id if hasattr(r.relation_type, 'id') else str(r.relation_type)
+            rel_types.add(r_id)
+
+        return {
+            "available_tags": sorted(list(all_tags)),
+            "relation_types": sorted(list(rel_types)),
+            "entity_types": [t.value for t in EntityType]
+        }
+
+    # TODO: добавить это в GUI отрисованного графа!
+    def query_entities(
+        self, 
+        include_tags: Optional[List[str]] = None, 
+        exclude_tags: Optional[List[str]] = None, 
+        type_filter: Optional[str] = None,
+        limit: int = 50
+    ) -> str:
+        """
+        Возвращает сжатый список сущностей для контекста.
+        Формат: "ID | Name | Type | [Tags]"
+        """
+        results = []
+        
+        # Превращаем списки в множества для скорости
+        inc_set = set(include_tags) if include_tags else set()
+        exc_set = set(exclude_tags) if exclude_tags else set()
+        
+        count = 0
+        for entity in self.graph.entities.values():
+            if count >= limit:
+                break
+
+            # 1. Фильтр по Типу
+            if type_filter and entity.type != type_filter:
+                continue
+            
+            # 2. Фильтр "Исключить" (Черный список) - Самый важный для сжатия
+            # Если пересечение множества тегов сущности и черного списка НЕ пустое -> пропускаем
+            if exc_set and not exc_set.isdisjoint(entity.tags):
+                continue
+                
+            # 3. Фильтр "Включить" (Белый список)
+            # Если белый список задан, entity.tags должны содержать ВСЕ теги из него (AND логика)
+            # (Можно поменять на isdisjoint для OR логики, но для поиска обычно нужен AND)
+            if inc_set and not inc_set.issubset(entity.tags):
+                continue
+
+            # Формируем строку
+            tags_str = ", ".join(sorted(entity.tags))
+            # Добавляем родителя для контекста (где это находится)
+            parent_info = f" (in {entity.parent_id})" if entity.parent_id else ""
+            
+            line = f"- {entity.id}: {entity.name} [{entity.type}]{parent_info} | Tags: {{{tags_str}}}"
+            results.append(line)
+            count += 1
+            
+        if not results:
+            return "No entities found matching criteria."
+            
+        header = f"Found {len(results)} entities (Limit: {limit}):"
+        return header + "\n" + "\n".join(results)
+
+    def analyze_relationships(
+        self, 
+        source_type: Optional[str] = None, 
+        target_type: Optional[str] = None,
+        relation_filter: Optional[str] = None
+    ) -> str:
+        """
+        Строит Markdown-таблицу связей.
+        Позволяет LLM увидеть политическую/религиозную карту мира.
+        """
+        rows = []
+        
+        for r in self.graph.relations:
+            # Нормализация relation_type
+            r_type_id = r.relation_type.id if hasattr(r.relation_type, 'id') else str(r.relation_type)
+            
+            # Фильтры
+            if relation_filter and r_type_id != relation_filter:
+                continue
+            if source_type and r.from_entity.type != source_type:
+                continue
+            if target_type and r.to_entity.type != target_type:
+                continue
+                
+            # Формируем строку таблицы
+            # Source Name | Relation | Target Name | Description (если есть в типе)
+            rows.append(f"| {r.from_entity.name} | **{r_type_id}** | {r.to_entity.name} |")
+
+        if not rows:
+            return "No relationships found for these criteria."
+
+        # Сборка таблицы
+        header = "| Source Entity | Relation Type | Target Entity |\n|---|---|---|\n"
+        return header + "\n".join(rows)
+
+    def update_tags(self, entity_id: str, add_tags: List[str], remove_tags: List[str]):
+        entity = self.get_entity(entity_id)
+        if not entity:
+            raise ValueError(f"Entity {entity_id} not found")
+        
+        # Удаление
+        for t in remove_tags:
+            entity.tags.discard(t)
+            
+        # Добавление
+        for t in add_tags:
+            entity.tags.add(t)
+            
+        return list(entity.tags)
+
+    def register_relation_type(self, type_id: str, description: str, is_symmetric: bool = False):
+        """
+        Позволяет динамически добавлять новые типы связей.
+        Это нужно для LLM, если она придумала новый тип отношений.
+        """
+        from src.models.generation import RelationType, EntityType # Локальный импорт во избежание циклов
+
+        # Если такой тип уже есть - не делаем ничего (или обновляем описание)
+        if type_id in self.graph.relation_types:
+            return
+
+        # Создаем "универсальный" тип связи.
+        # Т.к. мы не знаем типы from/to заранее, можно использовать базовый тип или игнорировать проверку
+        # В твоей модели RelationType требует from_type/to_type.
+        # Для гибкости можно ввести "Any" или просто использовать FACTION как дефолт,
+        # если связь предполагается социальной.
+        
+        new_rel = RelationType(
+            id=type_id,
+            description=description,
+            from_type=EntityType.FACTION, # Дефолт, LLM должна понимать контекст
+            to_type=EntityType.FACTION,
+            is_symmetric=is_symmetric
+        )
+        
+        self.graph.relation_types[type_id] = new_rel
+        print(f"[QueryService] Dynamic relation registered: {type_id}")
+
+    def get_children(self, parent_id: str, type_filter: Optional[EntityType] = None) -> List[Entity]:
+        """Возвращает всех детей (опционально фильтруя по типу)."""
+        if not parent_id: return []
+        return [
+            e for e in self.graph.entities.values()
+            if e.parent_id == parent_id
+            and (type_filter is None or e.type == type_filter)
+            and "inactive" not in e.tags
+        ]
+    
+    def get_location_of(self, entity: Entity) -> Optional[Entity]:
+        """Находит локацию, в которой находится сущность."""
+        if not entity or not entity.parent_id: return None
+        parent = self.get_entity(entity.parent_id)
+        if parent and parent.type == EntityType.LOCATION:
+            return parent
+        return None
+
+    # === WRITE (Изменения графа) ===
+
+    def add_entity(self, entity: Entity):
+        self.graph.add_entity(entity)
+
+    def add_relation(self, from_e: Entity, to_e: Entity, rel_type_id: str):
+        """
+        Безопасное создание связи с логированием ошибок.
+        """
+        if not from_e or not to_e:
+            print(f"[QueryService] Error: Attempt to link None entities. From: {from_e}, To: {to_e}")
+            return
+
+        # Проверка наличия типа связи
+        if rel_type_id not in self.graph.relation_types:
+            # КРИТИЧНО: Если типа нет, мы должны видеть это в логах ярко
+            print(f"!!! CRITICAL WARNING: Relation type '{rel_type_id}' MISSING in registry. Relation NOT created.")
+            # Можно временно создать тип, чтобы не крашить симуляцию, 
+            # но лучше исправить регистрацию в NarrativeEngine.
+            return
+            
+        try:
+            self.graph.add_relation(from_e, to_e, rel_type_id)
+        except Exception as e:
+            print(f"[QueryService] Exception adding relation {rel_type_id}: {e}")
+            raise e
+
+    def move_entity(self, entity: Entity, new_parent: Entity, relation_type: str = "faction_located_in"):
+        """
+        Перемещает сущность, безопасно удаляя старые связи.
+        """
+        if not entity or not new_parent: return
+
+        # Безопасная фильтрация связей
+        # Проверяем наличие атрибутов, чтобы избежать AttributeError, если граф поврежден
+        new_relations = []
+        for r in self.graph.relations:
+            try:
+                # Проверяем, что r.relation_type это объект и имеет id, либо это строка
+                r_type_id = r.relation_type.id if hasattr(r.relation_type, 'id') else str(r.relation_type)
+                
+                # Если это та самая связь, которую надо удалить — пропускаем её
+                if r.from_entity.id == entity.id and r_type_id == relation_type:
+                    continue
+                
+                new_relations.append(r)
+            except AttributeError:
+                # Если связь битая, удаляем её
+                continue
+        
+        self.graph.relations = new_relations
+        
+        entity.parent_id = new_parent.id
+        self.add_relation(entity, new_parent, relation_type)
+
+    def register_event(
+        self, 
+        event_type: str, 
+        summary: str, 
+        age: int, 
+        primary_entity: Entity, 
+        secondary_entities: Optional[List[Entity]] = None,
+        data: Optional[Dict[str, Any]] = None
+    ) -> Entity:
+        if data is None: data = {}
+            
+        data.update({
+            "age": age,
+            "event_type": event_type,
+            "summary": summary
+        })
+
+        event_id = f"evt_{str(uuid.uuid4())[:8]}"
+        event = Entity(
+            id=event_id,
+            definition_id="sys_event",
+            type=EntityType.EVENT,
+            name=f"Эпоха {age}: {summary}",
+            created_at=age,
+            data=data
+        )
+        self.add_entity(event)
+
+        if primary_entity:
+            rel_name = "affected_by" if primary_entity.type == EntityType.FACTION else "occurred_at"
+            self.add_relation(primary_entity, event, rel_name)
+
+        if secondary_entities:
+            for entity in secondary_entities:
+                if entity:
+                    rel_name = "affected_by" if entity.type == EntityType.FACTION else "occurred_at"
+                    self.add_relation(entity, event, rel_name)
+
+        return event
+    
+    # === GOD MODE TOOLS ===
+
+    def get_entity_details(self, entity_id: str) -> str:
+        """Возвращает полный JSON сущности для детального изучения."""
+        entity = self.get_entity(entity_id)
+        if not entity:
+            return f"Error: Entity {entity_id} not found."
+        
+        # model_dump_json() - это стандартный метод Pydantic
+        return entity.model_dump_json(indent=2)
+
+    def spawn_entity(
+        self, 
+        definition_id: str, 
+        parent_id: str, 
+        entity_type: str, 
+        name: Optional[str] = None,
+        data: Optional[Dict[str, Any]] = None
+    ) -> str:
+        """
+        Ручной спавн сущности.
+        """
+        import uuid
+        from src.models.generation import Entity, EntityType
+
+        parent = self.get_entity(parent_id)
+        if not parent and parent_id != "root": # "root" для корневых биомов
+             return f"Error: Parent {parent_id} not found."
+
+        # Генерация ID
+        unique_suffix = str(uuid.uuid4())[:6]
+        new_id = f"{definition_id}_{unique_suffix}"
+        
+        # Если имя не задано, берем definition_id (в идеале тут нужен NamingService, 
+        # но для ручного спавна LLM обычно сама дает имя)
+        final_name = name if name else f"{definition_id} instance"
+
+        new_entity = Entity(
+            id=new_id,
+            definition_id=definition_id,
+            type=EntityType(entity_type), # Конвертация строки в Enum
+            name=final_name,
+            parent_id=parent_id if parent_id != "root" else None,
+            created_at=0, # Или текущая эпоха
+            data=data or {}
+        )
+        
+        self.add_entity(new_entity)
+        return f"Spawned: {new_entity.name} (ID: {new_entity.id}) in {parent_id}"

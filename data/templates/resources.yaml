@@ -1,0 +1,79 @@
+- id: res_wood
+  name_key: wood
+  renewable: true
+  tags: [organic, building, tools]
+  rarity_options:
+    - {rarity: common, weight: 80}
+    - {rarity: uncommon, weight: 14}
+    - {rarity: rare, weight: 5}
+    - {rarity: epic, weight: 1}
+
+- id: res_stone
+  name_key: stone
+  renewable: false
+  tags: [mining, mineral, building]
+  rarity_options:
+    - {rarity: common, weight: 80}
+    - {rarity: uncommon, weight: 15}
+    - {rarity: rare, weight: 4}
+    - {rarity: epic, weight: 1}
+
+- id: res_ore
+  name_key: ore
+  renewable: false
+  tags: [mining, metal, tools, armor, weapon]
+  rarity_options:
+    - {rarity: common, weight: 15}
+    - {rarity: uncommon, weight: 60}
+    - {rarity: rare, weight: 20}
+    - {rarity: epic, weight: 5}
+
+- id: res_herbs
+  name_key: herbs
+  renewable: true
+  tags: [organic, poison, drug]
+  rarity_options:
+    - {rarity: common, weight: 30}
+    - {rarity: uncommon, weight: 40}
+    - {rarity: rare, weight: 25}
+    - {rarity: epic, weight: 5}
+
+- id: res_eat
+  name_key: eat
+  renewable: true
+  tags: [product, essential]
+  rarity_options:
+    - {rarity: common, weight: 30}
+    - {rarity: uncommon, weight: 40}
+    - {rarity: rare, weight: 20}
+    - {rarity: epic, weight: 10}
+
+- id: res_other
+  name_key: other
+  renewable: true
+  tags: [decor, building]
+  rarity_options:
+    - {rarity: common, weight: 30}
+    - {rarity: uncommon, weight: 40}
+    - {rarity: rare, weight: 25}
+    - {rarity: epic, weight: 5}
+
+- id: res_artificial
+  name_key: artificial
+  renewable: true
+  tags: [politic, knowledge]
+  rarity_options:
+    - {rarity: common, weight: 80}
+    - {rarity: uncommon, weight: 15}
+    - {rarity: rare, weight: 4}
+    - {rarity: epic, weight: 1}
+
+- id: res_parts
+  name_key: parts
+  renewable: true
+  tags: [material]
+  rarity_options:
+    - {rarity: common, weight: 30}
+    - {rarity: uncommon, weight: 40}
+    - {rarity: rare, weight: 25}
+    - {rarity: epic, weight: 5}
