@@ -1,0 +1,52 @@
+# data/templates/beliefs.yaml
+
+# --- ВОИНСТВЕННЫЕ КУЛЬТЫ ---
+- id: belief_war
+  name: "Культ Войны"
+  # Тэги фракций, которые склонны к этой вере
+  preferred_roles: ["military", "raider"] 
+  # Ключи для NamingService (какой список шаблонов имен использовать)
+  naming_style: "martial" 
+  # Базовые догматы (гарантированные)
+  base_tenets:
+    aggression: 3.0
+    pacifism: -5.0
+  # Случайные вариации (выбирается 1-2 при генерации)
+  variations:
+    - { name: "Honor Bound", modifiers: { honor: 2.0 } }
+    - { name: "Bloodthirsty", modifiers: { cruelty: 2.0 } }
+
+# --- ПРИРОДНЫЕ ВЕРОВАНИЯ ---
+- id: belief_nature
+  name: "Природный Круг"
+  preferred_roles: ["druid", "peasant", "gatherer"]
+  naming_style: "nature"
+  base_tenets:
+    growth: 2.0
+    industry: -2.0
+  variations:
+    - { name: "Harmony", modifiers: { stability: 2.0 } }
+    - { name: "Wild Wrath", modifiers: { aggression: 1.0 } }
+
+# --- ТАЙНЫЕ ЗНАНИЯ ---
+- id: belief_arcane
+  name: "Тайный Орден"
+  preferred_roles: ["mage", "scholar"]
+  naming_style: "arcane"
+  base_tenets:
+    magic_affinity: 3.0
+    superstition: -2.0
+  variations:
+    - { name: "Forbidden Knowledge", modifiers: { chaos: 1.0 } }
+    - { name: "Illumination", modifiers: { order: 1.0 } }
+
+# --- ТОРГОВЫЕ/ГОРОДСКИЕ КУЛЬТЫ ---
+- id: belief_wealth
+  name: "Путь Золота"
+  preferred_roles: ["merchant", "aristocrat"]
+  naming_style: "wealth"
+  base_tenets:
+    greed: 2.0
+    charity: -1.0
+  variations:
+    - { name: "Mercantilism", modifiers: { trade: 2.0 } }

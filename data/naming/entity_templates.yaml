@@ -1,0 +1,78 @@
+Location:
+  biome_mountains: ["{adj} {noun}", "Крепость {symbol}", "Пещера {deity}"]
+  biome_forest: ["{adj} {noun}", "Роща {symbol}", "Святилище {deity}"]
+  biome_coast: ["{adj} {noun}", "Порт {symbol}", "Капище {deity}"]
+  # fallback
+  default: ["{adj} {noun}"]
+
+Item:
+  default:
+    - "Меч {symbol}"
+    - "Корона «{adj} {noun}»"
+    - "{base_res} фракции «{faction_name}»"  # Например: "Золото Дварфов"
+    - "Слеза {deity}"
+    - "Осколок {noun}"
+    - "{adj} {noun} из {location}"
+
+Faction:
+  biome_mountains: ["Братство {symbol}", "Орден {adj} {noun}"]
+  biome_forest: ["Друиды {symbol}", "Круг {symbol}"]
+  # ...
+
+Character:
+  # Если нужно, можно добавить специфику по биомам, 
+  # но в коде мы чаще используем character_names.yaml
+  default: ["Странник"]
+
+# Добавьте секцию Biome
+Biome:
+  biome_mountains:
+    - "Хребет {adj} {noun}"
+    - "Горы {symbol}"
+    - "{adj} Пики"
+    - "Край {symbol}"
+  
+  biome_forest:
+    - "Лес {adj} {noun}"
+    - "Чаща {symbol}"
+    - "{adj} Пуща"
+  
+  # ... остальные ...
+  
+  default:
+    - "{adj} Земли"
+    - "Край {noun}"
+
+
+Belief:
+  # Стиль: martial (Военные)
+  martial:
+    - "Культ {symbol}"     # Культ Меча
+    - "Орден {adj} {noun}" # Орден Железной Крови
+    - "Дети {deity}"       # Дети Одина
+    - "Путь {noun}"        # Путь Войны
+  
+  # Стиль: nature (Природные)
+  nature:
+    - "Круг {noun}"        # Круг Жизни
+    - "Шепот {adj} {noun}" # Шепот Древнего Леса
+    - "Служители {symbol}" # Служители Корней
+    - "{adj} Роща"
+  
+  # Стиль: arcane (Магические)
+  arcane:
+    - "Тайны {deity}"
+    - "Глаз {noun}"
+    - "Ищущие {symbol}"
+    - "{adj} Истина"
+  
+  # Стиль: wealth (Торговые)
+  wealth:
+    - "Гильдия {noun}"
+    - "Золотой {symbol}"
+    - "Благословение {deity}"
+
+  # Fallback
+  default:
+    - "Вера в {noun}"
+    - "Последователи {deity}"

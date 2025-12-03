@@ -1,0 +1,127 @@
+- id: loc_village
+  name: Деревня
+  capacity: 4
+  limits: {Resource: 1, Faction: 2}
+  tags: [settlement]
+
+- id: loc_hamlet
+  name: Хутор
+  capacity: 3
+  limits: {Resource: 1, Faction: 2}
+  tags: [settlement, hidden]
+
+- id: loc_town
+  name: Город
+  capacity: 8
+  limits: {Resource: 2, Faction: 4}
+  tags: [settlement, trade]
+
+- id: loc_city
+  name: Мегаполис
+  capacity: 15
+  limits: {Resource: 4, Faction: 10}
+  tags: [settlement, power, trade]
+
+- id: loc_cave
+  name: Пещера
+  capacity: 5
+  limits: {Resource: 3, Faction: 2}
+  tags: [hidden, mining]
+
+- id: loc_temple
+  name: Храм
+  capacity: 6
+  limits: {Resource: 1, Faction: 4}
+  tags: [sacred, ritual]
+
+- id: loc_shrine
+  name: Святилище
+  capacity: 3
+  limits: {Resource: 1, Faction: 3}
+  tags: [sacred, ritual]
+
+- id: loc_mountain_pass
+  name: Перевал
+  capacity: 3
+  limits: {Resource: 1, Faction: 2}
+  tags: [interest, no_res]
+
+- id: loc_tower
+  name: Башня
+  capacity: 3
+  limits: {Resource: 1, Faction: 2}
+  tags: [interest]
+
+- id: loc_ruins
+  name: Руины
+  capacity: 2
+  limits: {Resource: 2, Faction: 1}
+  tags: [hidden, nonhuman, ruins, dangerous]
+
+- id: loc_hunter_camp
+  name: Охотничий лагерь
+  capacity: 3
+  limits: {Resource: 1, Faction: 2}
+  tags: [moving]
+
+- id: loc_spirit_well
+  name: Источник духов
+  capacity: 3
+  limits: {Resource: 1, Faction: 2}
+  tags: [sacred, ritual, hidden, nonhuman]
+
+- id: loc_grove
+  name: Роща
+  capacity: 3
+  limits: {Resource: 1, Faction: 2}
+  tags: [ritual, hidden, nonhuman]
+
+- id: loc_port
+  name: Порт
+  capacity: 10
+  limits: {Resource: 3, Faction: 7}
+  tags: [power, settlement, trade]
+
+- id: loc_shipwreck
+  name: Обломки корабля
+  capacity: 3
+  limits: {Resource: 2, Faction: 2}
+  tags: [hidden, nonhuman]
+
+- id: loc_oasis
+  name: Оазис
+  capacity: 8
+  limits: {Resource: 3, Faction: 5}
+  tags: [settlement, trade]
+
+- id: loc_fortress
+  name: Крепость
+  capacity: 8
+  limits: {Resource: 2, Faction: 6}
+  tags: [interest, power]
+
+- id: loc_dunes
+  name: Дюны
+  capacity: 4
+  limits: {Resource: 1, Faction: 2}
+  tags: [nonhuman, maze]
+
+# ДИКИЕ ЗЕМЛИ (WILD)
+# Они имеют малую вместимость и тег 'hidden' или 'wild'
+- id: loc_wild_cave
+  name: Пещера
+  capacity: 1 # Только монстр или одна группа разведчиков
+  limits: {Resource: 1, Faction: 1}
+  tags: [hidden, wild, mining] # mining -> превратится в Шахту
+
+- id: loc_wild_glade
+  name: Поляна
+  capacity: 1
+  limits: {Resource: 2, Faction: 1}
+  tags: [hidden, wild, nature] # nature -> превратится в Хутор/Рощу
+
+- id: loc_ancient_ruins
+  name: Древние Руины
+  capacity: 2
+  limits: {Resource: 1, Faction: 1}
+  tags: [ruins, dangerous] # ruins -> превратится в Деревню/Форт

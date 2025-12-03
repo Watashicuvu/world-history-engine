@@ -1,0 +1,115 @@
+- id: biome_mountains
+  name: Горы
+  capacity: 4
+  tags: [rocky, isolated, high_position]
+  allowed_locations: [loc_cave, loc_town, loc_shrine, loc_mountain_pass, loc_hamlet, loc_tower]
+  available_resources: [res_wood, res_stone, res_other, res_ore, res_eat, res_artificial, res_parts]
+  # Тут определяем правила спавна фракций. Definition ID можно делать произвольными или создать factions.yaml
+  factions:
+    - definition_id: fac_mining_dwarves
+      role: mining
+      weight: 1.0
+      override_tags: [stone, ore, craft]
+    - definition_id: fac_mining_dwarves
+      role: mining
+      weight: 0.5
+      override_tags: [veteran]
+    - definition_id: fac_gargoyle_guardians
+      role: military
+      weight: 0.5
+      override_tags: [stone, guard]
+
+- id: biome_forest
+  name: Лес
+  capacity: 4
+  tags: [lush, mystical]
+  allowed_locations: [loc_village, loc_hamlet, loc_temple, loc_town, loc_ruins, loc_hunter_camp, loc_spirit_well, loc_grove]
+  available_resources: [res_wood, res_herbs, res_eat, res_artificial, res_parts]
+  factions:
+    - definition_id: fac_trading_elves
+      role: trading
+      weight: 1.0
+      override_tags: [politic, economy, craft]
+    - definition_id: fac_druids
+      role: religious
+      weight: 1.0
+    - definition_id: fac_tree_spirits
+      role: religious
+      weight: 0.8
+
+- id: biome_coast
+  name: Побережье
+  capacity: 5
+  tags: [conflict, danger, coastal, edge_only]
+  allowed_locations: [loc_village, loc_city, loc_port, loc_temple, loc_shipwreck]
+  available_resources: [res_stone, res_eat, res_artificial, res_parts]
+  factions:
+    - definition_id: fac_pirates
+      role: military
+      weight: 1.0
+    - definition_id: fac_sea_kings
+      role: military
+      weight: 0.8
+    - definition_id: fac_water_spirits
+      role: religious
+      weight: 0.6
+
+- id: biome_plains
+  name: Равнина
+  capacity: 6
+  tags: [progressive, conflict]
+  allowed_locations: [loc_village, loc_temple, loc_cave, loc_city, loc_tower, loc_ruins]
+  available_resources: [res_other, res_eat, res_artificial, res_parts]
+  factions:
+    - definition_id: fac_human_trading_guild
+      role: trading
+      weight: 1.2
+    - definition_id: fac_human_warriors
+      role: military
+      weight: 1.0
+
+- id: biome_swamp
+  name: Болото
+  capacity: 3
+  tags: [dark, mystical, danger]
+  allowed_locations: [loc_village, loc_temple, loc_shrine, loc_tower, loc_hunter_camp]
+  available_resources: [res_wood, res_other, res_herbs, res_ore, res_parts]
+  factions:
+    - definition_id: fac_undead_temple
+      role: religious
+      weight: 1.0
+      override_tags: [magic]
+    - definition_id: fac_trading_vampires
+      role: trading
+      weight: 0.5
+
+- id: biome_desert
+  name: Пустыня
+  capacity: 3
+  tags: [mystical, mortal, heat, no_edge]
+  # Используем ID биома в forbidden_neighbors!
+  forbidden_neighbors: [biome_tundra]
+  allowed_locations: [loc_village, loc_oasis, loc_temple, loc_ruins, loc_dunes]
+  available_resources: [res_wood, res_eat, res_artificial, res_parts]
+  factions:
+    - definition_id: fac_sand_wyverns
+      role: military
+      weight: 0.8
+    - definition_id: fac_fire_elementals
+      role: religious
+      weight: 0.6
+
+- id: biome_tundra
+  name: Тундра
+  capacity: 3
+  tags: [mortal, cold, no_edge]
+  forbidden_neighbors: [biome_desert]
+  allowed_locations: [loc_village, loc_temple, loc_fortress, loc_cave, loc_tower]
+  available_resources: [res_wood, res_stone, res_herbs, res_artificial, res_parts]
+  factions:
+    - definition_id: fac_frost_trolls
+      role: military
+      weight: 0.9
+    - definition_id: fac_skeletons
+      role: military
+      weight: 0.7

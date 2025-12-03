@@ -1,0 +1,20 @@
+- id: trait_warlord
+  name: "Военачальник"
+  modifiers:
+    aggression: 4
+    magic_affinity: -2
+    revered: ["strength", "conquest"]
+
+- id: trait_diplomat
+  name: "Дипломат"
+  modifiers:
+    aggression: -3
+    collectivism: 3
+    taboo: ["rudeness"]
+
+- id: trait_mad_king
+  name: "Безумный"
+  modifiers:
+    aggression: 5
+    collectivism: -5
+    taboo: ["reason"]

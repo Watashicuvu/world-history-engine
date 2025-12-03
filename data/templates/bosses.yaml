@@ -1,0 +1,43 @@
+# data/templates/bosses.yaml
+
+# === МОНСТРЫ (Creature Bosses) ===
+- id: boss_dragon_red
+  creature_type: beast
+  role: monster
+  tags: [boss, fire, flying, dragon]
+  name_template: "Дракон {name}" # Можно использовать спец. шаблон
+  culture:
+    aggression: 10 # Всегда атакует
+    collectivism: 0
+    revered: [gold, fire] # Любит золото (механика?)
+
+- id: boss_kraken
+  creature_type: beast
+  role: monster
+  tags: [boss, water, huge]
+  name_template: "Кракен {name}"
+  culture:
+    aggression: 8
+    collectivism: 0
+
+# === СТИХИЙНЫЕ БЕДСТВИЯ (Disaster Bosses) ===
+# Мы используем ту же структуру, но creature_type = spirit/construct
+# или новый тип "phenomenon"
+
+- id: disaster_volcano
+  creature_type: spirit 
+  role: disaster
+  tags: [boss, disaster, fire, static] # static = не может ходить в рейды
+  name_template: "Пробуждение Вулкана"
+  culture:
+    aggression: 10
+    taboo: [life] # Уничтожает всё живое
+
+- id: disaster_plague
+  creature_type: undead
+  role: disaster
+  tags: [boss, disaster, disease]
+  name_template: "Чума «{adj} Смерть»"
+  culture:
+    aggression: 5 # Медленная смерть
+    collectivism: 10 # Распространяется

@@ -1,0 +1,24 @@
+- id: trans_restore_ruins
+  requires_tag: ruins
+  needs_faction: true
+  target_def: loc_village
+  chance: 0.1
+  verb: restored
+  narrative: "восстановила руины и основала поселение"
+
+- id: trans_colonize_wild
+  requires_tag: wild
+  needs_faction: true
+  target_def: loc_hamlet
+  chance: 0.15
+  verb: colonized
+  narrative: "основала поселение на диких землях"
+
+- id: trans_nature_reclaim
+  requires_tag: ruins
+  needs_faction: false
+  min_age_empty: 30
+  target_def: loc_wild_ruins # Этот ключ должен обрабатываться как удаление/wild
+  chance: 0.05
+  verb: reclaimed
+  narrative: "природа окончательно поглотила остатки"

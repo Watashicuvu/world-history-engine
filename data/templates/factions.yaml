@@ -1,0 +1,263 @@
+# data/templates/factions.yaml
+
+# ==========================================
+# ЛЮДИ И ЦИВИЛИЗАЦИЯ (PLAINS, COAST, TOWNS)
+# ==========================================
+
+- id: fac_human_trading_guild
+  creature_type: humanoid
+  role: trading
+  tags: [economy, politic, diplomacy, coin]
+  culture:
+    aggression: -4
+    magic_affinity: -2
+    collectivism: 3
+    taboo: [poverty, charity, theft]
+    revered: [gold, contracts, stability]
+
+- id: fac_human_warriors
+  creature_type: humanoid
+  role: military
+  tags: [honor, steel, guard]
+  culture:
+    aggression: 6
+    magic_affinity: -3
+    collectivism: 7
+    taboo: [cowardice, betrayal, magic]
+    revered: [king, sword, honor]
+
+- id: fac_human_templars
+  creature_type: humanoid
+  role: religious
+  tags: [light, fanatical, order]
+  culture:
+    aggression: 8
+    magic_affinity: 2
+    collectivism: 9
+    taboo: [heresy, darkness, demons]
+    revered: [light, purity, sacrifice]
+
+- id: fac_shadow_assassins
+  creature_type: humanoid
+  role: military
+  tags: [stealth, crime, politic]
+  culture:
+    aggression: 4
+    magic_affinity: 3
+    collectivism: -2
+    taboo: [publicity, mercy]
+    revered: [shadow, silence, contract]
+
+- id: fac_pirates
+  creature_type: humanoid
+  role: military
+  tags: [water, crime, chaotic]
+  culture:
+    aggression: 7
+    magic_affinity: -1
+    collectivism: -4  # Каждый сам за себя
+    taboo: [law, sobriety]
+    revered: [luck, gold, sea]
+
+# ==========================================
+# ДВАРФЫ И ПОДЗЕМЕЛЬЯ (MOUNTAINS)
+# ==========================================
+
+- id: fac_mining_dwarves
+  creature_type: humanoid
+  role: mining
+  tags: [stone, ore, craft, dwarf]
+  culture:
+    aggression: 1
+    magic_affinity: -4
+    collectivism: 8
+    taboo: [swimming, elves, sky]
+    revered: [ancestors, hammer, craft]
+
+- id: fac_dwarf_warriors
+  creature_type: humanoid
+  role: military
+  tags: [heavy_armor, dwarf, fortress]
+  culture:
+    aggression: 5
+    magic_affinity: -5
+    collectivism: 10
+    taboo: [retreat, shaving_beard]
+    revered: [ancestors, duty, stone]
+
+- id: fac_gargoyle_guardians
+  creature_type: construct
+  role: military
+  tags: [stone, guard, flying]
+  culture:
+    aggression: 3
+    magic_affinity: 5
+    collectivism: 10
+    taboo: [leaving_post, flesh]
+    revered: [master, silence, stone]
+
+# ==========================================
+# ЭЛЬФЫ И ПРИРОДА (FOREST)
+# ==========================================
+
+- id: fac_trading_elves
+  creature_type: humanoid
+  role: trading
+  tags: [art, luxury, elf]
+  culture:
+    aggression: -3
+    magic_affinity: 8
+    collectivism: 4
+    taboo: [ugliness, crude_metal]
+    revered: [stars, art, wine]
+
+- id: fac_druids
+  creature_type: humanoid
+  role: religious
+  tags: [nature, balance, magic]
+  culture:
+    aggression: -1
+    magic_affinity: 10
+    collectivism: 6
+    taboo: [iron, industry, killing_animals_for_sport]
+    revered: [circle, oak, seasons]
+
+- id: fac_tree_spirits
+  creature_type: spirit
+  role: religious
+  tags: [nature, ancient, slow]
+  culture:
+    aggression: 2
+    magic_affinity: 10
+    collectivism: 10
+    taboo: [fire, axes]
+    revered: [sun, roots, water]
+
+- id: fac_elves_warriors
+  creature_type: humanoid
+  role: military
+  tags: [archery, forest, elf]
+  culture:
+    aggression: 4
+    magic_affinity: 6
+    collectivism: 5
+    taboo: [trespassers, destruction]
+    revered: [hunt, moon]
+
+# ==========================================
+# НЕЖИТЬ И ТЬМА (SWAMP, DESERT RUINS)
+# ==========================================
+
+- id: fac_undead_temple
+  creature_type: undead
+  role: religious
+  tags: [magic, ritual, death]
+  culture:
+    aggression: 3
+    magic_affinity: 10
+    collectivism: 10 # Улей
+    taboo: [life, sun, healing]
+    revered: [eternal_silence, entropy]
+
+- id: fac_undead_warriors
+  creature_type: undead
+  role: military
+  tags: [fear, horde, death]
+  culture:
+    aggression: 9
+    magic_affinity: 2
+    collectivism: 10
+    taboo: [mercy, retreat]
+    revered: [master, bone]
+
+- id: fac_trading_vampires
+  creature_type: undead
+  role: trading
+  tags: [aristocrat, blood, politics]
+  culture:
+    aggression: 2
+    magic_affinity: 7
+    collectivism: 1
+    taboo: [garlic, sun, bad_manners]
+    revered: [blood, lineage, power]
+
+- id: fac_skeletons
+  creature_type: undead
+  role: military
+  tags: [horde, bone]
+  culture:
+    aggression: 8
+    magic_affinity: 1
+    collectivism: 10
+    taboo: [flesh]
+    revered: [lich_king]
+
+# ==========================================
+# МОНСТРЫ И ДИКАРИ (TUNDRA, DESERT, SWAMP)
+# ==========================================
+
+- id: fac_sand_wyverns
+  creature_type: beast
+  role: military
+  tags: [flying, predator, desert]
+  culture:
+    aggression: 10
+    magic_affinity: 0
+    collectivism: 2
+    taboo: [weakness]
+    revered: [sky, meat, sun]
+
+- id: fac_fire_elementals
+  creature_type: spirit
+  role: religious
+  tags: [fire, magic, destruction]
+  culture:
+    aggression: 8
+    magic_affinity: 10
+    collectivism: 0
+    taboo: [water, ice, calm]
+    revered: [flame, ash, burning]
+
+- id: fac_frost_trolls
+  creature_type: beast
+  role: military
+  tags: [cold, regeneration, brute]
+  culture:
+    aggression: 9
+    magic_affinity: 2
+    collectivism: 4
+    taboo: [fire]
+    revered: [strength, eating]
+
+- id: fac_sea_kings
+  creature_type: beast # Или гуманоид (рыболюди)
+  role: military
+  tags: [water, deep, trident]
+  culture:
+    aggression: 6
+    magic_affinity: 5
+    collectivism: 8
+    taboo: [dry_land, fire]
+    revered: [kraken, depths, storm]
+
+- id: fac_water_spirits
+  creature_type: spirit
+  role: religious
+  tags: [water, calm, healing]
+  culture:
+    aggression: -5
+    magic_affinity: 10
+    collectivism: 5
+    taboo: [pollution, stagnation]
+    revered: [flow, moon, tide]
+
+- id: fac_swamp_witches
+  creature_type: humanoid
+  role: religious # Или mining (сбор трав)
+  tags: [potion, curse, lonely]
+  culture:
+    aggression: 0
+    magic_affinity: 9
+    collectivism: -3
+    taboo: [men, cities, purity]
+    revered: [spirits, cauldron, toad]

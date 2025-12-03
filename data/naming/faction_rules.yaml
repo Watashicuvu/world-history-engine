@@ -1,0 +1,98 @@
+# data/naming/faction_rules.yaml
+
+# --- HUMANOID (Люди, Эльфы, Дварфы, Орки) ---
+humanoid:
+  # Военные фракции
+  military:
+    - "Легион «{adj} {noun}»"
+    - "Орден «{adj} {symbol}»"
+    - "{adj} Клинок"
+
+  # Религиозные фракции
+  religious:
+    - "Культ «{deity}»"
+    - "Братство «{symbol}»"
+
+  # Торговые фракции
+  trading:
+    - "Торговый союз «{symbol}»"
+    - "Гильдия «{noun}»"
+    - "Компания «{adj} {noun}»"
+    - "Караван «{symbol}»"
+    - "Лига «{symbol}»"
+
+  # Шахтерские / Ремесленные (часто для дварфов)
+  mining:
+    - "Гильдия «{symbol}»"
+    - "Клан «{symbol}»"
+    - "Союз «{noun}»"
+
+  # Fallback для гуманоидов
+  default:
+    - "Группа «{adj} {noun}»"
+
+# --- UNDEAD (Нежить) ---
+undead:
+  religious:
+    - "Культ «{deity_prefix}»"
+    - "Хор Мертвых"
+  
+  military:
+    - "Легион Мёртвых"
+    - "Армия {deity}"
+    - "Костяная Стража"
+
+  default:
+    - "{adj} Нежить"
+    - "Прах {symbol}"
+    - "Восставшие из {noun}"
+
+# --- BEAST (Звери, Монстры) ---
+beast:
+  military:
+    - "Стая {symbol}"
+    - "Клан {symbol}"
+    - "Рой {noun}"
+  
+  trading:
+    - "Стая {symbol}" # Звери редко торгуют, но вдруг крысо-люди?
+  
+  default:
+    - "Создания {symbol}"
+    - "{adj} звери"
+    - "Дети {deity_prefix}"
+    - "Племя {symbol}"
+
+# --- SPIRIT (Духи, Элементали) ---
+spirit:
+  religious:
+    - "Круг {symbol}"
+    - "Хор {noun}"
+    - "Духи {symbol}"
+    - "Ковен {deity_prefix}"
+  
+  default:
+    - "Эхо {symbol}"
+    - "Тени {noun}"
+    - "{adj} Духи"
+    - "Шепот {deity}"
+
+# --- CONSTRUCT (Големы, Механизмы) ---
+construct:
+  military:
+    - "Стражи {symbol}"
+    - "Железный Легион"
+    - "Хранители {noun}"
+  
+  default:
+    - "Механизмы {symbol}"
+    - "{adj} Стражи"
+    - "Собрание {noun}"
+
+# --- DEFAULT (Если тип существа не найден) ---
+default:
+  default:
+    - "{adj} {noun}"
+    - "Группа {symbol}"
+    - "{symbol} и {noun}"
+    - "Последователи {deity}"
