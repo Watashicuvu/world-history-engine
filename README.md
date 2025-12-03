@@ -86,7 +86,7 @@ The engine comes with a HTML visualizers.
 3.  Upload the JSON export of your world (generated via the `get_world_metadata` or export tools).
 4.  **Explore:** Drag nodes, filter by factions, and use the **Timeline Slider** at the bottom to replay history.
 
-[INSERT SCREENSHOT HERE: Static screenshot of the visualization interface]
+[assets/*]
 
 ## ⚙️ Configuration & Templates
 
