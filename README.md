@@ -46,6 +46,7 @@ uv sync
 ```bash
 uv run server 
 # Then click: http://0.0.0.0:8000
+```
 
 ### Running the MCP Server manually
 
