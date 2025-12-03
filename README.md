@@ -6,7 +6,7 @@
 
 **A narrative graph engine used to generate, track, and visualize fictional worlds using LLMs.**
 
-[INSERT DEMO GIF HERE: A short gif showing the graph visualization and the timeline slider moving]
+[assets/graph.gif]
 
 ## 📖 Overview
 
@@ -41,6 +41,12 @@ cd world-history-engine
 uv sync
 ````
 
+### Running the graph visualization
+
+```bash
+uv run server 
+# Then click: http://0.0.0.0:8000
+
 ### Running the MCP Server manually
 
 ```bash
@@ -73,10 +79,10 @@ To use this engine as a tool inside Claude, add the following configuration to y
 
 ## 📊 Visualizing Your World
 
-The engine comes with a standalone HTML visualizer.
+The engine comes with a HTML visualizers.
 
 1.  Generate some history using Claude.
-2.  Open `static/world_viz.html` in your browser.
+2.  Open `static/world_viz.html` or `static/index.html` (after running `uv run serve`) in your browser.
 3.  Upload the JSON export of your world (generated via the `get_world_metadata` or export tools).
 4.  **Explore:** Drag nodes, filter by factions, and use the **Timeline Slider** at the bottom to replay history.
 
@@ -119,4 +125,4 @@ Contributions are welcome\! Please check out the issues tab or submit a PR.
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](https://www.google.com/search?q=LICENSE) file for details.
+This project is licensed under the MIT License.
