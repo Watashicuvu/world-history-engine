@@ -137,6 +137,64 @@ class LifecycleSystem:
                     secondary_entities=[winner_faction]
                 )
 
+    def process_overcrowding(self, age: int) -> List[Entity]:
+        """
+        Компенсирующий механизм: если локация переполнена, запускает кризис.
+        """
+        events = []
+        locations = [l for l in self.qs.graph.entities.values() if l.type == EntityType.LOCATION]
+
+        for loc in locations:
+            # Получаем лимиты из шаблона (или сохраненные в data)
+            if not loc.data:
+                loc.data = {}
+
+            loc_limits = loc.data.get("limits", {})
+            if not loc_limits:
+                # Пытаемся достать из реестра, если в data пусто
+                tmpl = LOCATION_REGISTRY.get(loc.definition_id)
+                if tmpl: loc_limits = tmpl.limits
+            
+            # Лимит фракций
+            max_factions = loc_limits.get("Faction", 2)
+            factions = self.qs.get_children(loc.id, EntityType.FACTION)
+            active_factions = [f for f in factions if "absorbed" not in f.tags and "dead" not in f.tags]
+
+            if len(active_factions) > max_factions:
+                # === КРИЗИС ПЕРЕНАСЕЛЕНИЯ ===
+                loc.tags.add("overcrowded")
+                
+                # Шанс на событие уменьшения популяции (голод/болезнь/бунт)
+                if random.random() < 0.5:
+                    victim = random.choice(active_factions)
+                    
+                    # Два варианта: изгнание или гибель
+                    #if random.random() < 0.5:
+                    victim.tags.add("dead")
+                    victim.tags.add("starved")
+                    summary = f"Фракция {victim.name} вымерла от голода из-за перенаселения в {loc.name}"
+                    ev_type = "famine"
+                    # else:
+                    #     # Принудительное выселение (попытка миграции)
+                    #     # TODO ну тут безобразие снова
+                    #     # В простейшем случае - просто удаляем (ушли в неизвестность)
+                    #     victim.tags.add("exiled_by_crowd")
+                    #     victim.parent_id = None # Ушли в никуда (или можно сделать логику flight)
+                    #     summary = f"{victim.name} были вынуждены покинуть переполненный {loc.name}"
+                    #     ev_type = "forced_migration"
+
+                    events.append(self.qs.register_event(
+                        event_type=ev_type,
+                        summary=summary,
+                        age=age,
+                        primary_entity=loc,
+                        secondary_entities=[victim]
+                    ))
+            else:
+                loc.tags.discard("overcrowded")
+
+        return events
+
     def process_resource_decay(self, age: int, chance: float = 0.03) -> List[Entity]:
         events = []
         active_resources = [

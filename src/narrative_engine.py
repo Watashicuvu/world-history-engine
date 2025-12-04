@@ -192,6 +192,10 @@ class NarrativeEngine:
                 all_events.extend(new_res)
                 all_events.extend(regrown)
             
+            # От перенаселения подчищаем каждую эпоху
+            crysis = self.lifecycle_system.process_overcrowding(self.age)
+            all_events.extend(crysis)
+
             # --- 4. ТРАНСФОРМАЦИЯ ---
             transforms = self.transformation_system.process_transformations(self.age)
             expansions = self.transformation_system.process_expansions(self.age)

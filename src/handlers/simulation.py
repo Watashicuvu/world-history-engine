@@ -144,7 +144,7 @@ async def get_latest_graph(service: FromDishka[SimulationService]):
 @router.get("/world/graph")
 async def get_world_graph(
     service: FromDishka[WorldQueryService],
-    exclude_tags: Optional[List[str]] = Query(default=["dead", "inactive", "historical"])
+    exclude_tags: Optional[List[str]] = Query(default=["dead", "inactive", "absorbed"])
 ):
     """
     Возвращает JSON графа с примененными фильтрами.

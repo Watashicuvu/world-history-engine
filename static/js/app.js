@@ -2,7 +2,7 @@ import { initWorkbench } from './workbench.js';
 // Используем динамический импорт внутри обработчиков, чтобы не грузить лишнее сразу,
 // либо импортируем статически, но функции вызываем лениво.
 // Оставим статический импорт для простоты, но изменим логику вызова.
-import { initSimulation, loadSimulationData } from './simulation.js';
+import { initSimulation, onTabActive } from './simulation.js';
 import { initChronicles, loadWorldData } from './chronicles.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -30,8 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     initSimulation(); 
                     state.simulationInited = true;
                 }
-                // Загрузка данных - каждый раз (или можно тоже закрыть флагом)
-                loadSimulationData();
+                onTabActive();
             }
             
             if (targetId === '#chronicles') {

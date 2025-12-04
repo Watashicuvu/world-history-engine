@@ -4,6 +4,7 @@ import traceback # <--- ВАЖНО: Добавлено для отладки
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from src.models.registries import BIOME_REGISTRY
 from src.services.world_query_service import WorldQueryService
 from src.word_generator import WorldGenerator
 from src.narrative_engine import NarrativeEngine
@@ -53,7 +54,26 @@ class SimulationService:
             "biomes_count": len(world.graph.entities)
         }
 
+    # def _restore_params_from_layout(self) -> Dict[str, Any]:
+    #     params = {"width": 3, "height": 3, "biome_ids": None}
+    #     if self.layout_file.exists():
+    #         try:
+    #             with open(self.layout_file, "r", encoding="utf-8") as f:
+    #                 data = json.load(f)
+    #                 params["width"] = data.get("width", 3)
+    #                 params["height"] = data.get("height", 3)
+    #                 cells = data.get("cells", {})
+    #                 unique_biomes = list(set(val for val in cells.values() if val is not None))
+    #                 if unique_biomes:
+    #                     params["biome_ids"] = unique_biomes
+    #         except Exception as e:
+    #             print(f"Warning: Failed to restore layout params: {e}")
+    #     return params
+
     def _restore_params_from_layout(self) -> Dict[str, Any]:
+        """
+        Восстанавливает параметры, но проверяет их валидность.
+        """
         params = {"width": 3, "height": 3, "biome_ids": None}
         if self.layout_file.exists():
             try:
@@ -61,10 +81,27 @@ class SimulationService:
                     data = json.load(f)
                     params["width"] = data.get("width", 3)
                     params["height"] = data.get("height", 3)
+                    
                     cells = data.get("cells", {})
-                    unique_biomes = list(set(val for val in cells.values() if val is not None))
-                    if unique_biomes:
-                        params["biome_ids"] = unique_biomes
+                    # Собираем уникальные значения, исключая None
+                    raw_biomes = list(set(val for val in cells.values() if val is not None))
+                    
+                    # === ИСПРАВЛЕНИЕ ===
+                    # Фильтруем биомы. Если в файле записан "default" или мусор, 
+                    # которого нет в реестре, мы его игнорируем.
+                    valid_keys = set(BIOME_REGISTRY.keys())
+                    
+                    # Оставляем только те ID, которые реально загружены
+                    clean_biomes = [b for b in raw_biomes if b in valid_keys]
+                    
+                    if clean_biomes:
+                        params["biome_ids"] = clean_biomes
+                    else:
+                        # Если после чистки ничего не осталось (или файл был с "default"),
+                        # ставим None, чтобы генератор взял ВСЕ доступные биомы из реестра.
+                        print("Warning: Layout contained invalid biomes. Resetting to full pool.")
+                        params["biome_ids"] = None
+                        
             except Exception as e:
                 print(f"Warning: Failed to restore layout params: {e}")
         return params
@@ -75,6 +112,11 @@ class SimulationService:
         
         self.is_running = True
         try:
+            print("Loading templates...")
+            load_all_templates()
+            naming_service = ContextualNamingService()
+            load_naming_data(naming_service)
+
             if not self.check_existing_world():
                 print("No existing world found, generating new one...")
                 self.generate_world_only()
@@ -83,11 +125,6 @@ class SimulationService:
             w = restore_data["width"]
             h = restore_data["height"]
             b_ids = restore_data["biome_ids"]
-
-            print("Loading templates...")
-            load_all_templates()
-            naming_service = ContextualNamingService()
-            load_naming_data(naming_service)
             
             world_gen = WorldGenerator(naming_service=naming_service)
             

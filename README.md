@@ -214,9 +214,7 @@ And more other rules of naming in `data/naming`
 ## 🗺️ Roadmap
 
   * [ ] Persistent storage (PostgreSQL/Neo4j support)
-  * [ ] Multi-agent simulation steps
-  * [ ] Direct export to PDF/Wiki format
-  * [ ] Interactive map generation
+  * [ ] Develop AI driven quest generator
 
 ## 🤝 Contributing
 

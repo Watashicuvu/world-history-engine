@@ -1,13 +1,14 @@
 from typing import List, Optional, Dict, Any
 import uuid
 
-# Убедитесь, что Entity и EntityType импортированы корректно
+from src.services.spatial_manager import SpatialManager
 from src.models.generation import Entity, EntityType, World
 
 class WorldQueryService:
     def __init__(self, world: World):
         self.world = world
         self.graph = world.graph
+        self.spatial = SpatialManager()
 
     # === READ (Навигация) ===
 
@@ -55,7 +56,7 @@ class WorldQueryService:
 
     # === ANALYTICS & CONTEXT TOOLS (Для MCP) ===
 
-    # TODO: добавить почти везде, а не только в MCP !!!
+    # TODO: добавить почти везде (в запросах контекста, ui...), а не только в MCP !!!
     def get_world_metadata(self) -> Dict[str, List[str]]:
         """
         Возвращает "словарь" мира: какие теги и типы связей вообще существуют.
@@ -281,6 +282,43 @@ class WorldQueryService:
         
         entity.parent_id = new_parent.id
         self.add_relation(entity, new_parent, relation_type)
+
+        # Получаем всех будущих соседей (кто уже сидит в new_parent)
+        siblings = self.get_children(new_parent.id, entity.type)
+        
+        # Просим SpatialManager найти место
+        spatial_data = self.spatial.assign_slot(entity, new_parent, siblings)
+        
+        # Обновляем data сущности
+        if entity.data is None: entity.data = {}
+        entity.data.update(spatial_data)
+        
+        # Если родитель имеет глобальные координаты,
+        # мы можем закэшировать "абсолютные" координаты для ребенка
+        self._update_absolute_coordinates(entity, new_parent)
+
+    def _update_absolute_coordinates(self, entity: Entity, parent: Entity):
+        """
+        Вычисляет абсолютные мировые координаты для удобства отрисовки.
+        Biome (Global X, Y) -> Location (Offset) -> Entity (Offset)
+        """
+        # Базовые координаты родителя
+        parent_global = parent.data.get("geo_coord") # Допустим, храним тут (float, float)
+        
+        # Если у родителя нет float-координат, но это Биом с integer (x, y)
+        if not parent_global and "coord" in parent.data:
+            # Превращаем grid (5, 3) в float (5.5, 3.5) - центр клетки
+            grid_pos = parent.data["coord"]
+            parent_global = (float(grid_pos[0]), float(grid_pos[1]))
+
+        if parent_global and "local_coord" in entity.data:
+            loc_x, loc_y = entity.data["local_coord"]
+            # Смещение относительно родителя (допустим, локация занимает 0.8 размера клетки)
+            # Это упрощенная формула
+            abs_x = parent_global[0] + (loc_x - 0.5) * 0.8
+            abs_y = parent_global[1] + (loc_y - 0.5) * 0.8
+            
+            entity.data["abs_coord"] = (abs_x, abs_y)
 
     def register_event(
         self, 

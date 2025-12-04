@@ -2,11 +2,11 @@ import random
 import itertools
 from typing import List, Optional, Tuple
 
-from src.models.templates_schema import CultureVector
+from src.models.templates_schema import CultureVector, LocationTemplate
 from src.models.generation import Entity, EntityType
 from src.services.world_query_service import WorldQueryService
 from src.naming import NamingService
-from src.models.registries import BOSSES_REGISTRY
+from src.models.registries import BOSSES_REGISTRY, LOCATION_REGISTRY
 from src.utils import make_id
 
 class ConflictSystem:
@@ -529,32 +529,112 @@ class ConflictSystem:
                  loser.tags.add("inactive")
                  loser.tags.add("dead")
             return
+        
+        candidates = []
+        for loc in other_locations:
+            cap = loc.data.get("limits", {}).get("Faction", 2)
+            curr = len([f for f in self.qs.get_children(loc.id, EntityType.FACTION) if "absorbed" not in f.tags])
+            if curr < cap:
+                candidates.append(loc)
+        
+        target_loc = None
+        if candidates:
+            # Если есть свободные, выбираем из них
+            target_loc = random.choice(candidates)
+        else:
+            # Если свободных нет, выбираем любую, но создаем ПЕРЕНАСЕЛЕНИЕ
+            target_loc = random.choice(other_locations)
+            # LifecycleSystem.process_overcrowding потом с этим разберется
 
-        new_loc = random.choice(other_locations)
-        self.qs.move_entity(loser, new_loc, "faction_located_in")
-        self.qs.add_relation(loser, new_loc, "fled_to")
+        #new_loc = random.choice(other_locations)
+        self.qs.move_entity(loser, target_loc, "faction_located_in")
+        self.qs.add_relation(loser, target_loc, "fled_to")
+
+    def _get_parent_coord(self, parent_id: str) -> Optional[tuple]:
+        parent = self.qs.get_entity(parent_id)
+        if parent and parent.data and "coord" in parent.data:
+            return parent.data["coord"]
+        return None
 
     def _apply_new_settlement(self, factions, biome, age):
-        if not biome: return
+        if not biome: 
+            return
         
-        # Генерируем имя
-        loc_name = self.naming_service.generate_name(EntityType.LOCATION, {"biome_id": biome.definition_id})
+        from src.models.registries import BIOME_REGISTRY
+        biome_tmpl = BIOME_REGISTRY.get(biome.definition_id)
+        
+        current_locs = self.qs.get_children(biome.id, EntityType.LOCATION)
+        if biome_tmpl and len(current_locs) >= (biome_tmpl.capacity or 10):
+            # Биом переполнен, новые поселения не могут быть основаны
+            # Проигравшие становятся разбойниками или погибают
+            if factions:
+                loser = random.choice(factions)
+                loser.tags.add("wandering_bandits")
+                # Можно добавить событие "Ушли в леса"
+            return
+        
+        # 1. Выбираем подходящий тип для нового поселения.
+        # Чтобы не плодить "Деревни", проигравшие строят временные или малые убежища.
+        # Можно добавить логику: если биом "wild", то "loc_hunter_camp", иначе "loc_hamlet".
+        # TODO: убрать хардкод
+        starter_templates = ["loc_hamlet", "loc_hunter_camp", "loc_village"]
+        
+        # Пытаемся найти валидный шаблон
+        loc_def_id = random.choice(starter_templates)
+        template: LocationTemplate = LOCATION_REGISTRY.get(loc_def_id)
+        
+        # Если вдруг шаблона нет (или реестр не загружен), фоллбек на хардкод, 
+        # но лучше упасть с ошибкой или взять дефолт
+        if not template:
+            print(f"Warning: Template {loc_def_id} not found in registry")
+            return
+
+        # 2. Генерируем имя (используем naming_service как и раньше)
+        loc_name = self.naming_service.generate_name(
+            EntityType.LOCATION, 
+            {"biome_id": biome.definition_id}
+        )
+        
+        # 3. Честное создание сущности на основе шаблона
+        # Объединяем теги шаблона с тегом события
+        combined_tags = template.tags | {"new_settlement", "refugee_camp"}
         
         new_location = Entity(
             id=make_id("loc"),
-            definition_id="loc_village", 
+            definition_id=loc_def_id,
             type=EntityType.LOCATION,
             name=loc_name,
-            tags={"settlement", "new_settlement"},
+            
+            # ВАЖНО: Берем вместимость из шаблона
+            capacity=template.capacity,
+            
+            tags=combined_tags,
             created_at=age,
-            parent_id=biome.id
+            parent_id=biome.id,
+            
+            # Сохраняем лимиты в data, чтобы потом проверять их при наполнении
+            data={
+                "limits": template.limits,
+                "origin_event": "conflict_flee"
+            }
         )
+        
         self.qs.add_entity(new_location)
 
-        # Проигравший уходит строить деревню
+        siblings = self.qs.get_children(biome.id, EntityType.LOCATION)
+        spatial_data = self.qs.spatial.assign_slot(new_location, biome, siblings)
+        if not new_location.data:
+                new_location.data = {}
+        new_location.data.update(spatial_data)
+        self.qs._update_absolute_coordinates(new_location, biome)
+
+        # 4. Перемещение проигравшей фракции
         if factions:
             loser = random.choice(factions)
             self.qs.move_entity(loser, new_location, "fled_to")
+            
+            # Опционально: можно снизить силу фракции, так как они бежали
+            # loser.data["strength"] = max(1, loser.data.get("strength", 5) - 2)
 
     def _apply_destruction(self, location, age):
         if location.data is None: location.data = {}

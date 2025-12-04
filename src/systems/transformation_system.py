@@ -124,6 +124,13 @@ class TransformationSystem:
             )
             self.qs.add_entity(new_loc)
             
+            siblings = self.qs.get_children(biome.id, EntityType.LOCATION)
+            spatial_data = self.qs.spatial.assign_slot(new_loc, biome, siblings)
+            if not new_loc.data:
+                new_loc.data = {}
+            new_loc.data.update(spatial_data)
+            self.qs._update_absolute_coordinates(new_loc, biome)
+            
             events.append(self.qs.register_event(
                 event_type="discovery",
                 summary=f"Открыта новая локация в {biome.name}: {new_loc_name}",
@@ -152,6 +159,18 @@ class TransformationSystem:
             possible_targets = [l for l in neighbors if l.id != loc.id]
             
             # ИСПРАВЛЕНИЕ: Проверяем, есть ли куда расширяться
+            valid_targets = []
+            for t in possible_targets:
+                # Получаем лимит
+                limit = 2 # Дефолт
+                tmpl = LOCATION_REGISTRY.get(t.definition_id) 
+                if tmpl: limit = tmpl.limits.get("Faction", 2)
+                elif t.data and "limits" in t.data: limit = t.data["limits"].get("Faction", 2)
+                
+                curr = len(self.qs.get_children(t.id, EntityType.FACTION))
+                if curr < limit:
+                    valid_targets.append(t)
+            
             if possible_targets:
                 target = random.choice(possible_targets)
                 
