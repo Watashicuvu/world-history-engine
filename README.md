@@ -129,14 +129,7 @@ The recommended way to run the *World History Engine* in both Web UI (8000) and 
 
 This setup uses **Supervisord** to manage the two distinct processes (`server.py` and `mcp_server.py`) within a single container, offering a robust "all-in-one" solution.
 
-#### 1. Requirements
-
-Before building, ensure you have created:
-* A `Dockerfile` (as discussed previously).
-* A `supervisord.conf` file defining the two program entry points.
-* The port settings in `mcp_server.py` and `server.py` are set to `8001` and `8000` respectively.
-
-#### 2. Build the Image
+#### 1. Build the Image
 
 Build the container image from the root of your repository:
 
@@ -144,7 +137,7 @@ Build the container image from the root of your repository:
 docker build -t world-engine-mcp .
 ````
 
-#### 3\. Run the Container
+#### 2\. Run the Container
 
 Run the image, exposing the two required ports:
 
@@ -156,10 +149,10 @@ docker run -d \
   world-engine-mcp
 ```
 
-#### 4\. Access
+#### 3\. Access
 
-  * **Web UI (Standalone Generation):** Access the graphical interface at `http://localhost:8000`.
-  * **MCP Server (AI Integration):** Connect your Claude Desktop or other MCP client to `http://localhost:8001`.
+  * **Web UI (Standalone Generation):** Access the graphical interface at `http://localhost:8001`.
+  * **MCP Server (AI Integration):** Connect your Claude Desktop or other MCP client to `http://localhost:8000`.
   * **Logs:** View combined logs for both services: `docker logs world-engine-instance`.
 
 
