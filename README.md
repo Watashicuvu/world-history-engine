@@ -100,14 +100,17 @@ docker build -t world-engine-mcp .
 
 #### 2\. Run the Container
 
-Run the image, exposing the two required ports:
+Run the image, exposing the two required ports. Replace your_api_key_here with your actual key. You can skip BASE_URL if using standard OpenAI.:
 
 ```bash
 docker run -d \
-  --name world-engine-instance \
+  --name world-engine \
   -p 8000:8000 \
   -p 8001:8001 \
-  world-engine-mcp
+  -e API_KEY="sk-..." \
+  -e MODEL="claude-4-5-sonnet-latest" \
+  -e BASE_URL="[https://api.anthropic.com/v1](https://api.anthropic.com/v1)" \
+  world-engine
 ```
 
 #### 3\. Access
