@@ -55,7 +55,7 @@ uv run server
 uv run mcp_server.py
 ```
 
-## 🤖 Using with Claude Desktop
+## 🤖 Using with Claude Desktop or Qwen Desktop
 
 To use this engine as a tool inside Claude, add the following configuration to your `claude_desktop_config.json`:
 
@@ -75,6 +75,17 @@ To use this engine as a tool inside Claude, add the following configuration to y
   }
 }
 ```
+
+To use this engine as a tool inside Qwen Desktop, paste the following configuration in the MCP settings:
+```json
+{
+    "mcpServers": {
+        "world-builder": {
+            "url": "http://0.0.0.0:8000"
+        }
+    }
+```
+And add [description](system_prompt.md)
 
 *Note: You may need to specify the absolute path to `mcp_server.py` depending on your setup.*
 
