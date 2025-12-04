@@ -79,7 +79,7 @@ class LLMService:
         """
         Олитературивание событий эпохи.
         """
-        # TODO: убедиться, что есть фильтрация по тэгам / эпохам
+        # TODO: не хардкодить сеттинг во фронтэнде
         if not examples:
             examples = ['Dark Souls', 'Dwarf Fortress']
 

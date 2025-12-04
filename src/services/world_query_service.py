@@ -55,6 +55,7 @@ class WorldQueryService:
 
     # === ANALYTICS & CONTEXT TOOLS (Для MCP) ===
 
+    # TODO: добавить почти везде, а не только в MCP !!!
     def get_world_metadata(self) -> Dict[str, List[str]]:
         """
         Возвращает "словарь" мира: какие теги и типы связей вообще существуют.

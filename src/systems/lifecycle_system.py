@@ -1,6 +1,6 @@
 import random
 import uuid
-from typing import List
+from typing import List, Optional
 
 from src.models.generation import EntityType, Entity
 from src.services.world_query_service import WorldQueryService
@@ -54,6 +54,88 @@ class LifecycleSystem:
                     )
                 )
         return events
+
+    def _handle_conquered_leaders(self, loser_faction_id: str, winner_faction: Optional[Entity] = None, age: int = 0):
+        """
+        Решает судьбу элиты уничтоженной фракции.
+        """
+        # 1. Находим живых персонажей, принадлежащих этой фракции
+        # Проверяем parent_id и тип CHARACTER
+        leaders = [
+            e for e in self.qs.graph.entities.values() 
+            if e.parent_id == loser_faction_id 
+            and e.type == EntityType.CHARACTER 
+            and "dead" not in e.tags
+        ]
+
+        if not leaders:
+            return
+
+        print(f"[Lifecycle] Processing fate for {len(leaders)} leaders of {loser_faction_id}")
+
+        for leader in leaders:
+            # Если победителя нет (развал), то 50/50 казнь или изгнание. 
+            # Если есть победитель — шанс на вербовку.
+            roll = random.random()
+            
+            if not winner_faction:
+                fate = "exile" if roll > 0.5 else "execution"
+            else:
+                if roll < 0.3:
+                    fate = "execution"
+                elif roll < 0.7:
+                    fate = "exile"
+                else:
+                    fate = "recruit"
+
+            # === ЛОГИКА СУДЕБ ===
+            if fate == "execution":
+                leader.tags.add("dead")
+                leader.tags.add("executed")
+                leader.tags.discard("active")
+                # Технически можно оставить parent_id как "могилу" или null
+                
+                self.qs.register_event(
+                    event_type="execution",
+                    summary=f"{leader.name} был казнен после падения фракции.",
+                    age=age,
+                    primary_entity=leader,
+                    secondary_entities=[winner_faction] if winner_faction else []
+                )
+
+            elif fate == "exile":
+                # Лидер сбегает в случайную локацию
+                # Пытаемся найти локацию, отличную от текущей (если возможно)
+                all_locs = [e for e in self.qs.graph.entities.values() if e.type == EntityType.LOCATION]
+                if all_locs:
+                    new_home = random.choice(all_locs)
+                    leader.parent_id = new_home.id
+                    leader.tags.add("exile")
+                    leader.tags.add("wanderer")
+                    # Удаляем связь 'leads', если она была
+                    # (Логика очистки связей должна быть в remove_relation, но здесь мы просто меняем parent)
+                    
+                    self.qs.register_event(
+                        event_type="exile",
+                        summary=f"{leader.name} бежал в изгнание в {new_home.name}.",
+                        age=age,
+                        primary_entity=leader,
+                        secondary_entities=[new_home]
+                    )
+
+            elif fate == "recruit" and winner_faction:
+                # Переход на сторону врага
+                leader.parent_id = winner_faction.id
+                leader.tags.add("traitor") # Клеймо
+                leader.tags.add("vassal")
+                
+                self.qs.register_event(
+                    event_type="recruitment",
+                    summary=f"{leader.name} преклонил колено перед {winner_faction.name}.",
+                    age=age,
+                    primary_entity=leader,
+                    secondary_entities=[winner_faction]
+                )
 
     def process_resource_decay(self, age: int, chance: float = 0.03) -> List[Entity]:
         events = []

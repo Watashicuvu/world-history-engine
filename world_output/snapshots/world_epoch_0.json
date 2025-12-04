@@ -1,156 +1,157 @@
 {
   "graph": {
     "entities": {
-      "biome_759c94": {
-        "id": "biome_759c94",
-        "definition_id": "biome_mountains",
-        "type": "Biome",
-        "name": "Край Орла",
-        "tags": [
-          "isolated",
-          "high_position",
-          "rocky"
-        ],
-        "capacity": 4,
-        "data": {
-          "coord": [
-            0,
-            0
-          ],
-          "neighbor_biomes": [
-            "biome_afee75",
-            "biome_84de93"
-          ]
-        },
-        "created_at": 0
-      },
-      "biome_afee75": {
-        "id": "biome_afee75",
+      "biome_434841": {
+        "id": "biome_434841",
         "definition_id": "biome_plains",
         "type": "Biome",
         "name": "Широкий Земли",
         "tags": [
-          "progressive",
-          "conflict"
-        ],
-        "capacity": 6,
-        "data": {
-          "coord": [
-            1,
-            0
-          ],
-          "neighbor_biomes": [
-            "biome_759c94",
-            "biome_ed07a4",
-            "biome_8d8dd5"
-          ]
-        },
-        "created_at": 0
-      },
-      "biome_ed07a4": {
-        "id": "biome_ed07a4",
-        "definition_id": "biome_forest",
-        "type": "Biome",
-        "name": "Чаща Цветка",
-        "tags": [
-          "lush",
-          "mystical"
-        ],
-        "capacity": 4,
-        "data": {
-          "coord": [
-            2,
-            0
-          ],
-          "neighbor_biomes": [
-            "biome_afee75",
-            "biome_2db667"
-          ]
-        },
-        "created_at": 0
-      },
-      "biome_84de93": {
-        "id": "biome_84de93",
-        "definition_id": "biome_plains",
-        "type": "Biome",
-        "name": "Необъятный Земли",
-        "tags": [
-          "progressive",
-          "conflict"
+          "conflict",
+          "progressive"
         ],
         "capacity": 6,
         "data": {
           "coord": [
             0,
-            1
+            0
           ],
           "neighbor_biomes": [
-            "biome_8d8dd5",
-            "biome_759c94",
-            "biome_80b8c7"
+            "biome_475f72",
+            "biome_433ae9"
           ]
         },
         "created_at": 0
       },
-      "biome_8d8dd5": {
-        "id": "biome_8d8dd5",
-        "definition_id": "biome_tundra",
-        "type": "Biome",
-        "name": "Край Юрта",
-        "tags": [
-          "cold",
-          "no_edge",
-          "mortal"
-        ],
-        "capacity": 3,
-        "data": {
-          "coord": [
-            1,
-            1
-          ],
-          "neighbor_biomes": [
-            "biome_84de93",
-            "biome_2db667",
-            "biome_afee75",
-            "biome_6fe22a"
-          ]
-        },
-        "created_at": 0
-      },
-      "biome_2db667": {
-        "id": "biome_2db667",
+      "biome_475f72": {
+        "id": "biome_475f72",
         "definition_id": "biome_coast",
         "type": "Biome",
-        "name": "Край Впадина",
+        "name": "Тихий Земли",
         "tags": [
-          "danger",
-          "edge_only",
           "conflict",
+          "edge_only",
+          "danger",
           "coastal"
         ],
         "capacity": 5,
         "data": {
           "coord": [
-            2,
-            1
+            1,
+            0
           ],
           "neighbor_biomes": [
-            "biome_8d8dd5",
-            "biome_ed07a4",
-            "biome_c07e88"
+            "biome_434841",
+            "biome_68ca58",
+            "biome_4de62a"
           ]
         },
         "created_at": 0
       },
-      "biome_80b8c7": {
-        "id": "biome_80b8c7",
+      "biome_68ca58": {
+        "id": "biome_68ca58",
+        "definition_id": "biome_forest",
+        "type": "Biome",
+        "name": "Лес Зелёный Завет",
+        "tags": [
+          "mystical",
+          "lush"
+        ],
+        "capacity": 4,
+        "data": {
+          "coord": [
+            2,
+            0
+          ],
+          "neighbor_biomes": [
+            "biome_475f72",
+            "biome_075ad2"
+          ]
+        },
+        "created_at": 0
+      },
+      "biome_433ae9": {
+        "id": "biome_433ae9",
+        "definition_id": "biome_swamp",
+        "type": "Biome",
+        "name": "Край Хижина",
+        "tags": [
+          "mystical",
+          "dark",
+          "danger"
+        ],
+        "capacity": 3,
+        "data": {
+          "coord": [
+            0,
+            1
+          ],
+          "neighbor_biomes": [
+            "biome_4de62a",
+            "biome_434841",
+            "biome_893cda"
+          ]
+        },
+        "created_at": 0
+      },
+      "biome_4de62a": {
+        "id": "biome_4de62a",
+        "definition_id": "biome_desert",
+        "type": "Biome",
+        "name": "Знойный Земли",
+        "tags": [
+          "no_edge",
+          "mortal",
+          "mystical",
+          "heat"
+        ],
+        "capacity": 3,
+        "data": {
+          "coord": [
+            1,
+            1
+          ],
+          "neighbor_biomes": [
+            "biome_433ae9",
+            "biome_075ad2",
+            "biome_475f72",
+            "biome_896527"
+          ]
+        },
+        "created_at": 0
+      },
+      "biome_075ad2": {
+        "id": "biome_075ad2",
+        "definition_id": "biome_forest",
+        "type": "Biome",
+        "name": "Лес Тенистый Корень",
+        "tags": [
+          "mystical",
+          "lush"
+        ],
+        "capacity": 4,
+        "data": {
+          "coord": [
+            2,
+            1
+          ],
+          "neighbor_biomes": [
+            "biome_4de62a",
+            "biome_68ca58",
+            "biome_d9532f"
+          ]
+        },
+        "created_at": 0
+      },
+      "biome_893cda": {
+        "id": "biome_893cda",
         "definition_id": "biome_mountains",
         "type": "Biome",
-        "name": "Хребет Железный Пик",
+        "name": "Хребет Мрачный Пик",
         "tags": [
+          "rocky",
           "isolated",
-          "high_position",
-          "rocky"
+          "high_position"
         ],
         "capacity": 4,
         "data": {
@@ -159,21 +160,21 @@
             2
           ],
           "neighbor_biomes": [
-            "biome_6fe22a",
-            "biome_84de93"
+            "biome_896527",
+            "biome_433ae9"
           ]
         },
         "created_at": 0
       },
-      "biome_6fe22a": {
-        "id": "biome_6fe22a",
+      "biome_896527": {
+        "id": "biome_896527",
         "definition_id": "biome_mountains",
         "type": "Biome",
-        "name": "Край Козла",
+        "name": "Край Камня",
         "tags": [
+          "rocky",
           "isolated",
-          "high_position",
-          "rocky"
+          "high_position"
         ],
         "capacity": 4,
         "data": {
@@ -182,536 +183,89 @@
             2
           ],
           "neighbor_biomes": [
-            "biome_80b8c7",
-            "biome_c07e88",
-            "biome_8d8dd5"
+            "biome_893cda",
+            "biome_d9532f",
+            "biome_4de62a"
           ]
         },
         "created_at": 0
       },
-      "biome_c07e88": {
-        "id": "biome_c07e88",
-        "definition_id": "biome_swamp",
+      "biome_d9532f": {
+        "id": "biome_d9532f",
+        "definition_id": "biome_plains",
         "type": "Biome",
-        "name": "Тенистый Земли",
+        "name": "Необъятный Земли",
         "tags": [
-          "danger",
-          "dark",
-          "mystical"
+          "conflict",
+          "progressive"
         ],
-        "capacity": 3,
+        "capacity": 6,
         "data": {
           "coord": [
             2,
             2
           ],
           "neighbor_biomes": [
-            "biome_6fe22a",
-            "biome_2db667"
+            "biome_896527",
+            "biome_075ad2"
           ]
         },
         "created_at": 0
       },
-      "loc_c73011": {
-        "id": "loc_c73011",
-        "definition_id": "loc_town",
+      "loc_41cac8": {
+        "id": "loc_41cac8",
+        "definition_id": "loc_cave",
         "type": "Location",
-        "name": "Город в Край Орла",
+        "name": "Пещера в Широкий Земли",
         "tags": [
-          "settlement",
-          "trade"
-        ],
-        "capacity": 8,
-        "parent_id": "biome_759c94",
-        "data": {
-          "slot_index": 0
-        },
-        "created_at": 0
-      },
-      "res_8cebe3": {
-        "id": "res_8cebe3",
-        "definition_id": "res_other",
-        "type": "Resource",
-        "name": "Other",
-        "tags": [
-          "decor",
-          "building",
-          "common"
-        ],
-        "parent_id": "loc_c73011",
-        "created_at": 0
-      },
-      "res_11134a": {
-        "id": "res_11134a",
-        "definition_id": "res_artificial",
-        "type": "Resource",
-        "name": "Artificial",
-        "tags": [
-          "common",
-          "knowledge",
-          "politic"
-        ],
-        "parent_id": "loc_c73011",
-        "created_at": 0
-      },
-      "loc_d28136": {
-        "id": "loc_d28136",
-        "definition_id": "loc_mountain_pass",
-        "type": "Location",
-        "name": "Перевал в Край Орла",
-        "tags": [
-          "interest",
-          "no_res"
-        ],
-        "capacity": 3,
-        "parent_id": "biome_759c94",
-        "data": {
-          "slot_index": 1
-        },
-        "created_at": 0
-      },
-      "res_906ee8": {
-        "id": "res_906ee8",
-        "definition_id": "res_artificial",
-        "type": "Resource",
-        "name": "Artificial",
-        "tags": [
-          "common",
-          "knowledge",
-          "politic"
-        ],
-        "parent_id": "loc_d28136",
-        "created_at": 0
-      },
-      "fac_14f9c9": {
-        "id": "fac_14f9c9",
-        "definition_id": "fac_mining_dwarves",
-        "type": "Faction",
-        "name": "Гильдия «Кирки»",
-        "tags": [
-          "dwarf",
-          "faction",
-          "ore",
-          "craft",
-          "stone"
-        ],
-        "parent_id": "loc_d28136",
-        "data": {
-          "role": "mining",
-          "creature_type": "humanoid",
-          "culture_vector": {
-            "aggression": 1,
-            "magic_affinity": -4,
-            "collectivism": 8,
-            "taboo": [
-              "swimming",
-              "sky",
-              "elves"
-            ],
-            "revered": [
-              "craft",
-              "hammer",
-              "ancestors"
-            ]
-          }
-        },
-        "created_at": 0
-      },
-      "loc_fe1abf": {
-        "id": "loc_fe1abf",
-        "definition_id": "loc_village",
-        "type": "Location",
-        "name": "Деревня в Широкий Земли",
-        "tags": [
-          "settlement"
-        ],
-        "capacity": 4,
-        "parent_id": "biome_afee75",
-        "data": {
-          "slot_index": 0
-        },
-        "created_at": 0
-      },
-      "res_a7767e": {
-        "id": "res_a7767e",
-        "definition_id": "res_parts",
-        "type": "Resource",
-        "name": "Parts",
-        "tags": [
-          "common",
-          "material"
-        ],
-        "parent_id": "loc_fe1abf",
-        "created_at": 0
-      },
-      "fac_0322e6": {
-        "id": "fac_0322e6",
-        "definition_id": "fac_human_warriors",
-        "type": "Faction",
-        "name": "Широкий Клинок",
-        "tags": [
-          "faction",
-          "steel",
-          "honor",
-          "guard"
-        ],
-        "parent_id": "loc_fe1abf",
-        "data": {
-          "role": "military",
-          "creature_type": "humanoid",
-          "culture_vector": {
-            "aggression": 6,
-            "magic_affinity": -3,
-            "collectivism": 7,
-            "taboo": [
-              "betrayal",
-              "magic",
-              "cowardice"
-            ],
-            "revered": [
-              "sword",
-              "honor",
-              "king"
-            ]
-          }
-        },
-        "created_at": 0
-      },
-      "loc_6eeb87": {
-        "id": "loc_6eeb87",
-        "definition_id": "loc_ruins",
-        "type": "Location",
-        "name": "Руины в Широкий Земли",
-        "tags": [
-          "nonhuman",
-          "hidden",
-          "ruins",
-          "dangerous"
-        ],
-        "capacity": 2,
-        "parent_id": "biome_afee75",
-        "data": {
-          "slot_index": 1
-        },
-        "created_at": 0
-      },
-      "res_1979b7": {
-        "id": "res_1979b7",
-        "definition_id": "res_other",
-        "type": "Resource",
-        "name": "Other",
-        "tags": [
-          "decor",
-          "building",
-          "common"
-        ],
-        "parent_id": "loc_6eeb87",
-        "created_at": 0
-      },
-      "res_fa73f2": {
-        "id": "res_fa73f2",
-        "definition_id": "res_parts",
-        "type": "Resource",
-        "name": "Необычный Parts",
-        "tags": [
-          "material",
-          "uncommon"
-        ],
-        "parent_id": "loc_6eeb87",
-        "created_at": 0
-      },
-      "fac_ae57d0": {
-        "id": "fac_ae57d0",
-        "definition_id": "fac_human_warriors",
-        "type": "Faction",
-        "name": "Орден «Просторный Вереска»",
-        "tags": [
-          "faction",
-          "steel",
-          "honor",
-          "guard"
-        ],
-        "parent_id": "loc_6eeb87",
-        "data": {
-          "role": "military",
-          "creature_type": "humanoid",
-          "culture_vector": {
-            "aggression": 6,
-            "magic_affinity": -3,
-            "collectivism": 7,
-            "taboo": [
-              "betrayal",
-              "magic",
-              "cowardice"
-            ],
-            "revered": [
-              "sword",
-              "honor",
-              "king"
-            ]
-          }
-        },
-        "created_at": 0
-      },
-      "loc_3913c5": {
-        "id": "loc_3913c5",
-        "definition_id": "loc_town",
-        "type": "Location",
-        "name": "Город в Чаща Цветка",
-        "tags": [
-          "settlement",
-          "trade"
-        ],
-        "capacity": 8,
-        "parent_id": "biome_ed07a4",
-        "data": {
-          "slot_index": 0
-        },
-        "created_at": 0
-      },
-      "res_4c6b8b": {
-        "id": "res_4c6b8b",
-        "definition_id": "res_parts",
-        "type": "Resource",
-        "name": "Parts",
-        "tags": [
-          "common",
-          "material"
-        ],
-        "parent_id": "loc_3913c5",
-        "created_at": 0
-      },
-      "fac_7635a1": {
-        "id": "fac_7635a1",
-        "definition_id": "fac_trading_elves",
-        "type": "Faction",
-        "name": "Компания «Живой Долина»",
-        "tags": [
-          "faction",
-          "economy",
-          "elf",
-          "craft",
-          "art",
-          "politic",
-          "luxury"
-        ],
-        "parent_id": "loc_3913c5",
-        "data": {
-          "role": "trading",
-          "creature_type": "humanoid",
-          "culture_vector": {
-            "aggression": -3,
-            "magic_affinity": 8,
-            "collectivism": 4,
-            "taboo": [
-              "crude_metal",
-              "ugliness"
-            ],
-            "revered": [
-              "stars",
-              "wine",
-              "art"
-            ]
-          }
-        },
-        "created_at": 0
-      },
-      "loc_4080e2": {
-        "id": "loc_4080e2",
-        "definition_id": "loc_hamlet",
-        "type": "Location",
-        "name": "Хутор в Чаща Цветка",
-        "tags": [
-          "settlement",
+          "mining",
           "hidden"
         ],
-        "capacity": 3,
-        "parent_id": "biome_ed07a4",
-        "data": {
-          "slot_index": 1
-        },
-        "created_at": 0
-      },
-      "res_41e875": {
-        "id": "res_41e875",
-        "definition_id": "res_eat",
-        "type": "Resource",
-        "name": "Eat",
-        "tags": [
-          "common",
-          "product",
-          "essential"
-        ],
-        "parent_id": "loc_4080e2",
-        "created_at": 0
-      },
-      "fac_f9ad2c": {
-        "id": "fac_f9ad2c",
-        "definition_id": "fac_trading_elves",
-        "type": "Faction",
-        "name": "Гильдия «Круг»",
-        "tags": [
-          "faction",
-          "economy",
-          "elf",
-          "craft",
-          "art",
-          "politic",
-          "luxury"
-        ],
-        "parent_id": "loc_4080e2",
-        "data": {
-          "role": "trading",
-          "creature_type": "humanoid",
-          "culture_vector": {
-            "aggression": -3,
-            "magic_affinity": 8,
-            "collectivism": 4,
-            "taboo": [
-              "crude_metal",
-              "ugliness"
-            ],
-            "revered": [
-              "stars",
-              "wine",
-              "art"
-            ]
-          }
-        },
-        "created_at": 0
-      },
-      "loc_a779d8": {
-        "id": "loc_a779d8",
-        "definition_id": "loc_temple",
-        "type": "Location",
-        "name": "Храм в Необъятный Земли",
-        "tags": [
-          "ritual",
-          "sacred"
-        ],
-        "capacity": 6,
-        "parent_id": "biome_84de93",
+        "capacity": 5,
+        "parent_id": "biome_434841",
         "data": {
           "slot_index": 0
         },
         "created_at": 0
       },
-      "res_0ddb7d": {
-        "id": "res_0ddb7d",
+      "res_15b1e5": {
+        "id": "res_15b1e5",
+        "definition_id": "res_parts",
+        "type": "Resource",
+        "name": "Чешуя дракона",
+        "tags": [
+          "material",
+          "rare"
+        ],
+        "parent_id": "loc_41cac8",
+        "created_at": 0
+      },
+      "res_f11573": {
+        "id": "res_f11573",
         "definition_id": "res_artificial",
         "type": "Resource",
-        "name": "Artificial",
+        "name": "Разведданные",
         "tags": [
-          "common",
-          "knowledge",
-          "politic"
+          "politic",
+          "uncommon",
+          "knowledge"
         ],
-        "parent_id": "loc_a779d8",
+        "parent_id": "loc_41cac8",
         "created_at": 0
       },
-      "fac_800284": {
-        "id": "fac_800284",
-        "definition_id": "fac_human_warriors",
-        "type": "Faction",
-        "name": "Легион «Просторный Каньон»",
-        "tags": [
-          "faction",
-          "steel",
-          "honor",
-          "guard"
-        ],
-        "parent_id": "loc_a779d8",
-        "data": {
-          "role": "military",
-          "creature_type": "humanoid",
-          "culture_vector": {
-            "aggression": 6,
-            "magic_affinity": -3,
-            "collectivism": 7,
-            "taboo": [
-              "betrayal",
-              "magic",
-              "cowardice"
-            ],
-            "revered": [
-              "sword",
-              "honor",
-              "king"
-            ]
-          }
-        },
-        "created_at": 0
-      },
-      "loc_497c5b": {
-        "id": "loc_497c5b",
-        "definition_id": "loc_temple",
-        "type": "Location",
-        "name": "Храм в Необъятный Земли",
-        "tags": [
-          "ritual",
-          "sacred"
-        ],
-        "capacity": 6,
-        "parent_id": "biome_84de93",
-        "data": {
-          "slot_index": 1
-        },
-        "created_at": 0
-      },
-      "res_a14af1": {
-        "id": "res_a14af1",
-        "definition_id": "res_artificial",
-        "type": "Resource",
-        "name": "Artificial",
-        "tags": [
-          "common",
-          "knowledge",
-          "politic"
-        ],
-        "parent_id": "loc_497c5b",
-        "created_at": 0
-      },
-      "loc_a1ecd2": {
-        "id": "loc_a1ecd2",
-        "definition_id": "loc_tower",
-        "type": "Location",
-        "name": "Башня в Необъятный Земли",
-        "tags": [
-          "interest"
-        ],
-        "capacity": 3,
-        "parent_id": "biome_84de93",
-        "data": {
-          "slot_index": 2
-        },
-        "created_at": 0
-      },
-      "res_0afe74": {
-        "id": "res_0afe74",
-        "definition_id": "res_other",
-        "type": "Resource",
-        "name": "Other",
-        "tags": [
-          "decor",
-          "building",
-          "common"
-        ],
-        "parent_id": "loc_a1ecd2",
-        "created_at": 0
-      },
-      "fac_9da506": {
-        "id": "fac_9da506",
+      "fac_9620cb": {
+        "id": "fac_9620cb",
         "definition_id": "fac_human_trading_guild",
         "type": "Faction",
-        "name": "Гильдия «Междуречье»",
+        "name": "Лига «Озера»",
         "tags": [
-          "faction",
-          "coin",
+          "politic",
           "economy",
           "diplomacy",
-          "politic"
+          "faction",
+          "coin"
         ],
-        "parent_id": "loc_a1ecd2",
+        "parent_id": "loc_41cac8",
         "data": {
           "role": "trading",
           "creature_type": "humanoid",
@@ -725,653 +279,418 @@
               "poverty"
             ],
             "revered": [
+              "stability",
               "gold",
-              "contracts",
-              "stability"
+              "contracts"
             ]
           }
         },
         "created_at": 0
       },
-      "loc_918502": {
-        "id": "loc_918502",
-        "definition_id": "loc_village",
-        "type": "Location",
-        "name": "Деревня в Край Юрта",
-        "tags": [
-          "settlement"
-        ],
-        "capacity": 4,
-        "parent_id": "biome_8d8dd5",
-        "data": {
-          "slot_index": 0
-        },
-        "created_at": 0
-      },
-      "res_5fee8c": {
-        "id": "res_5fee8c",
-        "definition_id": "res_herbs",
-        "type": "Resource",
-        "name": "Необычный Herbs",
-        "tags": [
-          "organic",
-          "poison",
-          "drug",
-          "uncommon"
-        ],
-        "parent_id": "loc_918502",
-        "created_at": 0
-      },
-      "fac_7d484f": {
-        "id": "fac_7d484f",
-        "definition_id": "fac_frost_trolls",
-        "type": "Faction",
-        "name": "Клан Очага",
-        "tags": [
-          "regeneration",
-          "cold",
-          "faction",
-          "brute"
-        ],
-        "parent_id": "loc_918502",
-        "data": {
-          "role": "military",
-          "creature_type": "beast",
-          "culture_vector": {
-            "aggression": 9,
-            "magic_affinity": 2,
-            "collectivism": 4,
-            "taboo": [
-              "fire"
-            ],
-            "revered": [
-              "strength",
-              "eating"
-            ]
-          }
-        },
-        "created_at": 0
-      },
-      "loc_d514e9": {
-        "id": "loc_d514e9",
-        "definition_id": "loc_village",
-        "type": "Location",
-        "name": "Деревня в Край Юрта",
-        "tags": [
-          "settlement"
-        ],
-        "capacity": 4,
-        "parent_id": "biome_8d8dd5",
-        "data": {
-          "slot_index": 1
-        },
-        "created_at": 0
-      },
-      "res_a84fc0": {
-        "id": "res_a84fc0",
-        "definition_id": "res_parts",
-        "type": "Resource",
-        "name": "Редкий Parts",
-        "tags": [
-          "material",
-          "rare"
-        ],
-        "parent_id": "loc_d514e9",
-        "created_at": 0
-      },
-      "loc_01511e": {
-        "id": "loc_01511e",
-        "definition_id": "loc_port",
-        "type": "Location",
-        "name": "Порт в Край Впадина",
-        "tags": [
-          "power",
-          "settlement",
-          "trade"
-        ],
-        "capacity": 10,
-        "parent_id": "biome_2db667",
-        "data": {
-          "slot_index": 0
-        },
-        "created_at": 0
-      },
-      "res_d2accd": {
-        "id": "res_d2accd",
-        "definition_id": "res_eat",
-        "type": "Resource",
-        "name": "Редкий Eat",
-        "tags": [
-          "product",
-          "essential",
-          "rare"
-        ],
-        "parent_id": "loc_01511e",
-        "created_at": 0
-      },
-      "res_d8abd3": {
-        "id": "res_d8abd3",
-        "definition_id": "res_artificial",
-        "type": "Resource",
-        "name": "Artificial",
-        "tags": [
-          "common",
-          "knowledge",
-          "politic"
-        ],
-        "parent_id": "loc_01511e",
-        "created_at": 0
-      },
-      "loc_6a3b5b": {
-        "id": "loc_6a3b5b",
+      "loc_84aa2e": {
+        "id": "loc_84aa2e",
         "definition_id": "loc_city",
         "type": "Location",
-        "name": "Мегаполис в Край Впадина",
+        "name": "Мегаполис в Широкий Земли",
         "tags": [
-          "settlement",
           "trade",
+          "settlement",
           "power"
         ],
         "capacity": 15,
-        "parent_id": "biome_2db667",
+        "parent_id": "biome_434841",
         "data": {
           "slot_index": 1
         },
         "created_at": 0
       },
-      "res_5cd90b": {
-        "id": "res_5cd90b",
-        "definition_id": "res_stone",
-        "type": "Resource",
-        "name": "Stone",
-        "tags": [
-          "common",
-          "building",
-          "mining",
-          "mineral"
-        ],
-        "parent_id": "loc_6a3b5b",
-        "created_at": 0
-      },
-      "res_3107a7": {
-        "id": "res_3107a7",
-        "definition_id": "res_parts",
-        "type": "Resource",
-        "name": "Редкий Parts",
-        "tags": [
-          "material",
-          "rare"
-        ],
-        "parent_id": "loc_6a3b5b",
-        "created_at": 0
-      },
-      "fac_c26a06": {
-        "id": "fac_c26a06",
-        "definition_id": "fac_sea_kings",
-        "type": "Faction",
-        "name": "Рой Залив",
-        "tags": [
-          "trident",
-          "deep",
-          "water",
-          "faction"
-        ],
-        "parent_id": "loc_6a3b5b",
-        "data": {
-          "role": "military",
-          "creature_type": "beast",
-          "culture_vector": {
-            "aggression": 6,
-            "magic_affinity": 5,
-            "collectivism": 8,
-            "taboo": [
-              "fire",
-              "dry_land"
-            ],
-            "revered": [
-              "storm",
-              "depths",
-              "kraken"
-            ]
-          }
-        },
-        "created_at": 0
-      },
-      "loc_b746c0": {
-        "id": "loc_b746c0",
-        "definition_id": "loc_port",
-        "type": "Location",
-        "name": "Порт в Край Впадина",
-        "tags": [
-          "power",
-          "settlement",
-          "trade"
-        ],
-        "capacity": 10,
-        "parent_id": "biome_2db667",
-        "data": {
-          "slot_index": 2
-        },
-        "created_at": 0
-      },
-      "res_2bfc4b": {
-        "id": "res_2bfc4b",
+      "res_735439": {
+        "id": "res_735439",
         "definition_id": "res_eat",
         "type": "Resource",
-        "name": "Редкий Eat",
+        "name": "Виски",
         "tags": [
-          "product",
           "essential",
-          "rare"
-        ],
-        "parent_id": "loc_b746c0",
-        "created_at": 0
-      },
-      "res_266d10": {
-        "id": "res_266d10",
-        "definition_id": "res_parts",
-        "type": "Resource",
-        "name": "Редкий Parts",
-        "tags": [
-          "material",
-          "rare"
-        ],
-        "parent_id": "loc_b746c0",
-        "created_at": 0
-      },
-      "fac_83b671": {
-        "id": "fac_83b671",
-        "definition_id": "fac_sea_kings",
-        "type": "Faction",
-        "name": "Рой Полуостров",
-        "tags": [
-          "trident",
-          "deep",
-          "water",
-          "faction"
-        ],
-        "parent_id": "loc_b746c0",
-        "data": {
-          "role": "military",
-          "creature_type": "beast",
-          "culture_vector": {
-            "aggression": 6,
-            "magic_affinity": 5,
-            "collectivism": 8,
-            "taboo": [
-              "fire",
-              "dry_land"
-            ],
-            "revered": [
-              "storm",
-              "depths",
-              "kraken"
-            ]
-          }
-        },
-        "created_at": 0
-      },
-      "loc_3e8fbf": {
-        "id": "loc_3e8fbf",
-        "definition_id": "loc_shrine",
-        "type": "Location",
-        "name": "Святилище в Хребет Железный Пик",
-        "tags": [
-          "ritual",
-          "sacred"
-        ],
-        "capacity": 3,
-        "parent_id": "biome_80b8c7",
-        "data": {
-          "slot_index": 0
-        },
-        "created_at": 0
-      },
-      "res_6e36e5": {
-        "id": "res_6e36e5",
-        "definition_id": "res_other",
-        "type": "Resource",
-        "name": "Необычный Other",
-        "tags": [
-          "decor",
-          "building",
+          "product",
           "uncommon"
         ],
-        "parent_id": "loc_3e8fbf",
+        "parent_id": "loc_84aa2e",
         "created_at": 0
       },
-      "fac_4f68e8": {
-        "id": "fac_4f68e8",
-        "definition_id": "fac_gargoyle_guardians",
-        "type": "Faction",
-        "name": "Стражи Камня",
-        "tags": [
-          "flying",
-          "faction",
-          "guard",
-          "stone"
-        ],
-        "parent_id": "loc_3e8fbf",
-        "data": {
-          "role": "military",
-          "creature_type": "construct",
-          "culture_vector": {
-            "aggression": 3,
-            "magic_affinity": 5,
-            "collectivism": 10,
-            "taboo": [
-              "flesh",
-              "leaving_post"
-            ],
-            "revered": [
-              "silence",
-              "stone",
-              "master"
-            ]
-          }
-        },
-        "created_at": 0
-      },
-      "loc_4304ca": {
-        "id": "loc_4304ca",
-        "definition_id": "loc_cave",
-        "type": "Location",
-        "name": "Пещера в Хребет Железный Пик",
-        "tags": [
-          "mining",
-          "hidden"
-        ],
-        "capacity": 5,
-        "parent_id": "biome_80b8c7",
-        "data": {
-          "slot_index": 1
-        },
-        "created_at": 0
-      },
-      "res_afd644": {
-        "id": "res_afd644",
-        "definition_id": "res_parts",
-        "type": "Resource",
-        "name": "Parts",
-        "tags": [
-          "common",
-          "material"
-        ],
-        "parent_id": "loc_4304ca",
-        "created_at": 0
-      },
-      "res_4bc73c": {
-        "id": "res_4bc73c",
-        "definition_id": "res_eat",
-        "type": "Resource",
-        "name": "Необычный Eat",
-        "tags": [
-          "product",
-          "essential",
-          "uncommon"
-        ],
-        "parent_id": "loc_4304ca",
-        "created_at": 0
-      },
-      "fac_410316": {
-        "id": "fac_410316",
-        "definition_id": "fac_gargoyle_guardians",
-        "type": "Faction",
-        "name": "Хранители Хребет",
-        "tags": [
-          "flying",
-          "faction",
-          "guard",
-          "stone"
-        ],
-        "parent_id": "loc_4304ca",
-        "data": {
-          "role": "military",
-          "creature_type": "construct",
-          "culture_vector": {
-            "aggression": 3,
-            "magic_affinity": 5,
-            "collectivism": 10,
-            "taboo": [
-              "flesh",
-              "leaving_post"
-            ],
-            "revered": [
-              "silence",
-              "stone",
-              "master"
-            ]
-          }
-        },
-        "created_at": 0
-      },
-      "loc_0d3b09": {
-        "id": "loc_0d3b09",
-        "definition_id": "loc_shrine",
-        "type": "Location",
-        "name": "Святилище в Хребет Железный Пик",
-        "tags": [
-          "ritual",
-          "sacred"
-        ],
-        "capacity": 3,
-        "parent_id": "biome_80b8c7",
-        "data": {
-          "slot_index": 2
-        },
-        "created_at": 0
-      },
-      "res_db98da": {
-        "id": "res_db98da",
+      "res_2d2a79": {
+        "id": "res_2d2a79",
         "definition_id": "res_artificial",
         "type": "Resource",
-        "name": "Artificial",
+        "name": "Метод стрижки овец",
         "tags": [
+          "politic",
           "common",
-          "knowledge",
-          "politic"
+          "knowledge"
         ],
-        "parent_id": "loc_0d3b09",
+        "parent_id": "loc_84aa2e",
         "created_at": 0
       },
-      "loc_b93297": {
-        "id": "loc_b93297",
-        "definition_id": "loc_mountain_pass",
+      "loc_dbe2ba": {
+        "id": "loc_dbe2ba",
+        "definition_id": "loc_shipwreck",
         "type": "Location",
-        "name": "Перевал в Край Козла",
+        "name": "Обломки корабля в Тихий Земли",
         "tags": [
-          "interest",
-          "no_res"
+          "hidden",
+          "nonhuman"
         ],
         "capacity": 3,
-        "parent_id": "biome_6fe22a",
+        "parent_id": "biome_475f72",
         "data": {
           "slot_index": 0
         },
         "created_at": 0
       },
-      "res_afa91d": {
-        "id": "res_afa91d",
-        "definition_id": "res_stone",
+      "res_d210d5": {
+        "id": "res_d210d5",
+        "definition_id": "res_eat",
         "type": "Resource",
-        "name": "Stone",
+        "name": "Глубинный кальмар",
         "tags": [
-          "common",
-          "building",
-          "mining",
-          "mineral"
+          "essential",
+          "product",
+          "rare"
         ],
-        "parent_id": "loc_b93297",
+        "parent_id": "loc_dbe2ba",
         "created_at": 0
       },
-      "fac_6e98d8": {
-        "id": "fac_6e98d8",
-        "definition_id": "fac_mining_dwarves",
-        "type": "Faction",
-        "name": "Клан «Орла»",
+      "res_6d3f09": {
+        "id": "res_6d3f09",
+        "definition_id": "res_stone",
+        "type": "Resource",
+        "name": "Песчаник",
         "tags": [
-          "dwarf",
-          "faction",
-          "ore",
-          "craft",
-          "stone"
+          "building",
+          "mining",
+          "common",
+          "mineral"
         ],
-        "parent_id": "loc_b93297",
+        "parent_id": "loc_dbe2ba",
+        "created_at": 0
+      },
+      "fac_835e13": {
+        "id": "fac_835e13",
+        "definition_id": "fac_water_spirits",
+        "type": "Faction",
+        "name": "Круг Трезубца",
+        "tags": [
+          "calm",
+          "water",
+          "healing",
+          "faction"
+        ],
+        "parent_id": "loc_dbe2ba",
         "data": {
-          "role": "mining",
-          "creature_type": "humanoid",
+          "role": "religious",
+          "creature_type": "spirit",
           "culture_vector": {
-            "aggression": 1,
-            "magic_affinity": -4,
-            "collectivism": 8,
+            "aggression": -5,
+            "magic_affinity": 10,
+            "collectivism": 5,
             "taboo": [
-              "swimming",
-              "sky",
-              "elves"
+              "pollution",
+              "stagnation"
             ],
             "revered": [
-              "craft",
-              "hammer",
-              "ancestors"
+              "tide",
+              "flow",
+              "moon"
             ]
           }
         },
         "created_at": 0
       },
-      "loc_685423": {
-        "id": "loc_685423",
-        "definition_id": "loc_tower",
+      "loc_6059bb": {
+        "id": "loc_6059bb",
+        "definition_id": "loc_port",
         "type": "Location",
-        "name": "Башня в Край Козла",
+        "name": "Порт в Тихий Земли",
         "tags": [
-          "interest"
+          "trade",
+          "settlement",
+          "power"
         ],
-        "capacity": 3,
-        "parent_id": "biome_6fe22a",
+        "capacity": 10,
+        "parent_id": "biome_475f72",
         "data": {
           "slot_index": 1
         },
         "created_at": 0
       },
-      "res_b76a68": {
-        "id": "res_b76a68",
-        "definition_id": "res_ore",
+      "res_f51d01": {
+        "id": "res_f51d01",
+        "definition_id": "res_eat",
         "type": "Resource",
-        "name": "Редкий Ore",
+        "name": "Булка",
         "tags": [
-          "metal",
-          "armor",
-          "mining",
-          "tools",
-          "weapon",
-          "rare"
-        ],
-        "parent_id": "loc_685423",
-        "created_at": 0
-      },
-      "loc_acee53": {
-        "id": "loc_acee53",
-        "definition_id": "loc_tower",
-        "type": "Location",
-        "name": "Башня в Край Козла",
-        "tags": [
-          "interest"
-        ],
-        "capacity": 3,
-        "parent_id": "biome_6fe22a",
-        "data": {
-          "slot_index": 2
-        },
-        "created_at": 0
-      },
-      "res_6221f3": {
-        "id": "res_6221f3",
-        "definition_id": "res_stone",
-        "type": "Resource",
-        "name": "Необычный Stone",
-        "tags": [
-          "building",
-          "mining",
-          "mineral",
+          "essential",
+          "product",
           "uncommon"
         ],
-        "parent_id": "loc_acee53",
+        "parent_id": "loc_6059bb",
         "created_at": 0
       },
-      "fac_9f695a": {
-        "id": "fac_9f695a",
-        "definition_id": "fac_mining_dwarves",
-        "type": "Faction",
-        "name": "Гильдия «Камня»",
+      "res_31a190": {
+        "id": "res_31a190",
+        "definition_id": "res_eat",
+        "type": "Resource",
+        "name": "Глубинный кальмар",
         "tags": [
-          "dwarf",
-          "faction",
-          "ore",
-          "craft",
-          "stone"
+          "essential",
+          "product",
+          "rare"
         ],
-        "parent_id": "loc_acee53",
+        "parent_id": "loc_6059bb",
+        "created_at": 0
+      },
+      "fac_a9123c": {
+        "id": "fac_a9123c",
+        "definition_id": "fac_sea_kings",
+        "type": "Faction",
+        "name": "Клан Клешни",
+        "tags": [
+          "deep",
+          "trident",
+          "faction",
+          "water"
+        ],
+        "parent_id": "loc_6059bb",
         "data": {
-          "role": "mining",
-          "creature_type": "humanoid",
+          "role": "military",
+          "creature_type": "beast",
           "culture_vector": {
-            "aggression": 1,
-            "magic_affinity": -4,
+            "aggression": 6,
+            "magic_affinity": 5,
             "collectivism": 8,
             "taboo": [
-              "swimming",
-              "sky",
-              "elves"
+              "fire",
+              "dry_land"
             ],
             "revered": [
-              "craft",
-              "hammer",
-              "ancestors"
+              "kraken",
+              "storm",
+              "depths"
             ]
           }
         },
         "created_at": 0
       },
-      "loc_82a23d": {
-        "id": "loc_82a23d",
-        "definition_id": "loc_village",
+      "loc_c4180b": {
+        "id": "loc_c4180b",
+        "definition_id": "loc_grove",
         "type": "Location",
-        "name": "Деревня в Тенистый Земли",
+        "name": "Роща в Лес Зелёный Завет",
         "tags": [
-          "settlement"
+          "hidden",
+          "ritual",
+          "nonhuman"
         ],
-        "capacity": 4,
-        "parent_id": "biome_c07e88",
+        "capacity": 3,
+        "parent_id": "biome_68ca58",
         "data": {
           "slot_index": 0
         },
         "created_at": 0
       },
-      "res_3339c6": {
-        "id": "res_3339c6",
-        "definition_id": "res_other",
+      "res_a5116f": {
+        "id": "res_a5116f",
+        "definition_id": "res_eat",
         "type": "Resource",
-        "name": "Other",
+        "name": "Булка",
         "tags": [
-          "decor",
-          "building",
-          "common"
+          "essential",
+          "product",
+          "uncommon"
         ],
-        "parent_id": "loc_82a23d",
+        "parent_id": "loc_c4180b",
         "created_at": 0
       },
-      "fac_b65c86": {
-        "id": "fac_b65c86",
+      "fac_9eb362": {
+        "id": "fac_9eb362",
+        "definition_id": "fac_trading_elves",
+        "type": "Faction",
+        "name": "Гильдия «Храм»",
+        "tags": [
+          "politic",
+          "craft",
+          "art",
+          "economy",
+          "faction",
+          "luxury",
+          "elf"
+        ],
+        "parent_id": "loc_c4180b",
+        "data": {
+          "role": "trading",
+          "creature_type": "humanoid",
+          "culture_vector": {
+            "aggression": -3,
+            "magic_affinity": 8,
+            "collectivism": 4,
+            "taboo": [
+              "crude_metal",
+              "ugliness"
+            ],
+            "revered": [
+              "wine",
+              "stars",
+              "art"
+            ]
+          }
+        },
+        "created_at": 0
+      },
+      "loc_bb880c": {
+        "id": "loc_bb880c",
+        "definition_id": "loc_town",
+        "type": "Location",
+        "name": "Город в Лес Зелёный Завет",
+        "tags": [
+          "trade",
+          "settlement"
+        ],
+        "capacity": 8,
+        "parent_id": "biome_68ca58",
+        "data": {
+          "slot_index": 1
+        },
+        "created_at": 0
+      },
+      "res_a5ec06": {
+        "id": "res_a5ec06",
+        "definition_id": "res_wood",
+        "type": "Resource",
+        "name": "Ольха",
+        "tags": [
+          "tools",
+          "uncommon",
+          "building",
+          "organic"
+        ],
+        "parent_id": "loc_bb880c",
+        "created_at": 0
+      },
+      "res_b32caf": {
+        "id": "res_b32caf",
+        "definition_id": "res_artificial",
+        "type": "Resource",
+        "name": "Метод сбора грибов",
+        "tags": [
+          "politic",
+          "common",
+          "knowledge"
+        ],
+        "parent_id": "loc_bb880c",
+        "created_at": 0
+      },
+      "fac_a614d5": {
+        "id": "fac_a614d5",
+        "definition_id": "fac_tree_spirits",
+        "type": "Faction",
+        "name": "Духи Листа",
+        "tags": [
+          "faction",
+          "ancient",
+          "slow",
+          "nature"
+        ],
+        "parent_id": "loc_bb880c",
+        "data": {
+          "role": "religious",
+          "creature_type": "spirit",
+          "culture_vector": {
+            "aggression": 2,
+            "magic_affinity": 10,
+            "collectivism": 10,
+            "taboo": [
+              "fire",
+              "axes"
+            ],
+            "revered": [
+              "sun",
+              "water",
+              "roots"
+            ]
+          }
+        },
+        "created_at": 0
+      },
+      "loc_293322": {
+        "id": "loc_293322",
+        "definition_id": "loc_temple",
+        "type": "Location",
+        "name": "Храм в Лес Зелёный Завет",
+        "tags": [
+          "ritual",
+          "sacred"
+        ],
+        "capacity": 6,
+        "parent_id": "biome_68ca58",
+        "data": {
+          "slot_index": 2
+        },
+        "created_at": 0
+      },
+      "res_24b7ed": {
+        "id": "res_24b7ed",
+        "definition_id": "res_artificial",
+        "type": "Resource",
+        "name": "Метод сбора грибов",
+        "tags": [
+          "politic",
+          "common",
+          "knowledge"
+        ],
+        "parent_id": "loc_293322",
+        "created_at": 0
+      },
+      "loc_631002": {
+        "id": "loc_631002",
+        "definition_id": "loc_temple",
+        "type": "Location",
+        "name": "Храм в Край Хижина",
+        "tags": [
+          "ritual",
+          "sacred"
+        ],
+        "capacity": 6,
+        "parent_id": "biome_433ae9",
+        "data": {
+          "slot_index": 0
+        },
+        "created_at": 0
+      },
+      "res_295b4d": {
+        "id": "res_295b4d",
+        "definition_id": "res_wood",
+        "type": "Resource",
+        "name": "Крепкая древесина",
+        "tags": [
+          "tools",
+          "uncommon",
+          "building",
+          "organic"
+        ],
+        "parent_id": "loc_631002",
+        "created_at": 0
+      },
+      "fac_9a49d2": {
+        "id": "fac_9a49d2",
         "definition_id": "fac_trading_vampires",
         "type": "Faction",
-        "name": "Туманный Нежить",
+        "name": "Прах Стрекоз",
         "tags": [
           "aristocrat",
-          "politics",
           "faction",
+          "politics",
           "blood"
         ],
-        "parent_id": "loc_82a23d",
+        "parent_id": "loc_631002",
         "data": {
           "role": "trading",
           "creature_type": "undead",
@@ -1393,48 +712,49 @@
         },
         "created_at": 0
       },
-      "loc_9a51fb": {
-        "id": "loc_9a51fb",
-        "definition_id": "loc_temple",
+      "loc_c8f8dc": {
+        "id": "loc_c8f8dc",
+        "definition_id": "loc_village",
         "type": "Location",
-        "name": "Храм в Тенистый Земли",
+        "name": "Деревня в Край Хижина",
         "tags": [
-          "ritual",
-          "sacred"
+          "settlement"
         ],
-        "capacity": 6,
-        "parent_id": "biome_c07e88",
+        "capacity": 4,
+        "parent_id": "biome_433ae9",
         "data": {
           "slot_index": 1
         },
         "created_at": 0
       },
-      "res_e0977f": {
-        "id": "res_e0977f",
-        "definition_id": "res_herbs",
+      "res_42db4e": {
+        "id": "res_42db4e",
+        "definition_id": "res_ore",
         "type": "Resource",
-        "name": "Herbs",
+        "name": "Руда",
         "tags": [
-          "common",
-          "organic",
-          "poison",
-          "drug"
+          "tools",
+          "weapon",
+          "armor",
+          "mining",
+          "metal",
+          "uncommon"
         ],
-        "parent_id": "loc_9a51fb",
+        "parent_id": "loc_c8f8dc",
         "created_at": 0
       },
-      "fac_e58a17": {
-        "id": "fac_e58a17",
+      "fac_c5cb87": {
+        "id": "fac_c5cb87",
         "definition_id": "fac_undead_temple",
         "type": "Faction",
         "name": "Хор Мертвых",
         "tags": [
-          "ritual",
-          "faction",
           "magic",
-          "death"
+          "death",
+          "ritual",
+          "faction"
         ],
-        "parent_id": "loc_9a51fb",
+        "parent_id": "loc_c8f8dc",
         "data": {
           "role": "religious",
           "creature_type": "undead",
@@ -1443,13 +763,743 @@
             "magic_affinity": 10,
             "collectivism": 10,
             "taboo": [
-              "life",
               "sun",
+              "life",
               "healing"
             ],
             "revered": [
-              "eternal_silence",
-              "entropy"
+              "entropy",
+              "eternal_silence"
+            ]
+          }
+        },
+        "created_at": 0
+      },
+      "loc_60c6dd": {
+        "id": "loc_60c6dd",
+        "definition_id": "loc_village",
+        "type": "Location",
+        "name": "Деревня в Знойный Земли",
+        "tags": [
+          "settlement"
+        ],
+        "capacity": 4,
+        "parent_id": "biome_4de62a",
+        "data": {
+          "slot_index": 0
+        },
+        "created_at": 0
+      },
+      "res_7b9471": {
+        "id": "res_7b9471",
+        "definition_id": "res_wood",
+        "type": "Resource",
+        "name": "Песчаный баобаб",
+        "tags": [
+          "building",
+          "tools",
+          "rare",
+          "organic"
+        ],
+        "parent_id": "loc_60c6dd",
+        "created_at": 0
+      },
+      "fac_aae02d": {
+        "id": "fac_aae02d",
+        "definition_id": "fac_sand_wyverns",
+        "type": "Faction",
+        "name": "Стая Скрытого оазиса",
+        "tags": [
+          "flying",
+          "desert",
+          "faction",
+          "predator"
+        ],
+        "parent_id": "loc_60c6dd",
+        "data": {
+          "role": "military",
+          "creature_type": "beast",
+          "culture_vector": {
+            "aggression": 10,
+            "magic_affinity": 0,
+            "collectivism": 2,
+            "taboo": [
+              "weakness"
+            ],
+            "revered": [
+              "meat",
+              "sky",
+              "sun"
+            ]
+          }
+        },
+        "created_at": 0
+      },
+      "loc_47cef7": {
+        "id": "loc_47cef7",
+        "definition_id": "loc_oasis",
+        "type": "Location",
+        "name": "Оазис в Знойный Земли",
+        "tags": [
+          "trade",
+          "settlement"
+        ],
+        "capacity": 8,
+        "parent_id": "biome_4de62a",
+        "data": {
+          "slot_index": 1
+        },
+        "created_at": 0
+      },
+      "res_7e3530": {
+        "id": "res_7e3530",
+        "definition_id": "res_wood",
+        "type": "Resource",
+        "name": "Песчаная ветвь",
+        "tags": [
+          "building",
+          "tools",
+          "common",
+          "organic"
+        ],
+        "parent_id": "loc_47cef7",
+        "created_at": 0
+      },
+      "fac_5f9227": {
+        "id": "fac_5f9227",
+        "definition_id": "fac_sand_wyverns",
+        "type": "Faction",
+        "name": "Рой Песок",
+        "tags": [
+          "flying",
+          "desert",
+          "faction",
+          "predator"
+        ],
+        "parent_id": "loc_47cef7",
+        "data": {
+          "role": "military",
+          "creature_type": "beast",
+          "culture_vector": {
+            "aggression": 10,
+            "magic_affinity": 0,
+            "collectivism": 2,
+            "taboo": [
+              "weakness"
+            ],
+            "revered": [
+              "meat",
+              "sky",
+              "sun"
+            ]
+          }
+        },
+        "created_at": 0
+      },
+      "loc_219fee": {
+        "id": "loc_219fee",
+        "definition_id": "loc_spirit_well",
+        "type": "Location",
+        "name": "Источник духов в Лес Тенистый Корень",
+        "tags": [
+          "hidden",
+          "nonhuman",
+          "ritual",
+          "sacred"
+        ],
+        "capacity": 3,
+        "parent_id": "biome_075ad2",
+        "data": {
+          "slot_index": 0
+        },
+        "created_at": 0
+      },
+      "res_777c7f": {
+        "id": "res_777c7f",
+        "definition_id": "res_wood",
+        "type": "Resource",
+        "name": "Берёза",
+        "tags": [
+          "building",
+          "tools",
+          "common",
+          "organic"
+        ],
+        "parent_id": "loc_219fee",
+        "created_at": 0
+      },
+      "fac_778197": {
+        "id": "fac_778197",
+        "definition_id": "fac_trading_elves",
+        "type": "Faction",
+        "name": "Торговый союз «Цветка»",
+        "tags": [
+          "politic",
+          "craft",
+          "art",
+          "economy",
+          "faction",
+          "luxury",
+          "elf"
+        ],
+        "parent_id": "loc_219fee",
+        "data": {
+          "role": "trading",
+          "creature_type": "humanoid",
+          "culture_vector": {
+            "aggression": -3,
+            "magic_affinity": 8,
+            "collectivism": 4,
+            "taboo": [
+              "crude_metal",
+              "ugliness"
+            ],
+            "revered": [
+              "wine",
+              "stars",
+              "art"
+            ]
+          }
+        },
+        "created_at": 0
+      },
+      "loc_f6255b": {
+        "id": "loc_f6255b",
+        "definition_id": "loc_ruins",
+        "type": "Location",
+        "name": "Руины в Лес Тенистый Корень",
+        "tags": [
+          "dangerous",
+          "hidden",
+          "ruins",
+          "nonhuman"
+        ],
+        "capacity": 2,
+        "parent_id": "biome_075ad2",
+        "data": {
+          "slot_index": 1
+        },
+        "created_at": 0
+      },
+      "res_40aacc": {
+        "id": "res_40aacc",
+        "definition_id": "res_herbs",
+        "type": "Resource",
+        "name": "Полынь",
+        "tags": [
+          "poison",
+          "drug",
+          "common",
+          "organic"
+        ],
+        "parent_id": "loc_f6255b",
+        "created_at": 0
+      },
+      "res_3f2f9f": {
+        "id": "res_3f2f9f",
+        "definition_id": "res_eat",
+        "type": "Resource",
+        "name": "Булка",
+        "tags": [
+          "essential",
+          "product",
+          "uncommon"
+        ],
+        "parent_id": "loc_f6255b",
+        "created_at": 0
+      },
+      "fac_b2e860": {
+        "id": "fac_b2e860",
+        "definition_id": "fac_tree_spirits",
+        "type": "Faction",
+        "name": "Духи Тумана",
+        "tags": [
+          "faction",
+          "ancient",
+          "slow",
+          "nature"
+        ],
+        "parent_id": "loc_f6255b",
+        "data": {
+          "role": "religious",
+          "creature_type": "spirit",
+          "culture_vector": {
+            "aggression": 2,
+            "magic_affinity": 10,
+            "collectivism": 10,
+            "taboo": [
+              "fire",
+              "axes"
+            ],
+            "revered": [
+              "sun",
+              "water",
+              "roots"
+            ]
+          }
+        },
+        "created_at": 0
+      },
+      "loc_7e00bf": {
+        "id": "loc_7e00bf",
+        "definition_id": "loc_town",
+        "type": "Location",
+        "name": "Город в Лес Тенистый Корень",
+        "tags": [
+          "trade",
+          "settlement"
+        ],
+        "capacity": 8,
+        "parent_id": "biome_075ad2",
+        "data": {
+          "slot_index": 2
+        },
+        "created_at": 0
+      },
+      "res_7d6450": {
+        "id": "res_7d6450",
+        "definition_id": "res_herbs",
+        "type": "Resource",
+        "name": "Лунный корень",
+        "tags": [
+          "poison",
+          "uncommon",
+          "drug",
+          "organic"
+        ],
+        "parent_id": "loc_7e00bf",
+        "created_at": 0
+      },
+      "res_cf3ca2": {
+        "id": "res_cf3ca2",
+        "definition_id": "res_herbs",
+        "type": "Resource",
+        "name": "Цветок бессмертия",
+        "tags": [
+          "poison",
+          "drug",
+          "rare",
+          "organic"
+        ],
+        "parent_id": "loc_7e00bf",
+        "created_at": 0
+      },
+      "fac_9ba528": {
+        "id": "fac_9ba528",
+        "definition_id": "fac_trading_elves",
+        "type": "Faction",
+        "name": "Компания «Зелёный Храм»",
+        "tags": [
+          "politic",
+          "craft",
+          "art",
+          "economy",
+          "faction",
+          "luxury",
+          "elf"
+        ],
+        "parent_id": "loc_7e00bf",
+        "data": {
+          "role": "trading",
+          "creature_type": "humanoid",
+          "culture_vector": {
+            "aggression": -3,
+            "magic_affinity": 8,
+            "collectivism": 4,
+            "taboo": [
+              "crude_metal",
+              "ugliness"
+            ],
+            "revered": [
+              "wine",
+              "stars",
+              "art"
+            ]
+          }
+        },
+        "created_at": 0
+      },
+      "loc_5a1552": {
+        "id": "loc_5a1552",
+        "definition_id": "loc_town",
+        "type": "Location",
+        "name": "Город в Хребет Мрачный Пик",
+        "tags": [
+          "trade",
+          "settlement"
+        ],
+        "capacity": 8,
+        "parent_id": "biome_893cda",
+        "data": {
+          "slot_index": 0
+        },
+        "created_at": 0
+      },
+      "res_8f8853": {
+        "id": "res_8f8853",
+        "definition_id": "res_ore",
+        "type": "Resource",
+        "name": "Железо",
+        "tags": [
+          "tools",
+          "weapon",
+          "armor",
+          "mining",
+          "metal",
+          "uncommon"
+        ],
+        "parent_id": "loc_5a1552",
+        "created_at": 0
+      },
+      "fac_3a6360": {
+        "id": "fac_3a6360",
+        "definition_id": "fac_mining_dwarves",
+        "type": "Faction",
+        "name": "Союз «Хребет»",
+        "tags": [
+          "craft",
+          "ore",
+          "stone",
+          "faction",
+          "veteran",
+          "dwarf"
+        ],
+        "parent_id": "loc_5a1552",
+        "data": {
+          "role": "mining",
+          "creature_type": "humanoid",
+          "culture_vector": {
+            "aggression": 1,
+            "magic_affinity": -4,
+            "collectivism": 8,
+            "taboo": [
+              "elves",
+              "sky",
+              "swimming"
+            ],
+            "revered": [
+              "ancestors",
+              "craft",
+              "hammer"
+            ]
+          }
+        },
+        "created_at": 0
+      },
+      "loc_1304d5": {
+        "id": "loc_1304d5",
+        "definition_id": "loc_tower",
+        "type": "Location",
+        "name": "Башня в Хребет Мрачный Пик",
+        "tags": [
+          "interest"
+        ],
+        "capacity": 3,
+        "parent_id": "biome_893cda",
+        "data": {
+          "slot_index": 1
+        },
+        "created_at": 0
+      },
+      "res_69e5a3": {
+        "id": "res_69e5a3",
+        "definition_id": "res_other",
+        "type": "Resource",
+        "name": "Ониксовый уголь",
+        "tags": [
+          "decor",
+          "uncommon",
+          "building"
+        ],
+        "parent_id": "loc_1304d5",
+        "created_at": 0
+      },
+      "fac_7aac67": {
+        "id": "fac_7aac67",
+        "definition_id": "fac_gargoyle_guardians",
+        "type": "Faction",
+        "name": "Хранители Трон",
+        "tags": [
+          "guard",
+          "flying",
+          "stone",
+          "faction"
+        ],
+        "parent_id": "loc_1304d5",
+        "data": {
+          "role": "military",
+          "creature_type": "construct",
+          "culture_vector": {
+            "aggression": 3,
+            "magic_affinity": 5,
+            "collectivism": 10,
+            "taboo": [
+              "leaving_post",
+              "flesh"
+            ],
+            "revered": [
+              "master",
+              "silence",
+              "stone"
+            ]
+          }
+        },
+        "created_at": 0
+      },
+      "loc_15e94d": {
+        "id": "loc_15e94d",
+        "definition_id": "loc_tower",
+        "type": "Location",
+        "name": "Башня в Край Камня",
+        "tags": [
+          "interest"
+        ],
+        "capacity": 3,
+        "parent_id": "biome_896527",
+        "data": {
+          "slot_index": 0
+        },
+        "created_at": 0
+      },
+      "res_484af1": {
+        "id": "res_484af1",
+        "definition_id": "res_ore",
+        "type": "Resource",
+        "name": "Мифрил",
+        "tags": [
+          "tools",
+          "weapon",
+          "armor",
+          "mining",
+          "metal",
+          "rare"
+        ],
+        "parent_id": "loc_15e94d",
+        "created_at": 0
+      },
+      "fac_5bd15e": {
+        "id": "fac_5bd15e",
+        "definition_id": "fac_mining_dwarves",
+        "type": "Faction",
+        "name": "Клан «Козла»",
+        "tags": [
+          "craft",
+          "ore",
+          "stone",
+          "faction",
+          "dwarf"
+        ],
+        "parent_id": "loc_15e94d",
+        "data": {
+          "role": "mining",
+          "creature_type": "humanoid",
+          "culture_vector": {
+            "aggression": 1,
+            "magic_affinity": -4,
+            "collectivism": 8,
+            "taboo": [
+              "elves",
+              "sky",
+              "swimming"
+            ],
+            "revered": [
+              "ancestors",
+              "craft",
+              "hammer"
+            ]
+          }
+        },
+        "created_at": 0
+      },
+      "loc_dcae9b": {
+        "id": "loc_dcae9b",
+        "definition_id": "loc_tower",
+        "type": "Location",
+        "name": "Башня в Край Камня",
+        "tags": [
+          "interest"
+        ],
+        "capacity": 3,
+        "parent_id": "biome_896527",
+        "data": {
+          "slot_index": 1
+        },
+        "created_at": 0
+      },
+      "res_6d39eb": {
+        "id": "res_6d39eb",
+        "definition_id": "res_artificial",
+        "type": "Resource",
+        "name": "Рецепт горной чачи",
+        "tags": [
+          "politic",
+          "common",
+          "knowledge"
+        ],
+        "parent_id": "loc_dcae9b",
+        "created_at": 0
+      },
+      "fac_666ffd": {
+        "id": "fac_666ffd",
+        "definition_id": "fac_mining_dwarves",
+        "type": "Faction",
+        "name": "Гильдия «Орла»",
+        "tags": [
+          "craft",
+          "ore",
+          "stone",
+          "faction",
+          "dwarf"
+        ],
+        "parent_id": "loc_dcae9b",
+        "data": {
+          "role": "mining",
+          "creature_type": "humanoid",
+          "culture_vector": {
+            "aggression": 1,
+            "magic_affinity": -4,
+            "collectivism": 8,
+            "taboo": [
+              "elves",
+              "sky",
+              "swimming"
+            ],
+            "revered": [
+              "ancestors",
+              "craft",
+              "hammer"
+            ]
+          }
+        },
+        "created_at": 0
+      },
+      "loc_7459fa": {
+        "id": "loc_7459fa",
+        "definition_id": "loc_tower",
+        "type": "Location",
+        "name": "Башня в Край Камня",
+        "tags": [
+          "interest"
+        ],
+        "capacity": 3,
+        "parent_id": "biome_896527",
+        "data": {
+          "slot_index": 2
+        },
+        "created_at": 0
+      },
+      "res_8e69fb": {
+        "id": "res_8e69fb",
+        "definition_id": "res_wood",
+        "type": "Resource",
+        "name": "Древесина",
+        "tags": [
+          "building",
+          "tools",
+          "common",
+          "organic"
+        ],
+        "parent_id": "loc_7459fa",
+        "created_at": 0
+      },
+      "loc_62a7d5": {
+        "id": "loc_62a7d5",
+        "definition_id": "loc_cave",
+        "type": "Location",
+        "name": "Пещера в Необъятный Земли",
+        "tags": [
+          "mining",
+          "hidden"
+        ],
+        "capacity": 5,
+        "parent_id": "biome_d9532f",
+        "data": {
+          "slot_index": 0
+        },
+        "created_at": 0
+      },
+      "res_77416c": {
+        "id": "res_77416c",
+        "definition_id": "res_artificial",
+        "type": "Resource",
+        "name": "Разведданные",
+        "tags": [
+          "politic",
+          "uncommon",
+          "knowledge"
+        ],
+        "parent_id": "loc_62a7d5",
+        "created_at": 0
+      },
+      "res_46e128": {
+        "id": "res_46e128",
+        "definition_id": "res_eat",
+        "type": "Resource",
+        "name": "Виски",
+        "tags": [
+          "essential",
+          "product",
+          "uncommon"
+        ],
+        "parent_id": "loc_62a7d5",
+        "created_at": 0
+      },
+      "loc_8d67b4": {
+        "id": "loc_8d67b4",
+        "definition_id": "loc_tower",
+        "type": "Location",
+        "name": "Башня в Необъятный Земли",
+        "tags": [
+          "interest"
+        ],
+        "capacity": 3,
+        "parent_id": "biome_d9532f",
+        "data": {
+          "slot_index": 1
+        },
+        "created_at": 0
+      },
+      "res_60cb00": {
+        "id": "res_60cb00",
+        "definition_id": "res_parts",
+        "type": "Resource",
+        "name": "Чешуя дракона",
+        "tags": [
+          "material",
+          "rare"
+        ],
+        "parent_id": "loc_8d67b4",
+        "created_at": 0
+      },
+      "fac_106602": {
+        "id": "fac_106602",
+        "definition_id": "fac_human_trading_guild",
+        "type": "Faction",
+        "name": "Торговый союз «Озера»",
+        "tags": [
+          "politic",
+          "economy",
+          "diplomacy",
+          "faction",
+          "coin"
+        ],
+        "parent_id": "loc_8d67b4",
+        "data": {
+          "role": "trading",
+          "creature_type": "humanoid",
+          "culture_vector": {
+            "aggression": -4,
+            "magic_affinity": -2,
+            "collectivism": 3,
+            "taboo": [
+              "theft",
+              "charity",
+              "poverty"
+            ],
+            "revered": [
+              "stability",
+              "gold",
+              "contracts"
             ]
           }
         },
@@ -1475,533 +1525,30 @@
     "relations": [
       {
         "from_entity": {
-          "id": "res_8cebe3",
-          "definition_id": "res_other",
-          "type": "Resource",
-          "name": "Other",
-          "tags": [
-            "decor",
-            "building",
-            "common"
-          ],
-          "parent_id": "loc_c73011",
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_c73011",
-          "definition_id": "loc_town",
-          "type": "Location",
-          "name": "Город в Край Орла",
-          "tags": [
-            "settlement",
-            "trade"
-          ],
-          "capacity": 8,
-          "parent_id": "biome_759c94",
-          "data": {
-            "slot_index": 0
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "located_in",
-          "from_type": "Resource",
-          "to_type": "Location",
-          "description": "Находится в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "res_11134a",
-          "definition_id": "res_artificial",
-          "type": "Resource",
-          "name": "Artificial",
-          "tags": [
-            "common",
-            "knowledge",
-            "politic"
-          ],
-          "parent_id": "loc_c73011",
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_c73011",
-          "definition_id": "loc_town",
-          "type": "Location",
-          "name": "Город в Край Орла",
-          "tags": [
-            "settlement",
-            "trade"
-          ],
-          "capacity": 8,
-          "parent_id": "biome_759c94",
-          "data": {
-            "slot_index": 0
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "located_in",
-          "from_type": "Resource",
-          "to_type": "Location",
-          "description": "Находится в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "res_906ee8",
-          "definition_id": "res_artificial",
-          "type": "Resource",
-          "name": "Artificial",
-          "tags": [
-            "common",
-            "knowledge",
-            "politic"
-          ],
-          "parent_id": "loc_d28136",
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_d28136",
-          "definition_id": "loc_mountain_pass",
-          "type": "Location",
-          "name": "Перевал в Край Орла",
-          "tags": [
-            "interest",
-            "no_res"
-          ],
-          "capacity": 3,
-          "parent_id": "biome_759c94",
-          "data": {
-            "slot_index": 1
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "located_in",
-          "from_type": "Resource",
-          "to_type": "Location",
-          "description": "Находится в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "fac_14f9c9",
-          "definition_id": "fac_mining_dwarves",
-          "type": "Faction",
-          "name": "Гильдия «Кирки»",
-          "tags": [
-            "dwarf",
-            "faction",
-            "ore",
-            "craft",
-            "stone"
-          ],
-          "parent_id": "loc_d28136",
-          "data": {
-            "role": "mining",
-            "creature_type": "humanoid",
-            "culture_vector": {
-              "aggression": 1,
-              "magic_affinity": -4,
-              "collectivism": 8,
-              "taboo": [
-                "swimming",
-                "sky",
-                "elves"
-              ],
-              "revered": [
-                "craft",
-                "hammer",
-                "ancestors"
-              ]
-            }
-          },
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_d28136",
-          "definition_id": "loc_mountain_pass",
-          "type": "Location",
-          "name": "Перевал в Край Орла",
-          "tags": [
-            "interest",
-            "no_res"
-          ],
-          "capacity": 3,
-          "parent_id": "biome_759c94",
-          "data": {
-            "slot_index": 1
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "faction_located_in",
-          "from_type": "Faction",
-          "to_type": "Location",
-          "description": "Базируется в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "res_a7767e",
+          "id": "res_15b1e5",
           "definition_id": "res_parts",
           "type": "Resource",
-          "name": "Parts",
-          "tags": [
-            "common",
-            "material"
-          ],
-          "parent_id": "loc_fe1abf",
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_fe1abf",
-          "definition_id": "loc_village",
-          "type": "Location",
-          "name": "Деревня в Широкий Земли",
-          "tags": [
-            "settlement"
-          ],
-          "capacity": 4,
-          "parent_id": "biome_afee75",
-          "data": {
-            "slot_index": 0
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "located_in",
-          "from_type": "Resource",
-          "to_type": "Location",
-          "description": "Находится в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "fac_0322e6",
-          "definition_id": "fac_human_warriors",
-          "type": "Faction",
-          "name": "Широкий Клинок",
-          "tags": [
-            "faction",
-            "steel",
-            "honor",
-            "guard"
-          ],
-          "parent_id": "loc_fe1abf",
-          "data": {
-            "role": "military",
-            "creature_type": "humanoid",
-            "culture_vector": {
-              "aggression": 6,
-              "magic_affinity": -3,
-              "collectivism": 7,
-              "taboo": [
-                "betrayal",
-                "magic",
-                "cowardice"
-              ],
-              "revered": [
-                "sword",
-                "honor",
-                "king"
-              ]
-            }
-          },
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_fe1abf",
-          "definition_id": "loc_village",
-          "type": "Location",
-          "name": "Деревня в Широкий Земли",
-          "tags": [
-            "settlement"
-          ],
-          "capacity": 4,
-          "parent_id": "biome_afee75",
-          "data": {
-            "slot_index": 0
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "faction_located_in",
-          "from_type": "Faction",
-          "to_type": "Location",
-          "description": "Базируется в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "res_1979b7",
-          "definition_id": "res_other",
-          "type": "Resource",
-          "name": "Other",
-          "tags": [
-            "decor",
-            "building",
-            "common"
-          ],
-          "parent_id": "loc_6eeb87",
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_6eeb87",
-          "definition_id": "loc_ruins",
-          "type": "Location",
-          "name": "Руины в Широкий Земли",
-          "tags": [
-            "nonhuman",
-            "hidden",
-            "ruins",
-            "dangerous"
-          ],
-          "capacity": 2,
-          "parent_id": "biome_afee75",
-          "data": {
-            "slot_index": 1
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "located_in",
-          "from_type": "Resource",
-          "to_type": "Location",
-          "description": "Находится в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "res_fa73f2",
-          "definition_id": "res_parts",
-          "type": "Resource",
-          "name": "Необычный Parts",
+          "name": "Чешуя дракона",
           "tags": [
             "material",
-            "uncommon"
+            "rare"
           ],
-          "parent_id": "loc_6eeb87",
+          "parent_id": "loc_41cac8",
           "created_at": 0
         },
         "to_entity": {
-          "id": "loc_6eeb87",
-          "definition_id": "loc_ruins",
+          "id": "loc_41cac8",
+          "definition_id": "loc_cave",
           "type": "Location",
-          "name": "Руины в Широкий Земли",
+          "name": "Пещера в Широкий Земли",
           "tags": [
-            "nonhuman",
-            "hidden",
-            "ruins",
-            "dangerous"
-          ],
-          "capacity": 2,
-          "parent_id": "biome_afee75",
-          "data": {
-            "slot_index": 1
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "located_in",
-          "from_type": "Resource",
-          "to_type": "Location",
-          "description": "Находится в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "fac_ae57d0",
-          "definition_id": "fac_human_warriors",
-          "type": "Faction",
-          "name": "Орден «Просторный Вереска»",
-          "tags": [
-            "faction",
-            "steel",
-            "honor",
-            "guard"
-          ],
-          "parent_id": "loc_6eeb87",
-          "data": {
-            "role": "military",
-            "creature_type": "humanoid",
-            "culture_vector": {
-              "aggression": 6,
-              "magic_affinity": -3,
-              "collectivism": 7,
-              "taboo": [
-                "betrayal",
-                "magic",
-                "cowardice"
-              ],
-              "revered": [
-                "sword",
-                "honor",
-                "king"
-              ]
-            }
-          },
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_6eeb87",
-          "definition_id": "loc_ruins",
-          "type": "Location",
-          "name": "Руины в Широкий Земли",
-          "tags": [
-            "nonhuman",
-            "hidden",
-            "ruins",
-            "dangerous"
-          ],
-          "capacity": 2,
-          "parent_id": "biome_afee75",
-          "data": {
-            "slot_index": 1
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "faction_located_in",
-          "from_type": "Faction",
-          "to_type": "Location",
-          "description": "Базируется в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "res_4c6b8b",
-          "definition_id": "res_parts",
-          "type": "Resource",
-          "name": "Parts",
-          "tags": [
-            "common",
-            "material"
-          ],
-          "parent_id": "loc_3913c5",
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_3913c5",
-          "definition_id": "loc_town",
-          "type": "Location",
-          "name": "Город в Чаща Цветка",
-          "tags": [
-            "settlement",
-            "trade"
-          ],
-          "capacity": 8,
-          "parent_id": "biome_ed07a4",
-          "data": {
-            "slot_index": 0
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "located_in",
-          "from_type": "Resource",
-          "to_type": "Location",
-          "description": "Находится в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "fac_7635a1",
-          "definition_id": "fac_trading_elves",
-          "type": "Faction",
-          "name": "Компания «Живой Долина»",
-          "tags": [
-            "faction",
-            "economy",
-            "elf",
-            "craft",
-            "art",
-            "politic",
-            "luxury"
-          ],
-          "parent_id": "loc_3913c5",
-          "data": {
-            "role": "trading",
-            "creature_type": "humanoid",
-            "culture_vector": {
-              "aggression": -3,
-              "magic_affinity": 8,
-              "collectivism": 4,
-              "taboo": [
-                "crude_metal",
-                "ugliness"
-              ],
-              "revered": [
-                "stars",
-                "wine",
-                "art"
-              ]
-            }
-          },
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_3913c5",
-          "definition_id": "loc_town",
-          "type": "Location",
-          "name": "Город в Чаща Цветка",
-          "tags": [
-            "settlement",
-            "trade"
-          ],
-          "capacity": 8,
-          "parent_id": "biome_ed07a4",
-          "data": {
-            "slot_index": 0
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "faction_located_in",
-          "from_type": "Faction",
-          "to_type": "Location",
-          "description": "Базируется в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "res_41e875",
-          "definition_id": "res_eat",
-          "type": "Resource",
-          "name": "Eat",
-          "tags": [
-            "common",
-            "product",
-            "essential"
-          ],
-          "parent_id": "loc_4080e2",
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_4080e2",
-          "definition_id": "loc_hamlet",
-          "type": "Location",
-          "name": "Хутор в Чаща Цветка",
-          "tags": [
-            "settlement",
+            "mining",
             "hidden"
           ],
-          "capacity": 3,
-          "parent_id": "biome_ed07a4",
+          "capacity": 5,
+          "parent_id": "biome_434841",
           "data": {
-            "slot_index": 1
+            "slot_index": 0
           },
           "created_at": 0
         },
@@ -2015,89 +1562,29 @@
       },
       {
         "from_entity": {
-          "id": "fac_f9ad2c",
-          "definition_id": "fac_trading_elves",
-          "type": "Faction",
-          "name": "Гильдия «Круг»",
+          "id": "res_f11573",
+          "definition_id": "res_artificial",
+          "type": "Resource",
+          "name": "Разведданные",
           "tags": [
-            "faction",
-            "economy",
-            "elf",
-            "craft",
-            "art",
             "politic",
-            "luxury"
+            "uncommon",
+            "knowledge"
           ],
-          "parent_id": "loc_4080e2",
-          "data": {
-            "role": "trading",
-            "creature_type": "humanoid",
-            "culture_vector": {
-              "aggression": -3,
-              "magic_affinity": 8,
-              "collectivism": 4,
-              "taboo": [
-                "crude_metal",
-                "ugliness"
-              ],
-              "revered": [
-                "stars",
-                "wine",
-                "art"
-              ]
-            }
-          },
+          "parent_id": "loc_41cac8",
           "created_at": 0
         },
         "to_entity": {
-          "id": "loc_4080e2",
-          "definition_id": "loc_hamlet",
+          "id": "loc_41cac8",
+          "definition_id": "loc_cave",
           "type": "Location",
-          "name": "Хутор в Чаща Цветка",
+          "name": "Пещера в Широкий Земли",
           "tags": [
-            "settlement",
+            "mining",
             "hidden"
           ],
-          "capacity": 3,
-          "parent_id": "biome_ed07a4",
-          "data": {
-            "slot_index": 1
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "faction_located_in",
-          "from_type": "Faction",
-          "to_type": "Location",
-          "description": "Базируется в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "res_0ddb7d",
-          "definition_id": "res_artificial",
-          "type": "Resource",
-          "name": "Artificial",
-          "tags": [
-            "common",
-            "knowledge",
-            "politic"
-          ],
-          "parent_id": "loc_a779d8",
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_a779d8",
-          "definition_id": "loc_temple",
-          "type": "Location",
-          "name": "Храм в Необъятный Земли",
-          "tags": [
-            "ritual",
-            "sacred"
-          ],
-          "capacity": 6,
-          "parent_id": "biome_84de93",
+          "capacity": 5,
+          "parent_id": "biome_434841",
           "data": {
             "slot_index": 0
           },
@@ -2113,151 +1600,18 @@
       },
       {
         "from_entity": {
-          "id": "fac_800284",
-          "definition_id": "fac_human_warriors",
-          "type": "Faction",
-          "name": "Легион «Просторный Каньон»",
-          "tags": [
-            "faction",
-            "steel",
-            "honor",
-            "guard"
-          ],
-          "parent_id": "loc_a779d8",
-          "data": {
-            "role": "military",
-            "creature_type": "humanoid",
-            "culture_vector": {
-              "aggression": 6,
-              "magic_affinity": -3,
-              "collectivism": 7,
-              "taboo": [
-                "betrayal",
-                "magic",
-                "cowardice"
-              ],
-              "revered": [
-                "sword",
-                "honor",
-                "king"
-              ]
-            }
-          },
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_a779d8",
-          "definition_id": "loc_temple",
-          "type": "Location",
-          "name": "Храм в Необъятный Земли",
-          "tags": [
-            "ritual",
-            "sacred"
-          ],
-          "capacity": 6,
-          "parent_id": "biome_84de93",
-          "data": {
-            "slot_index": 0
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "faction_located_in",
-          "from_type": "Faction",
-          "to_type": "Location",
-          "description": "Базируется в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "res_a14af1",
-          "definition_id": "res_artificial",
-          "type": "Resource",
-          "name": "Artificial",
-          "tags": [
-            "common",
-            "knowledge",
-            "politic"
-          ],
-          "parent_id": "loc_497c5b",
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_497c5b",
-          "definition_id": "loc_temple",
-          "type": "Location",
-          "name": "Храм в Необъятный Земли",
-          "tags": [
-            "ritual",
-            "sacred"
-          ],
-          "capacity": 6,
-          "parent_id": "biome_84de93",
-          "data": {
-            "slot_index": 1
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "located_in",
-          "from_type": "Resource",
-          "to_type": "Location",
-          "description": "Находится в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "res_0afe74",
-          "definition_id": "res_other",
-          "type": "Resource",
-          "name": "Other",
-          "tags": [
-            "decor",
-            "building",
-            "common"
-          ],
-          "parent_id": "loc_a1ecd2",
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_a1ecd2",
-          "definition_id": "loc_tower",
-          "type": "Location",
-          "name": "Башня в Необъятный Земли",
-          "tags": [
-            "interest"
-          ],
-          "capacity": 3,
-          "parent_id": "biome_84de93",
-          "data": {
-            "slot_index": 2
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "located_in",
-          "from_type": "Resource",
-          "to_type": "Location",
-          "description": "Находится в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "fac_9da506",
+          "id": "fac_9620cb",
           "definition_id": "fac_human_trading_guild",
           "type": "Faction",
-          "name": "Гильдия «Междуречье»",
+          "name": "Лига «Озера»",
           "tags": [
-            "faction",
-            "coin",
+            "politic",
             "economy",
             "diplomacy",
-            "politic"
+            "faction",
+            "coin"
           ],
-          "parent_id": "loc_a1ecd2",
+          "parent_id": "loc_41cac8",
           "data": {
             "role": "trading",
             "creature_type": "humanoid",
@@ -2271,26 +1625,27 @@
                 "poverty"
               ],
               "revered": [
+                "stability",
                 "gold",
-                "contracts",
-                "stability"
+                "contracts"
               ]
             }
           },
           "created_at": 0
         },
         "to_entity": {
-          "id": "loc_a1ecd2",
-          "definition_id": "loc_tower",
+          "id": "loc_41cac8",
+          "definition_id": "loc_cave",
           "type": "Location",
-          "name": "Башня в Необъятный Земли",
+          "name": "Пещера в Широкий Земли",
           "tags": [
-            "interest"
+            "mining",
+            "hidden"
           ],
-          "capacity": 3,
-          "parent_id": "biome_84de93",
+          "capacity": 5,
+          "parent_id": "biome_434841",
           "data": {
-            "slot_index": 2
+            "slot_index": 0
           },
           "created_at": 0
         },
@@ -2304,29 +1659,107 @@
       },
       {
         "from_entity": {
-          "id": "res_5fee8c",
-          "definition_id": "res_herbs",
+          "id": "res_735439",
+          "definition_id": "res_eat",
           "type": "Resource",
-          "name": "Необычный Herbs",
+          "name": "Виски",
           "tags": [
-            "organic",
-            "poison",
-            "drug",
+            "essential",
+            "product",
             "uncommon"
           ],
-          "parent_id": "loc_918502",
+          "parent_id": "loc_84aa2e",
           "created_at": 0
         },
         "to_entity": {
-          "id": "loc_918502",
-          "definition_id": "loc_village",
+          "id": "loc_84aa2e",
+          "definition_id": "loc_city",
           "type": "Location",
-          "name": "Деревня в Край Юрта",
+          "name": "Мегаполис в Широкий Земли",
           "tags": [
-            "settlement"
+            "trade",
+            "settlement",
+            "power"
           ],
-          "capacity": 4,
-          "parent_id": "biome_8d8dd5",
+          "capacity": 15,
+          "parent_id": "biome_434841",
+          "data": {
+            "slot_index": 1
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "located_in",
+          "from_type": "Resource",
+          "to_type": "Location",
+          "description": "Находится в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "res_2d2a79",
+          "definition_id": "res_artificial",
+          "type": "Resource",
+          "name": "Метод стрижки овец",
+          "tags": [
+            "politic",
+            "common",
+            "knowledge"
+          ],
+          "parent_id": "loc_84aa2e",
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_84aa2e",
+          "definition_id": "loc_city",
+          "type": "Location",
+          "name": "Мегаполис в Широкий Земли",
+          "tags": [
+            "trade",
+            "settlement",
+            "power"
+          ],
+          "capacity": 15,
+          "parent_id": "biome_434841",
+          "data": {
+            "slot_index": 1
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "located_in",
+          "from_type": "Resource",
+          "to_type": "Location",
+          "description": "Находится в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "res_d210d5",
+          "definition_id": "res_eat",
+          "type": "Resource",
+          "name": "Глубинный кальмар",
+          "tags": [
+            "essential",
+            "product",
+            "rare"
+          ],
+          "parent_id": "loc_dbe2ba",
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_dbe2ba",
+          "definition_id": "loc_shipwreck",
+          "type": "Location",
+          "name": "Обломки корабля в Тихий Земли",
+          "tags": [
+            "hidden",
+            "nonhuman"
+          ],
+          "capacity": 3,
+          "parent_id": "biome_475f72",
           "data": {
             "slot_index": 0
           },
@@ -2342,525 +1775,323 @@
       },
       {
         "from_entity": {
-          "id": "fac_7d484f",
-          "definition_id": "fac_frost_trolls",
-          "type": "Faction",
-          "name": "Клан Очага",
+          "id": "res_6d3f09",
+          "definition_id": "res_stone",
+          "type": "Resource",
+          "name": "Песчаник",
           "tags": [
-            "regeneration",
-            "cold",
-            "faction",
-            "brute"
+            "building",
+            "mining",
+            "common",
+            "mineral"
           ],
-          "parent_id": "loc_918502",
+          "parent_id": "loc_dbe2ba",
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_dbe2ba",
+          "definition_id": "loc_shipwreck",
+          "type": "Location",
+          "name": "Обломки корабля в Тихий Земли",
+          "tags": [
+            "hidden",
+            "nonhuman"
+          ],
+          "capacity": 3,
+          "parent_id": "biome_475f72",
+          "data": {
+            "slot_index": 0
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "located_in",
+          "from_type": "Resource",
+          "to_type": "Location",
+          "description": "Находится в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "fac_835e13",
+          "definition_id": "fac_water_spirits",
+          "type": "Faction",
+          "name": "Круг Трезубца",
+          "tags": [
+            "calm",
+            "water",
+            "healing",
+            "faction"
+          ],
+          "parent_id": "loc_dbe2ba",
+          "data": {
+            "role": "religious",
+            "creature_type": "spirit",
+            "culture_vector": {
+              "aggression": -5,
+              "magic_affinity": 10,
+              "collectivism": 5,
+              "taboo": [
+                "pollution",
+                "stagnation"
+              ],
+              "revered": [
+                "tide",
+                "flow",
+                "moon"
+              ]
+            }
+          },
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_dbe2ba",
+          "definition_id": "loc_shipwreck",
+          "type": "Location",
+          "name": "Обломки корабля в Тихий Земли",
+          "tags": [
+            "hidden",
+            "nonhuman"
+          ],
+          "capacity": 3,
+          "parent_id": "biome_475f72",
+          "data": {
+            "slot_index": 0
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "faction_located_in",
+          "from_type": "Faction",
+          "to_type": "Location",
+          "description": "Базируется в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "res_f51d01",
+          "definition_id": "res_eat",
+          "type": "Resource",
+          "name": "Булка",
+          "tags": [
+            "essential",
+            "product",
+            "uncommon"
+          ],
+          "parent_id": "loc_6059bb",
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_6059bb",
+          "definition_id": "loc_port",
+          "type": "Location",
+          "name": "Порт в Тихий Земли",
+          "tags": [
+            "trade",
+            "settlement",
+            "power"
+          ],
+          "capacity": 10,
+          "parent_id": "biome_475f72",
+          "data": {
+            "slot_index": 1
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "located_in",
+          "from_type": "Resource",
+          "to_type": "Location",
+          "description": "Находится в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "res_31a190",
+          "definition_id": "res_eat",
+          "type": "Resource",
+          "name": "Глубинный кальмар",
+          "tags": [
+            "essential",
+            "product",
+            "rare"
+          ],
+          "parent_id": "loc_6059bb",
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_6059bb",
+          "definition_id": "loc_port",
+          "type": "Location",
+          "name": "Порт в Тихий Земли",
+          "tags": [
+            "trade",
+            "settlement",
+            "power"
+          ],
+          "capacity": 10,
+          "parent_id": "biome_475f72",
+          "data": {
+            "slot_index": 1
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "located_in",
+          "from_type": "Resource",
+          "to_type": "Location",
+          "description": "Находится в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "fac_a9123c",
+          "definition_id": "fac_sea_kings",
+          "type": "Faction",
+          "name": "Клан Клешни",
+          "tags": [
+            "deep",
+            "trident",
+            "faction",
+            "water"
+          ],
+          "parent_id": "loc_6059bb",
           "data": {
             "role": "military",
             "creature_type": "beast",
             "culture_vector": {
-              "aggression": 9,
-              "magic_affinity": 2,
+              "aggression": 6,
+              "magic_affinity": 5,
+              "collectivism": 8,
+              "taboo": [
+                "fire",
+                "dry_land"
+              ],
+              "revered": [
+                "kraken",
+                "storm",
+                "depths"
+              ]
+            }
+          },
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_6059bb",
+          "definition_id": "loc_port",
+          "type": "Location",
+          "name": "Порт в Тихий Земли",
+          "tags": [
+            "trade",
+            "settlement",
+            "power"
+          ],
+          "capacity": 10,
+          "parent_id": "biome_475f72",
+          "data": {
+            "slot_index": 1
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "faction_located_in",
+          "from_type": "Faction",
+          "to_type": "Location",
+          "description": "Базируется в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "res_a5116f",
+          "definition_id": "res_eat",
+          "type": "Resource",
+          "name": "Булка",
+          "tags": [
+            "essential",
+            "product",
+            "uncommon"
+          ],
+          "parent_id": "loc_c4180b",
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_c4180b",
+          "definition_id": "loc_grove",
+          "type": "Location",
+          "name": "Роща в Лес Зелёный Завет",
+          "tags": [
+            "hidden",
+            "ritual",
+            "nonhuman"
+          ],
+          "capacity": 3,
+          "parent_id": "biome_68ca58",
+          "data": {
+            "slot_index": 0
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "located_in",
+          "from_type": "Resource",
+          "to_type": "Location",
+          "description": "Находится в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "fac_9eb362",
+          "definition_id": "fac_trading_elves",
+          "type": "Faction",
+          "name": "Гильдия «Храм»",
+          "tags": [
+            "politic",
+            "craft",
+            "art",
+            "economy",
+            "faction",
+            "luxury",
+            "elf"
+          ],
+          "parent_id": "loc_c4180b",
+          "data": {
+            "role": "trading",
+            "creature_type": "humanoid",
+            "culture_vector": {
+              "aggression": -3,
+              "magic_affinity": 8,
               "collectivism": 4,
               "taboo": [
-                "fire"
+                "crude_metal",
+                "ugliness"
               ],
               "revered": [
-                "strength",
-                "eating"
+                "wine",
+                "stars",
+                "art"
               ]
             }
           },
           "created_at": 0
         },
         "to_entity": {
-          "id": "loc_918502",
-          "definition_id": "loc_village",
+          "id": "loc_c4180b",
+          "definition_id": "loc_grove",
           "type": "Location",
-          "name": "Деревня в Край Юрта",
+          "name": "Роща в Лес Зелёный Завет",
           "tags": [
-            "settlement"
-          ],
-          "capacity": 4,
-          "parent_id": "biome_8d8dd5",
-          "data": {
-            "slot_index": 0
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "faction_located_in",
-          "from_type": "Faction",
-          "to_type": "Location",
-          "description": "Базируется в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "res_a84fc0",
-          "definition_id": "res_parts",
-          "type": "Resource",
-          "name": "Редкий Parts",
-          "tags": [
-            "material",
-            "rare"
-          ],
-          "parent_id": "loc_d514e9",
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_d514e9",
-          "definition_id": "loc_village",
-          "type": "Location",
-          "name": "Деревня в Край Юрта",
-          "tags": [
-            "settlement"
-          ],
-          "capacity": 4,
-          "parent_id": "biome_8d8dd5",
-          "data": {
-            "slot_index": 1
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "located_in",
-          "from_type": "Resource",
-          "to_type": "Location",
-          "description": "Находится в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "res_d2accd",
-          "definition_id": "res_eat",
-          "type": "Resource",
-          "name": "Редкий Eat",
-          "tags": [
-            "product",
-            "essential",
-            "rare"
-          ],
-          "parent_id": "loc_01511e",
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_01511e",
-          "definition_id": "loc_port",
-          "type": "Location",
-          "name": "Порт в Край Впадина",
-          "tags": [
-            "power",
-            "settlement",
-            "trade"
-          ],
-          "capacity": 10,
-          "parent_id": "biome_2db667",
-          "data": {
-            "slot_index": 0
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "located_in",
-          "from_type": "Resource",
-          "to_type": "Location",
-          "description": "Находится в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "res_d8abd3",
-          "definition_id": "res_artificial",
-          "type": "Resource",
-          "name": "Artificial",
-          "tags": [
-            "common",
-            "knowledge",
-            "politic"
-          ],
-          "parent_id": "loc_01511e",
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_01511e",
-          "definition_id": "loc_port",
-          "type": "Location",
-          "name": "Порт в Край Впадина",
-          "tags": [
-            "power",
-            "settlement",
-            "trade"
-          ],
-          "capacity": 10,
-          "parent_id": "biome_2db667",
-          "data": {
-            "slot_index": 0
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "located_in",
-          "from_type": "Resource",
-          "to_type": "Location",
-          "description": "Находится в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "res_5cd90b",
-          "definition_id": "res_stone",
-          "type": "Resource",
-          "name": "Stone",
-          "tags": [
-            "common",
-            "building",
-            "mining",
-            "mineral"
-          ],
-          "parent_id": "loc_6a3b5b",
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_6a3b5b",
-          "definition_id": "loc_city",
-          "type": "Location",
-          "name": "Мегаполис в Край Впадина",
-          "tags": [
-            "settlement",
-            "trade",
-            "power"
-          ],
-          "capacity": 15,
-          "parent_id": "biome_2db667",
-          "data": {
-            "slot_index": 1
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "located_in",
-          "from_type": "Resource",
-          "to_type": "Location",
-          "description": "Находится в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "res_3107a7",
-          "definition_id": "res_parts",
-          "type": "Resource",
-          "name": "Редкий Parts",
-          "tags": [
-            "material",
-            "rare"
-          ],
-          "parent_id": "loc_6a3b5b",
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_6a3b5b",
-          "definition_id": "loc_city",
-          "type": "Location",
-          "name": "Мегаполис в Край Впадина",
-          "tags": [
-            "settlement",
-            "trade",
-            "power"
-          ],
-          "capacity": 15,
-          "parent_id": "biome_2db667",
-          "data": {
-            "slot_index": 1
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "located_in",
-          "from_type": "Resource",
-          "to_type": "Location",
-          "description": "Находится в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "fac_c26a06",
-          "definition_id": "fac_sea_kings",
-          "type": "Faction",
-          "name": "Рой Залив",
-          "tags": [
-            "trident",
-            "deep",
-            "water",
-            "faction"
-          ],
-          "parent_id": "loc_6a3b5b",
-          "data": {
-            "role": "military",
-            "creature_type": "beast",
-            "culture_vector": {
-              "aggression": 6,
-              "magic_affinity": 5,
-              "collectivism": 8,
-              "taboo": [
-                "fire",
-                "dry_land"
-              ],
-              "revered": [
-                "storm",
-                "depths",
-                "kraken"
-              ]
-            }
-          },
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_6a3b5b",
-          "definition_id": "loc_city",
-          "type": "Location",
-          "name": "Мегаполис в Край Впадина",
-          "tags": [
-            "settlement",
-            "trade",
-            "power"
-          ],
-          "capacity": 15,
-          "parent_id": "biome_2db667",
-          "data": {
-            "slot_index": 1
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "faction_located_in",
-          "from_type": "Faction",
-          "to_type": "Location",
-          "description": "Базируется в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "res_2bfc4b",
-          "definition_id": "res_eat",
-          "type": "Resource",
-          "name": "Редкий Eat",
-          "tags": [
-            "product",
-            "essential",
-            "rare"
-          ],
-          "parent_id": "loc_b746c0",
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_b746c0",
-          "definition_id": "loc_port",
-          "type": "Location",
-          "name": "Порт в Край Впадина",
-          "tags": [
-            "power",
-            "settlement",
-            "trade"
-          ],
-          "capacity": 10,
-          "parent_id": "biome_2db667",
-          "data": {
-            "slot_index": 2
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "located_in",
-          "from_type": "Resource",
-          "to_type": "Location",
-          "description": "Находится в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "res_266d10",
-          "definition_id": "res_parts",
-          "type": "Resource",
-          "name": "Редкий Parts",
-          "tags": [
-            "material",
-            "rare"
-          ],
-          "parent_id": "loc_b746c0",
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_b746c0",
-          "definition_id": "loc_port",
-          "type": "Location",
-          "name": "Порт в Край Впадина",
-          "tags": [
-            "power",
-            "settlement",
-            "trade"
-          ],
-          "capacity": 10,
-          "parent_id": "biome_2db667",
-          "data": {
-            "slot_index": 2
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "located_in",
-          "from_type": "Resource",
-          "to_type": "Location",
-          "description": "Находится в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "fac_83b671",
-          "definition_id": "fac_sea_kings",
-          "type": "Faction",
-          "name": "Рой Полуостров",
-          "tags": [
-            "trident",
-            "deep",
-            "water",
-            "faction"
-          ],
-          "parent_id": "loc_b746c0",
-          "data": {
-            "role": "military",
-            "creature_type": "beast",
-            "culture_vector": {
-              "aggression": 6,
-              "magic_affinity": 5,
-              "collectivism": 8,
-              "taboo": [
-                "fire",
-                "dry_land"
-              ],
-              "revered": [
-                "storm",
-                "depths",
-                "kraken"
-              ]
-            }
-          },
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_b746c0",
-          "definition_id": "loc_port",
-          "type": "Location",
-          "name": "Порт в Край Впадина",
-          "tags": [
-            "power",
-            "settlement",
-            "trade"
-          ],
-          "capacity": 10,
-          "parent_id": "biome_2db667",
-          "data": {
-            "slot_index": 2
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "faction_located_in",
-          "from_type": "Faction",
-          "to_type": "Location",
-          "description": "Базируется в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "res_6e36e5",
-          "definition_id": "res_other",
-          "type": "Resource",
-          "name": "Необычный Other",
-          "tags": [
-            "decor",
-            "building",
-            "uncommon"
-          ],
-          "parent_id": "loc_3e8fbf",
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_3e8fbf",
-          "definition_id": "loc_shrine",
-          "type": "Location",
-          "name": "Святилище в Хребет Железный Пик",
-          "tags": [
+            "hidden",
             "ritual",
-            "sacred"
+            "nonhuman"
           ],
           "capacity": 3,
-          "parent_id": "biome_80b8c7",
-          "data": {
-            "slot_index": 0
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "located_in",
-          "from_type": "Resource",
-          "to_type": "Location",
-          "description": "Находится в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "fac_4f68e8",
-          "definition_id": "fac_gargoyle_guardians",
-          "type": "Faction",
-          "name": "Стражи Камня",
-          "tags": [
-            "flying",
-            "faction",
-            "guard",
-            "stone"
-          ],
-          "parent_id": "loc_3e8fbf",
-          "data": {
-            "role": "military",
-            "creature_type": "construct",
-            "culture_vector": {
-              "aggression": 3,
-              "magic_affinity": 5,
-              "collectivism": 10,
-              "taboo": [
-                "flesh",
-                "leaving_post"
-              ],
-              "revered": [
-                "silence",
-                "stone",
-                "master"
-              ]
-            }
-          },
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_3e8fbf",
-          "definition_id": "loc_shrine",
-          "type": "Location",
-          "name": "Святилище в Хребет Железный Пик",
-          "tags": [
-            "ritual",
-            "sacred"
-          ],
-          "capacity": 3,
-          "parent_id": "biome_80b8c7",
+          "parent_id": "biome_68ca58",
           "data": {
             "slot_index": 0
           },
@@ -2876,299 +2107,30 @@
       },
       {
         "from_entity": {
-          "id": "res_afd644",
-          "definition_id": "res_parts",
+          "id": "res_a5ec06",
+          "definition_id": "res_wood",
           "type": "Resource",
-          "name": "Parts",
+          "name": "Ольха",
           "tags": [
-            "common",
-            "material"
-          ],
-          "parent_id": "loc_4304ca",
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_4304ca",
-          "definition_id": "loc_cave",
-          "type": "Location",
-          "name": "Пещера в Хребет Железный Пик",
-          "tags": [
-            "mining",
-            "hidden"
-          ],
-          "capacity": 5,
-          "parent_id": "biome_80b8c7",
-          "data": {
-            "slot_index": 1
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "located_in",
-          "from_type": "Resource",
-          "to_type": "Location",
-          "description": "Находится в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "res_4bc73c",
-          "definition_id": "res_eat",
-          "type": "Resource",
-          "name": "Необычный Eat",
-          "tags": [
-            "product",
-            "essential",
-            "uncommon"
-          ],
-          "parent_id": "loc_4304ca",
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_4304ca",
-          "definition_id": "loc_cave",
-          "type": "Location",
-          "name": "Пещера в Хребет Железный Пик",
-          "tags": [
-            "mining",
-            "hidden"
-          ],
-          "capacity": 5,
-          "parent_id": "biome_80b8c7",
-          "data": {
-            "slot_index": 1
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "located_in",
-          "from_type": "Resource",
-          "to_type": "Location",
-          "description": "Находится в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "fac_410316",
-          "definition_id": "fac_gargoyle_guardians",
-          "type": "Faction",
-          "name": "Хранители Хребет",
-          "tags": [
-            "flying",
-            "faction",
-            "guard",
-            "stone"
-          ],
-          "parent_id": "loc_4304ca",
-          "data": {
-            "role": "military",
-            "creature_type": "construct",
-            "culture_vector": {
-              "aggression": 3,
-              "magic_affinity": 5,
-              "collectivism": 10,
-              "taboo": [
-                "flesh",
-                "leaving_post"
-              ],
-              "revered": [
-                "silence",
-                "stone",
-                "master"
-              ]
-            }
-          },
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_4304ca",
-          "definition_id": "loc_cave",
-          "type": "Location",
-          "name": "Пещера в Хребет Железный Пик",
-          "tags": [
-            "mining",
-            "hidden"
-          ],
-          "capacity": 5,
-          "parent_id": "biome_80b8c7",
-          "data": {
-            "slot_index": 1
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "faction_located_in",
-          "from_type": "Faction",
-          "to_type": "Location",
-          "description": "Базируется в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "res_db98da",
-          "definition_id": "res_artificial",
-          "type": "Resource",
-          "name": "Artificial",
-          "tags": [
-            "common",
-            "knowledge",
-            "politic"
-          ],
-          "parent_id": "loc_0d3b09",
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_0d3b09",
-          "definition_id": "loc_shrine",
-          "type": "Location",
-          "name": "Святилище в Хребет Железный Пик",
-          "tags": [
-            "ritual",
-            "sacred"
-          ],
-          "capacity": 3,
-          "parent_id": "biome_80b8c7",
-          "data": {
-            "slot_index": 2
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "located_in",
-          "from_type": "Resource",
-          "to_type": "Location",
-          "description": "Находится в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "res_afa91d",
-          "definition_id": "res_stone",
-          "type": "Resource",
-          "name": "Stone",
-          "tags": [
-            "common",
-            "building",
-            "mining",
-            "mineral"
-          ],
-          "parent_id": "loc_b93297",
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_b93297",
-          "definition_id": "loc_mountain_pass",
-          "type": "Location",
-          "name": "Перевал в Край Козла",
-          "tags": [
-            "interest",
-            "no_res"
-          ],
-          "capacity": 3,
-          "parent_id": "biome_6fe22a",
-          "data": {
-            "slot_index": 0
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "located_in",
-          "from_type": "Resource",
-          "to_type": "Location",
-          "description": "Находится в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "fac_6e98d8",
-          "definition_id": "fac_mining_dwarves",
-          "type": "Faction",
-          "name": "Клан «Орла»",
-          "tags": [
-            "dwarf",
-            "faction",
-            "ore",
-            "craft",
-            "stone"
-          ],
-          "parent_id": "loc_b93297",
-          "data": {
-            "role": "mining",
-            "creature_type": "humanoid",
-            "culture_vector": {
-              "aggression": 1,
-              "magic_affinity": -4,
-              "collectivism": 8,
-              "taboo": [
-                "swimming",
-                "sky",
-                "elves"
-              ],
-              "revered": [
-                "craft",
-                "hammer",
-                "ancestors"
-              ]
-            }
-          },
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_b93297",
-          "definition_id": "loc_mountain_pass",
-          "type": "Location",
-          "name": "Перевал в Край Козла",
-          "tags": [
-            "interest",
-            "no_res"
-          ],
-          "capacity": 3,
-          "parent_id": "biome_6fe22a",
-          "data": {
-            "slot_index": 0
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "faction_located_in",
-          "from_type": "Faction",
-          "to_type": "Location",
-          "description": "Базируется в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "res_b76a68",
-          "definition_id": "res_ore",
-          "type": "Resource",
-          "name": "Редкий Ore",
-          "tags": [
-            "metal",
-            "armor",
-            "mining",
             "tools",
-            "weapon",
-            "rare"
+            "uncommon",
+            "building",
+            "organic"
           ],
-          "parent_id": "loc_685423",
+          "parent_id": "loc_bb880c",
           "created_at": 0
         },
         "to_entity": {
-          "id": "loc_685423",
-          "definition_id": "loc_tower",
+          "id": "loc_bb880c",
+          "definition_id": "loc_town",
           "type": "Location",
-          "name": "Башня в Край Козла",
+          "name": "Город в Лес Зелёный Завет",
           "tags": [
-            "interest"
+            "trade",
+            "settlement"
           ],
-          "capacity": 3,
-          "parent_id": "biome_6fe22a",
+          "capacity": 8,
+          "parent_id": "biome_68ca58",
           "data": {
             "slot_index": 1
           },
@@ -3184,29 +2146,124 @@
       },
       {
         "from_entity": {
-          "id": "res_6221f3",
-          "definition_id": "res_stone",
+          "id": "res_b32caf",
+          "definition_id": "res_artificial",
           "type": "Resource",
-          "name": "Необычный Stone",
+          "name": "Метод сбора грибов",
           "tags": [
-            "building",
-            "mining",
-            "mineral",
-            "uncommon"
+            "politic",
+            "common",
+            "knowledge"
           ],
-          "parent_id": "loc_acee53",
+          "parent_id": "loc_bb880c",
           "created_at": 0
         },
         "to_entity": {
-          "id": "loc_acee53",
-          "definition_id": "loc_tower",
+          "id": "loc_bb880c",
+          "definition_id": "loc_town",
           "type": "Location",
-          "name": "Башня в Край Козла",
+          "name": "Город в Лес Зелёный Завет",
           "tags": [
-            "interest"
+            "trade",
+            "settlement"
           ],
-          "capacity": 3,
-          "parent_id": "biome_6fe22a",
+          "capacity": 8,
+          "parent_id": "biome_68ca58",
+          "data": {
+            "slot_index": 1
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "located_in",
+          "from_type": "Resource",
+          "to_type": "Location",
+          "description": "Находится в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "fac_a614d5",
+          "definition_id": "fac_tree_spirits",
+          "type": "Faction",
+          "name": "Духи Листа",
+          "tags": [
+            "faction",
+            "ancient",
+            "slow",
+            "nature"
+          ],
+          "parent_id": "loc_bb880c",
+          "data": {
+            "role": "religious",
+            "creature_type": "spirit",
+            "culture_vector": {
+              "aggression": 2,
+              "magic_affinity": 10,
+              "collectivism": 10,
+              "taboo": [
+                "fire",
+                "axes"
+              ],
+              "revered": [
+                "sun",
+                "water",
+                "roots"
+              ]
+            }
+          },
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_bb880c",
+          "definition_id": "loc_town",
+          "type": "Location",
+          "name": "Город в Лес Зелёный Завет",
+          "tags": [
+            "trade",
+            "settlement"
+          ],
+          "capacity": 8,
+          "parent_id": "biome_68ca58",
+          "data": {
+            "slot_index": 1
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "faction_located_in",
+          "from_type": "Faction",
+          "to_type": "Location",
+          "description": "Базируется в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "res_24b7ed",
+          "definition_id": "res_artificial",
+          "type": "Resource",
+          "name": "Метод сбора грибов",
+          "tags": [
+            "politic",
+            "common",
+            "knowledge"
+          ],
+          "parent_id": "loc_293322",
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_293322",
+          "definition_id": "loc_temple",
+          "type": "Location",
+          "name": "Храм в Лес Зелёный Завет",
+          "tags": [
+            "ritual",
+            "sacred"
+          ],
+          "capacity": 6,
+          "parent_id": "biome_68ca58",
           "data": {
             "slot_index": 2
           },
@@ -3222,86 +2279,30 @@
       },
       {
         "from_entity": {
-          "id": "fac_9f695a",
-          "definition_id": "fac_mining_dwarves",
-          "type": "Faction",
-          "name": "Гильдия «Камня»",
-          "tags": [
-            "dwarf",
-            "faction",
-            "ore",
-            "craft",
-            "stone"
-          ],
-          "parent_id": "loc_acee53",
-          "data": {
-            "role": "mining",
-            "creature_type": "humanoid",
-            "culture_vector": {
-              "aggression": 1,
-              "magic_affinity": -4,
-              "collectivism": 8,
-              "taboo": [
-                "swimming",
-                "sky",
-                "elves"
-              ],
-              "revered": [
-                "craft",
-                "hammer",
-                "ancestors"
-              ]
-            }
-          },
-          "created_at": 0
-        },
-        "to_entity": {
-          "id": "loc_acee53",
-          "definition_id": "loc_tower",
-          "type": "Location",
-          "name": "Башня в Край Козла",
-          "tags": [
-            "interest"
-          ],
-          "capacity": 3,
-          "parent_id": "biome_6fe22a",
-          "data": {
-            "slot_index": 2
-          },
-          "created_at": 0
-        },
-        "relation_type": {
-          "id": "faction_located_in",
-          "from_type": "Faction",
-          "to_type": "Location",
-          "description": "Базируется в",
-          "is_symmetric": false
-        }
-      },
-      {
-        "from_entity": {
-          "id": "res_3339c6",
-          "definition_id": "res_other",
+          "id": "res_295b4d",
+          "definition_id": "res_wood",
           "type": "Resource",
-          "name": "Other",
+          "name": "Крепкая древесина",
           "tags": [
-            "decor",
+            "tools",
+            "uncommon",
             "building",
-            "common"
+            "organic"
           ],
-          "parent_id": "loc_82a23d",
+          "parent_id": "loc_631002",
           "created_at": 0
         },
         "to_entity": {
-          "id": "loc_82a23d",
-          "definition_id": "loc_village",
+          "id": "loc_631002",
+          "definition_id": "loc_temple",
           "type": "Location",
-          "name": "Деревня в Тенистый Земли",
+          "name": "Храм в Край Хижина",
           "tags": [
-            "settlement"
+            "ritual",
+            "sacred"
           ],
-          "capacity": 4,
-          "parent_id": "biome_c07e88",
+          "capacity": 6,
+          "parent_id": "biome_433ae9",
           "data": {
             "slot_index": 0
           },
@@ -3317,17 +2318,17 @@
       },
       {
         "from_entity": {
-          "id": "fac_b65c86",
+          "id": "fac_9a49d2",
           "definition_id": "fac_trading_vampires",
           "type": "Faction",
-          "name": "Туманный Нежить",
+          "name": "Прах Стрекоз",
           "tags": [
             "aristocrat",
-            "politics",
             "faction",
+            "politics",
             "blood"
           ],
-          "parent_id": "loc_82a23d",
+          "parent_id": "loc_631002",
           "data": {
             "role": "trading",
             "creature_type": "undead",
@@ -3350,15 +2351,16 @@
           "created_at": 0
         },
         "to_entity": {
-          "id": "loc_82a23d",
-          "definition_id": "loc_village",
+          "id": "loc_631002",
+          "definition_id": "loc_temple",
           "type": "Location",
-          "name": "Деревня в Тенистый Земли",
+          "name": "Храм в Край Хижина",
           "tags": [
-            "settlement"
+            "ritual",
+            "sacred"
           ],
-          "capacity": 4,
-          "parent_id": "biome_c07e88",
+          "capacity": 6,
+          "parent_id": "biome_433ae9",
           "data": {
             "slot_index": 0
           },
@@ -3374,30 +2376,31 @@
       },
       {
         "from_entity": {
-          "id": "res_e0977f",
-          "definition_id": "res_herbs",
+          "id": "res_42db4e",
+          "definition_id": "res_ore",
           "type": "Resource",
-          "name": "Herbs",
+          "name": "Руда",
           "tags": [
-            "common",
-            "organic",
-            "poison",
-            "drug"
+            "tools",
+            "weapon",
+            "armor",
+            "mining",
+            "metal",
+            "uncommon"
           ],
-          "parent_id": "loc_9a51fb",
+          "parent_id": "loc_c8f8dc",
           "created_at": 0
         },
         "to_entity": {
-          "id": "loc_9a51fb",
-          "definition_id": "loc_temple",
+          "id": "loc_c8f8dc",
+          "definition_id": "loc_village",
           "type": "Location",
-          "name": "Храм в Тенистый Земли",
+          "name": "Деревня в Край Хижина",
           "tags": [
-            "ritual",
-            "sacred"
+            "settlement"
           ],
-          "capacity": 6,
-          "parent_id": "biome_c07e88",
+          "capacity": 4,
+          "parent_id": "biome_433ae9",
           "data": {
             "slot_index": 1
           },
@@ -3413,17 +2416,17 @@
       },
       {
         "from_entity": {
-          "id": "fac_e58a17",
+          "id": "fac_c5cb87",
           "definition_id": "fac_undead_temple",
           "type": "Faction",
           "name": "Хор Мертвых",
           "tags": [
-            "ritual",
-            "faction",
             "magic",
-            "death"
+            "death",
+            "ritual",
+            "faction"
           ],
-          "parent_id": "loc_9a51fb",
+          "parent_id": "loc_c8f8dc",
           "data": {
             "role": "religious",
             "creature_type": "undead",
@@ -3432,29 +2435,1192 @@
               "magic_affinity": 10,
               "collectivism": 10,
               "taboo": [
-                "life",
                 "sun",
+                "life",
                 "healing"
               ],
               "revered": [
-                "eternal_silence",
-                "entropy"
+                "entropy",
+                "eternal_silence"
               ]
             }
           },
           "created_at": 0
         },
         "to_entity": {
-          "id": "loc_9a51fb",
-          "definition_id": "loc_temple",
+          "id": "loc_c8f8dc",
+          "definition_id": "loc_village",
           "type": "Location",
-          "name": "Храм в Тенистый Земли",
+          "name": "Деревня в Край Хижина",
           "tags": [
+            "settlement"
+          ],
+          "capacity": 4,
+          "parent_id": "biome_433ae9",
+          "data": {
+            "slot_index": 1
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "faction_located_in",
+          "from_type": "Faction",
+          "to_type": "Location",
+          "description": "Базируется в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "res_7b9471",
+          "definition_id": "res_wood",
+          "type": "Resource",
+          "name": "Песчаный баобаб",
+          "tags": [
+            "building",
+            "tools",
+            "rare",
+            "organic"
+          ],
+          "parent_id": "loc_60c6dd",
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_60c6dd",
+          "definition_id": "loc_village",
+          "type": "Location",
+          "name": "Деревня в Знойный Земли",
+          "tags": [
+            "settlement"
+          ],
+          "capacity": 4,
+          "parent_id": "biome_4de62a",
+          "data": {
+            "slot_index": 0
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "located_in",
+          "from_type": "Resource",
+          "to_type": "Location",
+          "description": "Находится в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "fac_aae02d",
+          "definition_id": "fac_sand_wyverns",
+          "type": "Faction",
+          "name": "Стая Скрытого оазиса",
+          "tags": [
+            "flying",
+            "desert",
+            "faction",
+            "predator"
+          ],
+          "parent_id": "loc_60c6dd",
+          "data": {
+            "role": "military",
+            "creature_type": "beast",
+            "culture_vector": {
+              "aggression": 10,
+              "magic_affinity": 0,
+              "collectivism": 2,
+              "taboo": [
+                "weakness"
+              ],
+              "revered": [
+                "meat",
+                "sky",
+                "sun"
+              ]
+            }
+          },
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_60c6dd",
+          "definition_id": "loc_village",
+          "type": "Location",
+          "name": "Деревня в Знойный Земли",
+          "tags": [
+            "settlement"
+          ],
+          "capacity": 4,
+          "parent_id": "biome_4de62a",
+          "data": {
+            "slot_index": 0
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "faction_located_in",
+          "from_type": "Faction",
+          "to_type": "Location",
+          "description": "Базируется в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "res_7e3530",
+          "definition_id": "res_wood",
+          "type": "Resource",
+          "name": "Песчаная ветвь",
+          "tags": [
+            "building",
+            "tools",
+            "common",
+            "organic"
+          ],
+          "parent_id": "loc_47cef7",
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_47cef7",
+          "definition_id": "loc_oasis",
+          "type": "Location",
+          "name": "Оазис в Знойный Земли",
+          "tags": [
+            "trade",
+            "settlement"
+          ],
+          "capacity": 8,
+          "parent_id": "biome_4de62a",
+          "data": {
+            "slot_index": 1
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "located_in",
+          "from_type": "Resource",
+          "to_type": "Location",
+          "description": "Находится в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "fac_5f9227",
+          "definition_id": "fac_sand_wyverns",
+          "type": "Faction",
+          "name": "Рой Песок",
+          "tags": [
+            "flying",
+            "desert",
+            "faction",
+            "predator"
+          ],
+          "parent_id": "loc_47cef7",
+          "data": {
+            "role": "military",
+            "creature_type": "beast",
+            "culture_vector": {
+              "aggression": 10,
+              "magic_affinity": 0,
+              "collectivism": 2,
+              "taboo": [
+                "weakness"
+              ],
+              "revered": [
+                "meat",
+                "sky",
+                "sun"
+              ]
+            }
+          },
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_47cef7",
+          "definition_id": "loc_oasis",
+          "type": "Location",
+          "name": "Оазис в Знойный Земли",
+          "tags": [
+            "trade",
+            "settlement"
+          ],
+          "capacity": 8,
+          "parent_id": "biome_4de62a",
+          "data": {
+            "slot_index": 1
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "faction_located_in",
+          "from_type": "Faction",
+          "to_type": "Location",
+          "description": "Базируется в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "res_777c7f",
+          "definition_id": "res_wood",
+          "type": "Resource",
+          "name": "Берёза",
+          "tags": [
+            "building",
+            "tools",
+            "common",
+            "organic"
+          ],
+          "parent_id": "loc_219fee",
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_219fee",
+          "definition_id": "loc_spirit_well",
+          "type": "Location",
+          "name": "Источник духов в Лес Тенистый Корень",
+          "tags": [
+            "hidden",
+            "nonhuman",
             "ritual",
             "sacred"
           ],
-          "capacity": 6,
-          "parent_id": "biome_c07e88",
+          "capacity": 3,
+          "parent_id": "biome_075ad2",
+          "data": {
+            "slot_index": 0
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "located_in",
+          "from_type": "Resource",
+          "to_type": "Location",
+          "description": "Находится в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "fac_778197",
+          "definition_id": "fac_trading_elves",
+          "type": "Faction",
+          "name": "Торговый союз «Цветка»",
+          "tags": [
+            "politic",
+            "craft",
+            "art",
+            "economy",
+            "faction",
+            "luxury",
+            "elf"
+          ],
+          "parent_id": "loc_219fee",
+          "data": {
+            "role": "trading",
+            "creature_type": "humanoid",
+            "culture_vector": {
+              "aggression": -3,
+              "magic_affinity": 8,
+              "collectivism": 4,
+              "taboo": [
+                "crude_metal",
+                "ugliness"
+              ],
+              "revered": [
+                "wine",
+                "stars",
+                "art"
+              ]
+            }
+          },
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_219fee",
+          "definition_id": "loc_spirit_well",
+          "type": "Location",
+          "name": "Источник духов в Лес Тенистый Корень",
+          "tags": [
+            "hidden",
+            "nonhuman",
+            "ritual",
+            "sacred"
+          ],
+          "capacity": 3,
+          "parent_id": "biome_075ad2",
+          "data": {
+            "slot_index": 0
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "faction_located_in",
+          "from_type": "Faction",
+          "to_type": "Location",
+          "description": "Базируется в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "res_40aacc",
+          "definition_id": "res_herbs",
+          "type": "Resource",
+          "name": "Полынь",
+          "tags": [
+            "poison",
+            "drug",
+            "common",
+            "organic"
+          ],
+          "parent_id": "loc_f6255b",
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_f6255b",
+          "definition_id": "loc_ruins",
+          "type": "Location",
+          "name": "Руины в Лес Тенистый Корень",
+          "tags": [
+            "dangerous",
+            "hidden",
+            "ruins",
+            "nonhuman"
+          ],
+          "capacity": 2,
+          "parent_id": "biome_075ad2",
+          "data": {
+            "slot_index": 1
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "located_in",
+          "from_type": "Resource",
+          "to_type": "Location",
+          "description": "Находится в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "res_3f2f9f",
+          "definition_id": "res_eat",
+          "type": "Resource",
+          "name": "Булка",
+          "tags": [
+            "essential",
+            "product",
+            "uncommon"
+          ],
+          "parent_id": "loc_f6255b",
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_f6255b",
+          "definition_id": "loc_ruins",
+          "type": "Location",
+          "name": "Руины в Лес Тенистый Корень",
+          "tags": [
+            "dangerous",
+            "hidden",
+            "ruins",
+            "nonhuman"
+          ],
+          "capacity": 2,
+          "parent_id": "biome_075ad2",
+          "data": {
+            "slot_index": 1
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "located_in",
+          "from_type": "Resource",
+          "to_type": "Location",
+          "description": "Находится в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "fac_b2e860",
+          "definition_id": "fac_tree_spirits",
+          "type": "Faction",
+          "name": "Духи Тумана",
+          "tags": [
+            "faction",
+            "ancient",
+            "slow",
+            "nature"
+          ],
+          "parent_id": "loc_f6255b",
+          "data": {
+            "role": "religious",
+            "creature_type": "spirit",
+            "culture_vector": {
+              "aggression": 2,
+              "magic_affinity": 10,
+              "collectivism": 10,
+              "taboo": [
+                "fire",
+                "axes"
+              ],
+              "revered": [
+                "sun",
+                "water",
+                "roots"
+              ]
+            }
+          },
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_f6255b",
+          "definition_id": "loc_ruins",
+          "type": "Location",
+          "name": "Руины в Лес Тенистый Корень",
+          "tags": [
+            "dangerous",
+            "hidden",
+            "ruins",
+            "nonhuman"
+          ],
+          "capacity": 2,
+          "parent_id": "biome_075ad2",
+          "data": {
+            "slot_index": 1
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "faction_located_in",
+          "from_type": "Faction",
+          "to_type": "Location",
+          "description": "Базируется в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "res_7d6450",
+          "definition_id": "res_herbs",
+          "type": "Resource",
+          "name": "Лунный корень",
+          "tags": [
+            "poison",
+            "uncommon",
+            "drug",
+            "organic"
+          ],
+          "parent_id": "loc_7e00bf",
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_7e00bf",
+          "definition_id": "loc_town",
+          "type": "Location",
+          "name": "Город в Лес Тенистый Корень",
+          "tags": [
+            "trade",
+            "settlement"
+          ],
+          "capacity": 8,
+          "parent_id": "biome_075ad2",
+          "data": {
+            "slot_index": 2
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "located_in",
+          "from_type": "Resource",
+          "to_type": "Location",
+          "description": "Находится в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "res_cf3ca2",
+          "definition_id": "res_herbs",
+          "type": "Resource",
+          "name": "Цветок бессмертия",
+          "tags": [
+            "poison",
+            "drug",
+            "rare",
+            "organic"
+          ],
+          "parent_id": "loc_7e00bf",
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_7e00bf",
+          "definition_id": "loc_town",
+          "type": "Location",
+          "name": "Город в Лес Тенистый Корень",
+          "tags": [
+            "trade",
+            "settlement"
+          ],
+          "capacity": 8,
+          "parent_id": "biome_075ad2",
+          "data": {
+            "slot_index": 2
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "located_in",
+          "from_type": "Resource",
+          "to_type": "Location",
+          "description": "Находится в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "fac_9ba528",
+          "definition_id": "fac_trading_elves",
+          "type": "Faction",
+          "name": "Компания «Зелёный Храм»",
+          "tags": [
+            "politic",
+            "craft",
+            "art",
+            "economy",
+            "faction",
+            "luxury",
+            "elf"
+          ],
+          "parent_id": "loc_7e00bf",
+          "data": {
+            "role": "trading",
+            "creature_type": "humanoid",
+            "culture_vector": {
+              "aggression": -3,
+              "magic_affinity": 8,
+              "collectivism": 4,
+              "taboo": [
+                "crude_metal",
+                "ugliness"
+              ],
+              "revered": [
+                "wine",
+                "stars",
+                "art"
+              ]
+            }
+          },
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_7e00bf",
+          "definition_id": "loc_town",
+          "type": "Location",
+          "name": "Город в Лес Тенистый Корень",
+          "tags": [
+            "trade",
+            "settlement"
+          ],
+          "capacity": 8,
+          "parent_id": "biome_075ad2",
+          "data": {
+            "slot_index": 2
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "faction_located_in",
+          "from_type": "Faction",
+          "to_type": "Location",
+          "description": "Базируется в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "res_8f8853",
+          "definition_id": "res_ore",
+          "type": "Resource",
+          "name": "Железо",
+          "tags": [
+            "tools",
+            "weapon",
+            "armor",
+            "mining",
+            "metal",
+            "uncommon"
+          ],
+          "parent_id": "loc_5a1552",
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_5a1552",
+          "definition_id": "loc_town",
+          "type": "Location",
+          "name": "Город в Хребет Мрачный Пик",
+          "tags": [
+            "trade",
+            "settlement"
+          ],
+          "capacity": 8,
+          "parent_id": "biome_893cda",
+          "data": {
+            "slot_index": 0
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "located_in",
+          "from_type": "Resource",
+          "to_type": "Location",
+          "description": "Находится в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "fac_3a6360",
+          "definition_id": "fac_mining_dwarves",
+          "type": "Faction",
+          "name": "Союз «Хребет»",
+          "tags": [
+            "craft",
+            "ore",
+            "stone",
+            "faction",
+            "veteran",
+            "dwarf"
+          ],
+          "parent_id": "loc_5a1552",
+          "data": {
+            "role": "mining",
+            "creature_type": "humanoid",
+            "culture_vector": {
+              "aggression": 1,
+              "magic_affinity": -4,
+              "collectivism": 8,
+              "taboo": [
+                "elves",
+                "sky",
+                "swimming"
+              ],
+              "revered": [
+                "ancestors",
+                "craft",
+                "hammer"
+              ]
+            }
+          },
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_5a1552",
+          "definition_id": "loc_town",
+          "type": "Location",
+          "name": "Город в Хребет Мрачный Пик",
+          "tags": [
+            "trade",
+            "settlement"
+          ],
+          "capacity": 8,
+          "parent_id": "biome_893cda",
+          "data": {
+            "slot_index": 0
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "faction_located_in",
+          "from_type": "Faction",
+          "to_type": "Location",
+          "description": "Базируется в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "res_69e5a3",
+          "definition_id": "res_other",
+          "type": "Resource",
+          "name": "Ониксовый уголь",
+          "tags": [
+            "decor",
+            "uncommon",
+            "building"
+          ],
+          "parent_id": "loc_1304d5",
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_1304d5",
+          "definition_id": "loc_tower",
+          "type": "Location",
+          "name": "Башня в Хребет Мрачный Пик",
+          "tags": [
+            "interest"
+          ],
+          "capacity": 3,
+          "parent_id": "biome_893cda",
+          "data": {
+            "slot_index": 1
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "located_in",
+          "from_type": "Resource",
+          "to_type": "Location",
+          "description": "Находится в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "fac_7aac67",
+          "definition_id": "fac_gargoyle_guardians",
+          "type": "Faction",
+          "name": "Хранители Трон",
+          "tags": [
+            "guard",
+            "flying",
+            "stone",
+            "faction"
+          ],
+          "parent_id": "loc_1304d5",
+          "data": {
+            "role": "military",
+            "creature_type": "construct",
+            "culture_vector": {
+              "aggression": 3,
+              "magic_affinity": 5,
+              "collectivism": 10,
+              "taboo": [
+                "leaving_post",
+                "flesh"
+              ],
+              "revered": [
+                "master",
+                "silence",
+                "stone"
+              ]
+            }
+          },
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_1304d5",
+          "definition_id": "loc_tower",
+          "type": "Location",
+          "name": "Башня в Хребет Мрачный Пик",
+          "tags": [
+            "interest"
+          ],
+          "capacity": 3,
+          "parent_id": "biome_893cda",
+          "data": {
+            "slot_index": 1
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "faction_located_in",
+          "from_type": "Faction",
+          "to_type": "Location",
+          "description": "Базируется в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "res_484af1",
+          "definition_id": "res_ore",
+          "type": "Resource",
+          "name": "Мифрил",
+          "tags": [
+            "tools",
+            "weapon",
+            "armor",
+            "mining",
+            "metal",
+            "rare"
+          ],
+          "parent_id": "loc_15e94d",
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_15e94d",
+          "definition_id": "loc_tower",
+          "type": "Location",
+          "name": "Башня в Край Камня",
+          "tags": [
+            "interest"
+          ],
+          "capacity": 3,
+          "parent_id": "biome_896527",
+          "data": {
+            "slot_index": 0
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "located_in",
+          "from_type": "Resource",
+          "to_type": "Location",
+          "description": "Находится в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "fac_5bd15e",
+          "definition_id": "fac_mining_dwarves",
+          "type": "Faction",
+          "name": "Клан «Козла»",
+          "tags": [
+            "craft",
+            "ore",
+            "stone",
+            "faction",
+            "dwarf"
+          ],
+          "parent_id": "loc_15e94d",
+          "data": {
+            "role": "mining",
+            "creature_type": "humanoid",
+            "culture_vector": {
+              "aggression": 1,
+              "magic_affinity": -4,
+              "collectivism": 8,
+              "taboo": [
+                "elves",
+                "sky",
+                "swimming"
+              ],
+              "revered": [
+                "ancestors",
+                "craft",
+                "hammer"
+              ]
+            }
+          },
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_15e94d",
+          "definition_id": "loc_tower",
+          "type": "Location",
+          "name": "Башня в Край Камня",
+          "tags": [
+            "interest"
+          ],
+          "capacity": 3,
+          "parent_id": "biome_896527",
+          "data": {
+            "slot_index": 0
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "faction_located_in",
+          "from_type": "Faction",
+          "to_type": "Location",
+          "description": "Базируется в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "res_6d39eb",
+          "definition_id": "res_artificial",
+          "type": "Resource",
+          "name": "Рецепт горной чачи",
+          "tags": [
+            "politic",
+            "common",
+            "knowledge"
+          ],
+          "parent_id": "loc_dcae9b",
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_dcae9b",
+          "definition_id": "loc_tower",
+          "type": "Location",
+          "name": "Башня в Край Камня",
+          "tags": [
+            "interest"
+          ],
+          "capacity": 3,
+          "parent_id": "biome_896527",
+          "data": {
+            "slot_index": 1
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "located_in",
+          "from_type": "Resource",
+          "to_type": "Location",
+          "description": "Находится в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "fac_666ffd",
+          "definition_id": "fac_mining_dwarves",
+          "type": "Faction",
+          "name": "Гильдия «Орла»",
+          "tags": [
+            "craft",
+            "ore",
+            "stone",
+            "faction",
+            "dwarf"
+          ],
+          "parent_id": "loc_dcae9b",
+          "data": {
+            "role": "mining",
+            "creature_type": "humanoid",
+            "culture_vector": {
+              "aggression": 1,
+              "magic_affinity": -4,
+              "collectivism": 8,
+              "taboo": [
+                "elves",
+                "sky",
+                "swimming"
+              ],
+              "revered": [
+                "ancestors",
+                "craft",
+                "hammer"
+              ]
+            }
+          },
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_dcae9b",
+          "definition_id": "loc_tower",
+          "type": "Location",
+          "name": "Башня в Край Камня",
+          "tags": [
+            "interest"
+          ],
+          "capacity": 3,
+          "parent_id": "biome_896527",
+          "data": {
+            "slot_index": 1
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "faction_located_in",
+          "from_type": "Faction",
+          "to_type": "Location",
+          "description": "Базируется в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "res_8e69fb",
+          "definition_id": "res_wood",
+          "type": "Resource",
+          "name": "Древесина",
+          "tags": [
+            "building",
+            "tools",
+            "common",
+            "organic"
+          ],
+          "parent_id": "loc_7459fa",
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_7459fa",
+          "definition_id": "loc_tower",
+          "type": "Location",
+          "name": "Башня в Край Камня",
+          "tags": [
+            "interest"
+          ],
+          "capacity": 3,
+          "parent_id": "biome_896527",
+          "data": {
+            "slot_index": 2
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "located_in",
+          "from_type": "Resource",
+          "to_type": "Location",
+          "description": "Находится в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "res_77416c",
+          "definition_id": "res_artificial",
+          "type": "Resource",
+          "name": "Разведданные",
+          "tags": [
+            "politic",
+            "uncommon",
+            "knowledge"
+          ],
+          "parent_id": "loc_62a7d5",
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_62a7d5",
+          "definition_id": "loc_cave",
+          "type": "Location",
+          "name": "Пещера в Необъятный Земли",
+          "tags": [
+            "mining",
+            "hidden"
+          ],
+          "capacity": 5,
+          "parent_id": "biome_d9532f",
+          "data": {
+            "slot_index": 0
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "located_in",
+          "from_type": "Resource",
+          "to_type": "Location",
+          "description": "Находится в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "res_46e128",
+          "definition_id": "res_eat",
+          "type": "Resource",
+          "name": "Виски",
+          "tags": [
+            "essential",
+            "product",
+            "uncommon"
+          ],
+          "parent_id": "loc_62a7d5",
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_62a7d5",
+          "definition_id": "loc_cave",
+          "type": "Location",
+          "name": "Пещера в Необъятный Земли",
+          "tags": [
+            "mining",
+            "hidden"
+          ],
+          "capacity": 5,
+          "parent_id": "biome_d9532f",
+          "data": {
+            "slot_index": 0
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "located_in",
+          "from_type": "Resource",
+          "to_type": "Location",
+          "description": "Находится в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "res_60cb00",
+          "definition_id": "res_parts",
+          "type": "Resource",
+          "name": "Чешуя дракона",
+          "tags": [
+            "material",
+            "rare"
+          ],
+          "parent_id": "loc_8d67b4",
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_8d67b4",
+          "definition_id": "loc_tower",
+          "type": "Location",
+          "name": "Башня в Необъятный Земли",
+          "tags": [
+            "interest"
+          ],
+          "capacity": 3,
+          "parent_id": "biome_d9532f",
+          "data": {
+            "slot_index": 1
+          },
+          "created_at": 0
+        },
+        "relation_type": {
+          "id": "located_in",
+          "from_type": "Resource",
+          "to_type": "Location",
+          "description": "Находится в",
+          "is_symmetric": false
+        }
+      },
+      {
+        "from_entity": {
+          "id": "fac_106602",
+          "definition_id": "fac_human_trading_guild",
+          "type": "Faction",
+          "name": "Торговый союз «Озера»",
+          "tags": [
+            "politic",
+            "economy",
+            "diplomacy",
+            "faction",
+            "coin"
+          ],
+          "parent_id": "loc_8d67b4",
+          "data": {
+            "role": "trading",
+            "creature_type": "humanoid",
+            "culture_vector": {
+              "aggression": -4,
+              "magic_affinity": -2,
+              "collectivism": 3,
+              "taboo": [
+                "theft",
+                "charity",
+                "poverty"
+              ],
+              "revered": [
+                "stability",
+                "gold",
+                "contracts"
+              ]
+            }
+          },
+          "created_at": 0
+        },
+        "to_entity": {
+          "id": "loc_8d67b4",
+          "definition_id": "loc_tower",
+          "type": "Location",
+          "name": "Башня в Необъятный Земли",
+          "tags": [
+            "interest"
+          ],
+          "capacity": 3,
+          "parent_id": "biome_d9532f",
           "data": {
             "slot_index": 1
           },

@@ -621,6 +621,104 @@ class ConflictSystem:
 
         # 4. Разные веры (по умолчанию)
         return 1.2
+    
+    def calculate_power(self, faction: Entity) -> float:
+        """
+        Рассчитывает динамическую силу фракции.
+        Формула: Base + (Leaders * 10) + (Vassals * 5) + (Resources * 2)
+        """
+        # 1. Базовая сила из шаблона (или дефолт)
+        base_power = faction.data.get("base_power", 10)
+        
+        # 2. Сила Лидеров
+        # Ищем всех персонажей, которые привязаны к фракции (parent_id) 
+        # и не имеют тегов dead/inactive
+        # (Используем qs.get_children, если он есть, или фильтруем вручную)
+        leaders = [
+            e for e in self.qs.graph.entities.values()
+            if e.parent_id == faction.id 
+            and e.type == EntityType.CHARACTER 
+            and "inactive" not in e.tags
+        ]
+        # Каждый лидер дает ощутимый бонус. 
+        # Если лидер имеет тег "general" или "hero", можно давать больше
+        leader_power = sum(20 if "hero" in l.tags else 10 for l in leaders)
+
+        # 3. Вассалы (поглощенные фракции)
+        # Это фракции, у которых parent_id = наша фракция
+        vassals = [
+            e for e in self.qs.graph.entities.values()
+            if e.parent_id == faction.id
+            and e.type == EntityType.FACTION
+            and "dead" not in e.tags
+        ]
+        vassal_power = len(vassals) * 15
+
+        # 4. Ресурсы в локации (Опционально)
+        # Если фракция владеет локацией, она получает силу от ресурсов
+        # (Упрощенно: считаем ресурсы в локации, где сидит фракция)
+        resource_power = 0
+        location = self.qs.get_entity(faction.parent_id)
+        if location:
+            resources = [
+                e for e in self.qs.graph.entities.values()
+                if e.parent_id == location.id and e.type == EntityType.RESOURCE
+            ]
+            resource_power = len(resources) * 5
+
+        total = base_power + leader_power + vassal_power + resource_power
+        
+        # Сохраняем в data для UI/Debugging
+        faction.data["current_power"] = total
+        return total
+    
+    def _check_imperial_stability(self, faction: Entity) -> float:
+        """
+        Возвращает риск распада (0.0 - 1.0).
+        Чем больше владений превышает лимит, тем выше риск.
+        """
+        # 1. Считаем владения
+        # Вассалы (другие фракции под контролем)
+        vassals = [
+            e for e in self.qs.graph.entities.values()
+            if e.parent_id == faction.id and e.type == EntityType.FACTION
+            and "dead" not in e.tags
+        ]
+        
+        # Территории (локации под контролем)
+        # Если ваша модель подразумевает, что фракция является "родителем" локации
+        territories = [
+            e for e in self.qs.graph.entities.values()
+            if e.parent_id == faction.id and e.type == EntityType.LOCATION
+        ]
+
+        # 2. Вычисляем нагрузку (Strain)
+        # Вассалами управлять сложнее, чем прямой территорией
+        strain = len(territories) * 1.0 + len(vassals) * 2.5
+        
+        # 3. Вычисляем лимит (Capacity)
+        # Базовая сила (из шаблона) + Бонусы от лидеров
+        base_cap = faction.data.get("base_power", 10)
+        # Умные лидеры помогают управлять империей
+        leaders = [
+            e for e in self.qs.graph.entities.values()
+            if e.parent_id == faction.id and e.type == EntityType.CHARACTER
+            and "dead" not in e.tags
+        ]
+        admin_bonus = len(leaders) * 5
+        
+        capacity = base_cap + admin_bonus
+        
+        # 4. Расчет риска
+        if strain <= capacity:
+            return 0.0
+        
+        # Перегрузка!
+        overstretch = strain - capacity
+        # Шанс растет на 5% за каждую единицу перегрузки
+        risk = min(0.8, overstretch * 0.05) 
+        
+        return risk
 
     def _calculate_cultural_tension(self, f1, f2, active_global_wars: List[Entity] = None) -> float:
         tension = 0.0

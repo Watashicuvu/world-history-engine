@@ -6,10 +6,10 @@ from dishka.integrations.fastapi import DishkaRoute
 
 # Импортируем ваши модели шаблонов
 from src.services.world_query_service import WorldQueryService
-from src.models.naming_schemas import BiomeLexiconEntry
+from src.models.naming_schemas import BiomeLexiconEntry, CharacterNamesConfig, EntityTemplateEntry, FactionNamingRule, ResourceNamingEntry
 from src.models.templates_schema import (
-    BiomeTemplate, FactionTemplate, LocationTemplate, 
-    ResourceTemplate, BossesTemplate, TransformationRule
+    BeliefTemplate, BiomeTemplate, FactionTemplate, LocationTemplate, 
+    ResourceTemplate, BossesTemplate, TraitTemplate, TransformationRule
 )
 from src.services.llm_service import LLMService
 from src.services.storyteller import StorytellerService
@@ -17,19 +17,29 @@ from src.services.storyteller import StorytellerService
 router = APIRouter(prefix="/api/llm", route_class=DishkaRoute)
 
 # Маппинг строковых ключей (как в URL) на Pydantic классы
+# TODO сделать общий маппинг на все сервисы!
 TEMPLATE_MAP: Dict[str, Type[BaseModel]] = {
+    "belief": BeliefTemplate,
     "biomes": BiomeTemplate,
+    "bosses": BossesTemplate,
     "factions": FactionTemplate,
     "locations": LocationTemplate,
     "resources": ResourceTemplate,
-    "bosses": BossesTemplate,
+    "traits": TraitTemplate,
     "transformations": TransformationRule,
+    # кажется, имена сыпятся при попытке генерить их с помощью LLM
     "naming_biomes": BiomeLexiconEntry,
+    "naming_faction": FactionNamingRule,
+    "naming_resources": ResourceNamingEntry,
+    "naming_characters": CharacterNamesConfig,
+    # TODO: это какая-то мусорка
+    "entity_templates": EntityTemplateEntry,
 }
 
 class SuggestRequest(BaseModel):
     prompt: str
 
+# TODO добавить поддержку шаблонов имён!
 @router.post("/suggest/{config_type}")
 async def suggest_template(
     config_type: str,

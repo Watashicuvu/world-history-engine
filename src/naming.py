@@ -27,9 +27,9 @@ class ContextualNamingService(NamingService):
         # Создаем минимальный fallback-лексикон на случай, если файлы пусты или ID кривые
         self._default_lexicon = {
             "adjectives": ["Древний", "Тайный", "Забытый"],
-            "nouns": ["Место", "Земля", "Край"],
+            "nouns": ["Край"],
             "symbols": ["Тьмы", "Света", "Времени"],
-            "deity_prefixes": ["Дух", "Тень"],
+            "deity_prefixes": ["Дух", "Призрак"],
         }
 
     def _generate_procedural_name(self, style: str = "fantasy") -> str:
@@ -153,41 +153,51 @@ class ContextualNamingService(NamingService):
 
         # === 4. RESOURCE ===
         if entity_type == EntityType.RESOURCE:
-            base_type = context.get("base_resource", "resource") # например "wood"
-            rarity = context.get("rarity", Rarity.COMMON) # Enum Rarity остается
+            base_type = context.get("base_resource", "resource")
+            rarity_obj = context.get("rarity", Rarity.COMMON) 
+
+            # [FIX] Преобразуем Enum в строку (lowercase), чтобы совпасть с ключами YAML
+            if hasattr(rarity_obj, "value"):
+                rarity_key = str(rarity_obj.value).lower()
+            else:
+                rarity_key = str(rarity_obj).lower()
 
             naming_options = None
             
-            # self.resource_naming_map: Dict[str_res_id, Dict[str_biome_id, Dict[Rarity, List[str]]]]
+            # Структура: self.resource_naming_map[base_type][biome_id][rarity_key]
             if base_type in self.resource_naming_map:
                 res_map = self.resource_naming_map[base_type]
                 
                 # 1. Точное совпадение биома
                 if biome_id and biome_id in res_map:
-                    if rarity in res_map[biome_id]:
-                        naming_options = res_map[biome_id][rarity]
+                    # [FIX] Используем строковый ключ rarity_key
+                    if rarity_key in res_map[biome_id]:
+                        naming_options = res_map[biome_id][rarity_key]
                 
-                # 2. Fallback на "default" или None (смотря как загрузчик сохранил глобальные варианты)
-                # Проверяем оба варианта ключа
+                # 2. Fallback на "default" / "global"
                 if not naming_options:
                     for fallback_key in [None, "default", "global"]:
                         if fallback_key in res_map:
-                            if rarity in res_map[fallback_key]:
-                                naming_options = res_map[fallback_key][rarity]
+                            if rarity_key in res_map[fallback_key]:
+                                naming_options = res_map[fallback_key][rarity_key]
                                 break
 
             if naming_options:
                 name = random.choice(naming_options)
             else:
-                # Генеративный фолбэк
+                # Генеративный фолбэк (на случай если и в конфиге пусто)
                 base_fallback = base_type.capitalize()
+                # Здесь rarity_obj может быть Enum, используем его для ключа словаря лейблов
+                rarity_enum = rarity_obj if isinstance(rarity_obj, Rarity) else Rarity.COMMON
+                
                 rarity_labels = {
                     Rarity.COMMON: "",
                     Rarity.UNCOMMON: "Необычный",
                     Rarity.RARE: "Редкий",
                     Rarity.EPIC: "Эпический"
                 }
-                adj = rarity_labels.get(rarity, "")
+                # Безопасное получение лейбла, если вдруг пришел не тот Enum
+                adj = rarity_labels.get(rarity_enum, str(rarity_key).capitalize())
                 name = f"{adj} {base_fallback}".strip()
 
             return name
