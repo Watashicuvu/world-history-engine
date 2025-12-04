@@ -1,4 +1,5 @@
 from dishka import Provider, Scope, provide
+from src.naming import ContextualNamingService
 from src.models.generation import World
 from src.services.world_query_service import WorldQueryService
 from src.services.simulation import SimulationService
@@ -7,6 +8,7 @@ from src.interfaces import IWorldRepository
 from src.services.llm_service import LLMService
 from src.services.storyteller import StorytellerService
 from src.services.template_editor import TemplateEditorService
+from src.word_generator import WorldGenerator
 
 from config import api_key, base_url, model, fallback_template_path
 
@@ -26,6 +28,18 @@ class GeneralProvider(Provider):
     def get_llm_service(self) -> LLMService:
         return LLMService(api_key=api_key, model_name=model, base_url=base_url)
     
+    @provide(scope=Scope.APP)
+    def get_naming_service(self) -> ContextualNamingService:
+        from src.template_loader import load_naming_data, load_all_templates
+        service = ContextualNamingService()
+        load_naming_data(service)
+        load_all_templates() 
+        return service
+
+    @provide(scope=Scope.APP)
+    def get_world_generator(self, naming_service: ContextualNamingService) -> WorldGenerator:
+        return WorldGenerator(naming_service=naming_service)
+
     @provide(scope=Scope.APP)
     def get_world(self) -> World:
         """
@@ -60,7 +74,7 @@ class GeneralProvider(Provider):
             for rid, rdata in raw_rtypes.items():
                 rtypes_map[rid] = RelationType(**rdata)
                 
-            # 3. Cure Relations using created objects
+            # 3. Fix Relations using created objects
             raw_relations = graph_data.get('relations', [])
             relations_list = []
             
