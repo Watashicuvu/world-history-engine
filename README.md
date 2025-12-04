@@ -88,7 +88,39 @@ graph TD
 
 ## 🚀 Quick Start
 
-### Prerequisites
+### 🐳 Docker Deployment
+
+The recommended way to run the *World History Engine* in both Web UI (8000) and MCP (8001) modes simultaneously is via Docker.
+
+This setup uses **Supervisord** to manage the two distinct processes (`server.py` and `mcp_server.py`) within a single container, offering a robust "all-in-one" solution.
+
+#### 1. Build the Image
+
+Build the container image from the root of your repository:
+
+```bash
+docker build -t world-engine-mcp .
+````
+
+#### 2\. Run the Container
+
+Run the image, exposing the two required ports:
+
+```bash
+docker run -d \
+  --name world-engine-instance \
+  -p 8000:8000 \
+  -p 8001:8001 \
+  world-engine-mcp
+```
+
+#### 3\. Access
+
+  * **Web UI (Standalone Generation):** Access the graphical interface at `http://localhost:8001`.
+  * **MCP Server (AI Integration):** Connect your Claude Desktop or other MCP client to `http://localhost:8000`.
+  * **Logs:** View combined logs for both services: `docker logs world-engine-instance`.
+
+### Prerequisites for deployment without Docker
 
   * Python 3.11+
   * `uv` (recommended) or `pip`
@@ -122,39 +154,6 @@ Run the main generation script to create a fresh world snapshot in `world_output
 ```bash
 uv run main.py
 ```
-
-### 🐳 Docker Deployment
-
-The recommended way to run the *World History Engine* in both Web UI (8000) and MCP (8001) modes simultaneously is via Docker.
-
-This setup uses **Supervisord** to manage the two distinct processes (`server.py` and `mcp_server.py`) within a single container, offering a robust "all-in-one" solution.
-
-#### 1. Build the Image
-
-Build the container image from the root of your repository:
-
-```bash
-docker build -t world-engine-mcp .
-````
-
-#### 2\. Run the Container
-
-Run the image, exposing the two required ports:
-
-```bash
-docker run -d \
-  --name world-engine-instance \
-  -p 8000:8000 \
-  -p 8001:8001 \
-  world-engine-mcp
-```
-
-#### 3\. Access
-
-  * **Web UI (Standalone Generation):** Access the graphical interface at `http://localhost:8001`.
-  * **MCP Server (AI Integration):** Connect your Claude Desktop or other MCP client to `http://localhost:8000`.
-  * **Logs:** View combined logs for both services: `docker logs world-engine-instance`.
-
 
 ### 🤖 Running with LLM (MCP Server)
 
