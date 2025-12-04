@@ -11,8 +11,8 @@ from src.models.naming_schemas import (
     CharacterNamesConfig
 )
 from src.models.templates_schema import (
-    BiomeTemplate, FactionTemplate, LocationTemplate, 
-    ResourceTemplate, BossesTemplate, TransformationRule
+    BeliefTemplate, BiomeTemplate, FactionTemplate, LocationTemplate, 
+    ResourceTemplate, BossesTemplate, TraitTemplate, TransformationRule
 )
 
 class TemplateEditorService:
@@ -25,11 +25,13 @@ class TemplateEditorService:
         
         self.config_map = {
             # --- Основные шаблоны ---
+            "belief": ("templates/belief.yaml", BeliefTemplate, False),
             "biomes": ("templates/biomes.yaml", BiomeTemplate, False),
+            "bosses": ("templates/bosses.yaml", BossesTemplate, False),
             "factions": ("templates/factions.yaml", FactionTemplate, False),
             "locations": ("templates/locations.yaml", LocationTemplate, False),
             "resources": ("templates/resources.yaml", ResourceTemplate, False),
-            "bosses": ("templates/bosses.yaml", BossesTemplate, False),
+            "trait": ("templates/traits.yaml", TraitTemplate, False),
             "transformations": ("templates/transformations.yaml", TransformationRule, False),
             
             # --- Нейминг (data/naming/) ---
