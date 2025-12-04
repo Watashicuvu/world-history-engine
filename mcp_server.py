@@ -3,6 +3,7 @@ import json
 from typing import AsyncIterator, Literal, Optional
 from mcp.server.fastmcp import FastMCP
 from dishka import make_async_container
+from pydantic import BaseModel, Field
 from src.ioc import RepositoryProvider, GeneralProvider, AppProvider
 from src.services.world_query_service import WorldQueryService
 from src.services.template_editor import TemplateEditorService
@@ -10,6 +11,7 @@ from src.services.template_editor import TemplateEditorService
 import logging
 from mcp.server.streamable_http import EventCallback, EventMessage, EventStore
 from mcp.types import JSONRPCMessage
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -46,11 +48,24 @@ class InMemoryEventStore(EventStore):
         return target_stream_id
 
 
+class WorldGenPlan(BaseModel):
+    existing_biomes_to_use: list[str] = Field(description="List of EXISTING biomes that are suitable")
+    new_biomes_to_create: list[str] = Field(description="List of names for NEW biomes that are missing (for example 'Cyberpunk City', 'Crystal Caves')")
+    width: int = Field(default=3, description="Map width (usually 2-3)")
+    height: int = Field(default=3, description="The height of the map (usually 2-3)")
+    reasoning: str = Field(description="A brief explanation of the choice of biomes")
+
+
 # --- 2. Lifespan ---
 @contextlib.asynccontextmanager
 async def server_lifespan(server: FastMCP) -> AsyncIterator[None]:
+    from src.template_loader import load_all_templates
     global container
     logger.info("Initializing DI Container...")
+    
+    logger.info("Loading templates and naming data...")
+    load_all_templates()
+
     try:
         container = make_async_container(
             RepositoryProvider(), 
@@ -74,6 +89,119 @@ mcp = FastMCP(
 )
 
 # --- 4. Tools ---
+
+@mcp.tool()
+async def generate_new_world(description: str) -> str:
+    """
+    Creates a world based on the description. AUTOMATICALLY creates the missing biomes.
+    Example: "A post-apocalyptic wasteland with radiation oases."
+    This operation overwrites the current world!
+    """
+    from src.models.registries import BIOME_REGISTRY
+    from src.models.templates_schema import BiomeTemplate
+    from src.services.llm_service import LLMService
+    from src.services.template_editor import TemplateEditorService
+    from src.word_generator import WorldGenerator
+    from src.models.generation import World
+    from src.utils import save_world_to_json
+    from config import fallback_template_path
+
+    if not container:
+        return "Error: Container not initialized"
+
+    log_output = []
+
+    async with container() as request_container:
+        llm = await request_container.get(LLMService)
+        generator = await request_container.get(WorldGenerator)
+        editor = await request_container.get(TemplateEditorService) # Для сохранения новых шаблонов
+        current_world = await request_container.get(World)
+
+        # 1. Анализ существующих ресурсов
+        # Мы больше не хардкодим, а берем реальные ключи из реестра
+        available_ids = list(BIOME_REGISTRY.keys())
+        
+        log_output.append(f"🔍 Analyzing request against {len(available_ids)} existing biomes...")
+
+        # 2. Планирование (LLM решает, что взять, а что создать)
+        try:
+            prompt = (
+                f"User wants: '{description}'.\n"
+                f"Available Biome IDs: {', '.join(available_ids)}\n"
+                "Decide which existing biomes to use and which NEW ones to create to match the description."
+            )
+            plan: WorldGenPlan = await llm.generate_structure(prompt, WorldGenPlan)
+        except Exception as e:
+            return f"Planning Error: {e}"
+
+        final_biome_ids = list(plan.existing_biomes_to_use)
+
+        # 3. Цикл создания недостающих биомов (Chain of Thought в коде)
+        if plan.new_biomes_to_create:
+            log_output.append(f"🔨 Needs to create {len(plan.new_biomes_to_create)} new biomes: {plan.new_biomes_to_create}")
+            
+            for new_biome_name in plan.new_biomes_to_create:
+                # Генерируем ID
+                import uuid
+                # Делаем читаемый ID (latin letters only ideally, but simple replace works for now)
+                slug = new_biome_name.lower().replace(" ", "_")[:15]
+                new_id = f"biome_{slug}_{str(uuid.uuid4())[:4]}"
+                
+                try:
+                    template_data = await llm.generate_template(
+                        f"Create a game design template for a biome named '{new_biome_name}'. "
+                        f"Context: {description}. ID should be '{new_id}'.",
+                        BiomeTemplate
+                    )
+                    
+                    # Принудительно ставим ID (на случай если LLM ошиблась)
+                    template_data['id'] = new_id
+                    
+                    # Сохраняем на диск через EditorService
+                    # config_type='biomes' соответствует ключу в entity_templates.yaml или отдельному файлу
+                    # В вашей архитектуре EditorService.append_template умеет писать в YAML
+                    editor.append_template(
+                        config_file="data/templates/biomes.yaml", # Путь к файлу биомов
+                        config_type="templates", 
+                        new_item=template_data
+                    )
+                    
+                    # ВАЖНО: Регистрируем в реестре памяти немедленно!
+                    # EditorService сохраняет файл, но нам нужно обновить Runtime Registry
+                    # Pydantic модель валидирует данные
+                    new_tmpl_obj = BiomeTemplate(**template_data)
+                    BIOME_REGISTRY.register(new_id, new_tmpl_obj)
+                    
+                    final_biome_ids.append(new_id)
+                    log_output.append(f"  ✅ Created and registered: {new_biome_name} ({new_id})")
+                    
+                except Exception as e:
+                    log_output.append(f"  ❌ Failed to create {new_biome_name}: {e}")
+
+        # 4. Финальная проверка перед генерацией
+        if not final_biome_ids:
+            # Fallback
+            final_biome_ids = available_ids[:3]
+            log_output.append("⚠️ No valid biomes found/created. Using defaults.")
+
+        # 5. Генерация мира
+        try:
+            log_output.append(f"🌍 Generating world {plan.width}x{plan.height} with: {final_biome_ids}...")
+            new_world_obj = generator.generate(
+                biome_ids=final_biome_ids,
+                world_width=plan.width,
+                world_height=plan.height,
+                num_biomes=plan.width * plan.height
+            )
+            
+            # Hot Swap
+            current_world.graph = new_world_obj.graph
+            save_world_to_json(current_world, fallback_template_path)
+            
+        except Exception as e:
+            return "\n".join(log_output) + f"\n💥 Critical Generation Error: {e}"
+
+        return "\n".join(log_output) + "\n✨ World Generation Complete!"
 
 @mcp.tool()
 async def get_world_metadata() -> str:
