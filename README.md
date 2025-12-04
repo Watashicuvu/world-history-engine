@@ -113,72 +113,84 @@ Here is the internal structure of the world engine entities:
 
 ```mermaid
 graph TD
-    subgraph "Frontend (Browser)"
-        UI[index.html + app.js]
+    %% --- Стилизация (Styling) ---
+    classDef browser fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef mcp fill:#ffecb3,stroke:#ff6f00,stroke-width:2px,stroke-dasharray: 5 5;
+    classDef storage fill:#e0e0e0,stroke:#333,stroke-width:2px;
+    classDef core fill:#e1f5fe,stroke:#0277bd,stroke-width:2px;
+
+    %% --- External Clients ---
+    subgraph Clients ["Clients & User Interfaces"]
+        BrowserUI[Browser<br>Web Visualizer]:::browser
+        ClaudeApp[Claude Desktop<br>AI Assistant]:::mcp
+    end
+
+    %% --- Frontend ---
+    subgraph Frontend ["Frontend (static/index.html)"]
+        direction TB
+        UI_Core[App Core]
         
-        subgraph "Modules"
-            WB_JS[workbench.js<br>Редактор шаблонов]
-            SIM_JS[simulation.js<br>Карта и управление]
-            CH_JS[chronicles.js<br>Граф истории]
+        subgraph JS_Modules ["JS Modules"]
+            WB_JS[workbench.js<br>Template Editor]
+            SIM_JS[simulation.js<br>Map & Controls]
+            CH_JS[chronicles.js<br>History Graph]
         end
         
         API_JS[api.js<br>HTTP Client]
-        UTILS_JS[utils.js<br>Colors & Icons]
         
-        UI --> WB_JS
-        UI --> SIM_JS
-        UI --> CH_JS
-        
-        WB_JS --> API_JS
-        SIM_JS --> API_JS & UTILS_JS
-        CH_JS --> API_JS & UTILS_JS
+        BrowserUI --> UI_Core
+        UI_Core --> WB_JS & SIM_JS & CH_JS
+        WB_JS & SIM_JS & CH_JS --> API_JS
     end
 
-    subgraph "Backend (FastAPI + Dishka)"
-        Server[server.py<br>Entry Point]
-        Router[API Routers]
+    %% --- Backend ---
+    subgraph Backend ["Backend (Python)"]
         
-        subgraph "Services (Business Logic)"
+        %% Entry Points
+        subgraph EntryPoints ["Entry Points"]
+            Server[server.py<br>FastAPI / HTTP]:::core
+            MCPSrv[mcp_server.py<br>MCP Server]:::mcp
+        end
+
+        %% Dependency Injection
+        DI((Dishka IOC))
+
+        %% Service Layer
+        subgraph Services ["Services (Business Logic)"]
             TES[TemplateEditorService]
             SIM_S[SimulationService]
             ST_S[StorytellerService]
-            LLM_S[LLMService]
+            WQS[WorldQueryService]
         end
         
-        subgraph "Core Engine"
+        %% Core Logic
+        subgraph CoreEngine ["Core Engine"]
             WG[WorldGenerator]
             NE[NarrativeEngine]
-            NS[NamingService]
             Repo[InMemoryRepository]
         end
 
-        Server --> Router
-        Router --> TES & SIM_S & ST_S & LLM_S
+        %% Connections
+        ClaudeApp == Stdio/SSE ==> MCPSrv
+        API_JS == HTTP ==> Server
         
-        SIM_S --> WG
-        SIM_S --> NE
-        WG --> NS
-        ST_S --> LLM_S
-        ST_S --> Repo
+        Server & MCPSrv --> DI
+        DI --> Services
         
-        %% Связь редактора с LLM
-        TES -.-> LLM_S
+        Services --> CoreEngine
     end
 
-    subgraph "Storage & External"
-        YAML[(YAML Templates<br>data/templates)]
-        JSON[(World Snapshots<br>world_output/)]
-        OpenAI(OpenAI API)
+    %% --- Storage ---
+    subgraph Storage ["Storage & External"]
+        YAML[(YAML Templates<br>data/templates)]:::storage
+        JSON[(World JSON<br>world_output)]:::storage
+        LLM_API(External LLM API<br>OpenAI/Anthropic):::storage
     end
 
-    %% Data Flows
-    TES <--> YAML
-    SIM_S <--> JSON
-    Repo <--> JSON
-    LLM_S <--> OpenAI
-    
-    %% API Connections
-    API_JS <== JSON ==> Router
+    %% --- Cross-Links ---
+    Services -.-> LLM_API
+    Repo -.-> JSON
+    TES -.-> YAML
 ```
 
 ## 🗺️ Roadmap
