@@ -41,5 +41,5 @@ app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
 if __name__ == "__main__":
     import uvicorn
-    # Запускаем сервер
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    # Start the server
+    uvicorn.run(app, host="0.0.0.0", port=8001)
