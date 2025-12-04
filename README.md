@@ -94,7 +94,7 @@ And add [description](system_prompt.md)
 The engine comes with a HTML visualizers.
 
 1.  Generate some history using Claude.
-2.  Open `static/world_viz.html` or `static/index.html` (after running `uv run serve`) in your browser.
+2.  Open `static/world_viz.html` or `static/index.html` (after running `uv run server`) in your browser.
 3.  Upload the JSON export of your world (generated via the `get_world_metadata` or export tools).
 4.  **Explore:** Drag nodes, filter by factions, and use the **Timeline Slider** at the bottom to replay history.
 
