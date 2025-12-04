@@ -15,6 +15,11 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 # Create dirs for logs and output
 RUN mkdir -p world_output
 
+# --- Environment Variables Defaults ---
+ENV API_KEY=""
+ENV BASE_URL="https://api.openai.com/v1"
+ENV MODEL="gpt-5-mini"
+
 # 8000 - Web UI / API
 # 8001 - MCP Server (SSE)
 EXPOSE 8000 8001
