@@ -319,21 +319,17 @@ class ConflictSystem:
         return events
 
     def _spawn_bosses(self, age: int, chance=0.03) -> List[Entity]:
-        # Логика боссов осталась без изменений, она самодостаточна
         events = []
-        # TODO: добавить эти шаблоны
-        biome_boss_map = {
-            "biome_mountains": ["boss_dragon_red", "disaster_volcano"],
-            "biome_coast": ["boss_kraken"],
-            "biome_swamp": ["disaster_plague"],
-            "default": []
-        }
-        
         locations = [l for l in self.qs.graph.entities.values() if l.type == EntityType.LOCATION]
         
+        # Предварительно группируем боссов по биомам для оптимизации (можно вынести в __init__)
+        # Но для надежности делаем перебор внутри цикла (или кэшируем)
+        
         for loc in locations:
+            # 1. Пропускаем, если тут уже есть босс
             if "boss" in loc.tags or "disaster" in loc.tags: continue
 
+            # 2. Логика шансов
             is_ruins = "ruins" in loc.tags
             current_chance = chance * 3.0 if is_ruins else chance
             
@@ -343,23 +339,41 @@ class ConflictSystem:
             
             if random.random() > current_chance: continue
             
+            # 3. Получаем биом
             biome = self.qs.get_biome(loc)
             if not biome: continue
             
-            possible_bosses = biome_boss_map.get(biome.definition_id, [])
-            if not possible_bosses: continue
+            # === ИЗМЕНЕНИЕ 1: Динамический поиск по шаблонам ===
+            possible_boss_templates = []
             
-            boss_def_id = random.choice(possible_bosses)
-            boss_tmpl = BOSSES_REGISTRY.get(boss_def_id)
-            if not boss_tmpl: continue
+            for tmpl in BOSSES_REGISTRY.get_all().values():
+                # Если список биомов пуст - считаем, что босс глобальный (или наоборот, запрещаем)
+                # Здесь логика: если биом локации есть в allowed_biomes босса
+                if biome.definition_id in tmpl.allowed_biomes:
+                    possible_boss_templates.append(tmpl)
+            
+            if not possible_boss_templates: continue
+            
+            boss_tmpl = random.choice(possible_boss_templates)
 
-            name = boss_tmpl.name_template or boss_tmpl.id
+            # === ИЗМЕНЕНИЕ 2: Правильный вызов нейминга ===
+            # Не присваиваем boss_tmpl.name_template напрямую!
+            
+            naming_context = {
+                "biome_id": biome.definition_id,
+                "name_template": boss_tmpl.name_template, # Передаем шаблон сервису
+                "tags": boss_tmpl.tags,
+                "creature_type": boss_tmpl.creature_type
+            }
+            
+            # Генерируем финальное имя (например: "Чума «Черная Смерть»")
+            final_name = self.naming_service.generate_name(EntityType.BOSS, naming_context)
             
             boss_entity = Entity(
                 id=make_id("boss"),
-                definition_id=boss_def_id,
-                type=EntityType.FACTION,
-                name=name,
+                definition_id=boss_tmpl.id,
+                type=EntityType.BOSS, 
+                name=final_name, # Используем уже сгенерированное имя
                 tags=boss_tmpl.tags | {"boss", "hostile"},
                 created_at=age,
                 parent_id=loc.id,
@@ -375,7 +389,7 @@ class ConflictSystem:
                 
             events.append(self.qs.register_event(
                 event_type="boss_spawn",
-                summary=f"В «{loc.name}» пробудилась угроза: {name}!",
+                summary=f"В «{loc.name}» пробудилась угроза: {final_name}!",
                 age=age,
                 primary_entity=boss_entity,
                 secondary_entities=[loc]
@@ -387,7 +401,7 @@ class ConflictSystem:
                     definition_id='conflict_boss',
                     type=EntityType.CONFLICT,
                     created_at=age,
-                    name=f"Битва с {name}",
+                    name=f"Битва с {final_name}",
                     data={
                         "participants": [boss_entity.id, victim.id],
                         "location_id": loc.id,

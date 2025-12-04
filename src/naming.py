@@ -221,6 +221,37 @@ class ContextualNamingService(NamingService):
                 name = f"Вера {local_vars['noun']}"
             
             return name
+        
+        # === 6. CREATURE / BOSS (FIX) ===
+        if entity_type == EntityType.BOSS:
+            # 1. Проверяем, передан ли явный шаблон (например, из bosses.yaml)
+            passed_template = context.get("name_template")
+            
+            # 2. Если шаблона нет, ищем в конфигах или берем дефолтный
+            if not passed_template:
+                # Попытка найти специфичный для существа шаблон в self.templates, если реализовано
+                # Иначе процедурная генерация
+                creature_type = context.get("creature_type", "beast")
+                style = "orc" if creature_type in ["beast", "undead"] else "fantasy"
+                return self._generate_procedural_name(style)
+            
+            template = passed_template
+
+            # 3. Для боссов часто нужно имя собственное внутри шаблона (например, "Дракон {name}")
+            local_vars = variables.copy()
+            if "{name}" in template and "name" not in context:
+                 # Генерируем процедурное имя для вставки в титул
+                 style = "orc" if context.get("tags") and "boss" in context["tags"] else "fantasy"
+                 local_vars["name"] = self._generate_procedural_name(style)
+
+            # 4. Форматируем. Именно здесь {adj} превратится в слово, а не останется тегом
+            try:
+                name = template.format(**local_vars)
+            except KeyError:
+                # Fallback, если в шаблоне есть переменные, которых нет в словаре (например {title})
+                name = template.replace("{", "").replace("}", "") 
+            
+            return name
 
         # === DEFAULT GENERIC ===
         if not templates_list:

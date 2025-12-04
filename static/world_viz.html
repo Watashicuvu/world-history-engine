@@ -72,16 +72,68 @@
 
   <div id="controls" class="overlay-panel">
     <h3>🌍 World Explorer</h3>
-    <input type="file" id="file" accept=".json" style="margin-bottom: 10px; width: 100%;" />
-    <div id="status" style="font-size: 12px; color: #666; margin-bottom: 10px;">Ожидание файла...</div>
     
-    <button class="btn" onclick="forceLayout()">Перестроить граф</button>
+    <div style="margin-bottom: 10px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">
+        <label style="font-size: 12px; color: #666;">Offline Mode (File):</label>
+        <input type="file" id="file" accept=".json" style="width: 100%;" />
+    </div>
+
+    <div>
+        <label style="font-size: 12px; color: #666;">Live Mode (Server):</label>
+        <input type="text" id="excludeTagsInput" value="dead, inactive" placeholder="exclude tags (comma split)" style="width: 100%; margin-bottom: 5px; box-sizing: border-box;">
+        <button class="btn" onclick="loadFromServer()">📡 Load Live State</button>
+    </div>
+
+    <div id="status" style="font-size: 12px; color: #666; margin: 10px 0;">Ready</div>
+    <button class="btn" onclick="forceLayout()">Relayout</button>
     
     <div style="margin-top: 15px; border-top: 1px solid #ddd; padding-top: 10px;">
-      <h4>Фильтры</h4>
+      <h4>Node Types</h4>
       <div id="nodeFilters"></div>
     </div>
   </div>
+
+  <script>
+      // Добавь эту функцию в скрипт
+      async function loadFromServer() {
+          const status = document.getElementById('status');
+          const tagsInput = document.getElementById('excludeTagsInput').value;
+          
+          // Формируем query params: ?exclude_tags=dead&exclude_tags=inactive
+          const tags = tagsInput.split(',').map(t => t.trim()).filter(t => t);
+          const params = new URLSearchParams();
+          tags.forEach(t => params.append('exclude_tags', t));
+
+          status.textContent = 'Fetching from API...';
+          
+          try {
+              const res = await fetch(`/api/world/graph?${params.toString()}`);
+              if (!res.ok) throw new Error('API Error');
+              
+              const data = await res.json();
+              
+              // Используем ту же логику, что и для файла
+              fullData = prepareData(data);
+              maxEpoch = getMaxEpoch(fullData);
+              
+              // Обновляем слайдер и UI
+              const slider = document.getElementById('timeSlider');
+              slider.max = maxEpoch;
+              slider.value = maxEpoch; // Ставим сразу последнее состояние
+              slider.disabled = false;
+              
+              status.textContent = `Live Data: ${fullData.nodes.length} nodes loaded.`;
+              generateFilters(data);
+
+              initCy();
+              updateGraphToEpoch(maxEpoch); // Показываем сразу финал
+              
+          } catch (err) {
+              console.error(err);
+              status.textContent = 'Error loading from server';
+          }
+      }
+  </script>
 
   <div id="details" class="overlay-panel">
     <h3 id="detail-title">Details</h3>

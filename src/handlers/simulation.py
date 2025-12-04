@@ -1,10 +1,11 @@
 import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-from fastapi import APIRouter, BackgroundTasks, HTTPException
+from fastapi import APIRouter, BackgroundTasks, HTTPException, Query
 from dishka import FromDishka
 from dishka.integrations.fastapi import DishkaRoute
 from pydantic import BaseModel
+from src.services.world_query_service import WorldQueryService
 from src.services.simulation import SimulationService
 from src.services.storyteller import StorytellerService
 
@@ -139,3 +140,13 @@ async def get_latest_graph(service: FromDishka[SimulationService]):
     # Теперь мы получаем самые свежие данные.
     graph_data = service.get_latest_graph_data()
     return graph_data
+
+@router.get("/world/graph")
+async def get_world_graph(
+    service: FromDishka[WorldQueryService],
+    exclude_tags: Optional[List[str]] = Query(default=["dead", "inactive", "historical"])
+):
+    """
+    Возвращает JSON графа с примененными фильтрами.
+    """
+    return service.get_graph_snapshot(exclude_tags=exclude_tags)

@@ -2,14 +2,14 @@
   "width": 3,
   "height": 3,
   "cells": {
-    "0,0": "biome_swamp",
-    "1,0": "biome_coast",
-    "2,0": "biome_mountains",
-    "0,1": "biome_forest",
-    "1,1": "biome_desert",
-    "2,1": "biome_plains",
-    "0,2": "biome_forest",
-    "1,2": "biome_mountains",
+    "0,0": "biome_plains",
+    "1,0": "biome_forest",
+    "2,0": "biome_swamp",
+    "0,1": "biome_plains",
+    "1,1": "biome_tundra",
+    "2,1": "biome_mountains",
+    "0,2": "biome_coast",
+    "1,2": "biome_swamp",
     "2,2": "biome_swamp"
   }
 }

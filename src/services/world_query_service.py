@@ -370,3 +370,65 @@ class WorldQueryService:
         
         self.add_entity(new_entity)
         return f"Spawned: {new_entity.name} (ID: {new_entity.id}) in {parent_id}"
+    
+    # def get_graph_snapshot(self, exclude_tags: Optional[List[str]] = None) -> Dict[str, Any]:
+    #     """
+    #     Возвращает граф в формате, готовом для JSON-сериализации и отправки на фронт.
+    #     Фильтрует сущности по тегам.
+    #     """
+    #     if exclude_tags is None:
+    #         exclude_tags = ["dead", "inactive"] # Твои дефолтные значения
+
+    #     exc_set = set(exclude_tags)
+        
+    #     # 1. Фильтруем сущности
+    #     filtered_entities = {}
+    #     for entity_id, entity in self.graph.entities.items():
+    #         # Если есть пересечение с черным списком тегов — пропускаем
+    #         if exc_set and not exc_set.isdisjoint(entity.tags):
+    #             continue
+    #         filtered_entities[entity_id] = entity
+
+    #     # 2. Собираем только актуальные связи
+    #     # (оба конца связи должны существовать в отфильтрованном списке)
+    #     filtered_relations = []
+    #     for r in self.graph.relations:
+    #         if r.from_entity.id in filtered_entities and r.to_entity.id in filtered_entities:
+    #             filtered_relations.append(r)
+
+    #     # Возвращаем структуру, идентичную той, что в world_output/*.json
+    #     return {
+    #         "graph": {
+    #             "entities": filtered_entities, # Pydantic сериализует это автоматически при return из FastAPI
+    #             "relations": filtered_relations,
+    #             "relation_types": self.graph.relation_types
+    #         }
+    #     }
+    def get_graph_snapshot(self, exclude_tags: Optional[List[str]] = None) -> Dict[str, Any]:
+        if exclude_tags is None:
+            exclude_tags = []
+        
+        exc_set = set(exclude_tags)
+        
+        # 1. Фильтрация узлов
+        filtered_entities = {}
+        for entity_id, entity in self.graph.entities.items():
+            # Если есть пересечение с черным списком тегов — пропускаем
+            if exc_set and not exc_set.isdisjoint(entity.tags):
+                continue
+            filtered_entities[entity_id] = entity
+
+        # 2. Фильтрация связей
+        filtered_relations = []
+        for r in self.graph.relations:
+            # Связь валидна только если оба конца существуют в отфильтрованном списке
+            if r.from_entity.id in filtered_entities and r.to_entity.id in filtered_entities:
+                filtered_relations.append(r)
+        
+        print(f"[API] Serving graph snapshot. Nodes: {len(filtered_entities)}, Edges: {len(filtered_relations)}")
+
+        # ВАЖНО: Возвращаем плоскую структуру, которую ждет JS
+        return {
+            "entities": filtered_entities,
+            "relations": filtered_relations
+        }

@@ -28,7 +28,8 @@ class EntityType(str, Enum):
     OBJECT_OF_WORSHIP = "ObjectOfWorship" # "Божество", "Предок" // НЕ ИСПОЛЬЗУЕТСЯ
     BELIEF = "Belief" 
     GLOBAL_CONFLICT = "global_conflict"
-    CREATURE = "Creature"
+    CREATURE = "Creature" # НЕ ИСПОЛЬЗУЕТСЯ
+    BOSS = "Boss"
     CHARACTER = "Character"       # ключевые фигуры
     CONFLICT = "Conflict"         # конфликт между фракциями
     EVENT = "Event"               # нарративное событие (опционально)

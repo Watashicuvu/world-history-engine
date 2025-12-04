@@ -1,43 +1,34 @@
 # data/templates/bosses.yaml
 
-# === МОНСТРЫ (Creature Bosses) ===
 - id: boss_dragon_red
   creature_type: beast
   role: monster
+  # Добавляем список биомов, где он может появиться
+  allowed_biomes: ["biome_mountains", "biome_volcano", "biome_peaks"]
   tags: [boss, fire, flying, dragon]
-  name_template: "Дракон {name}" # Можно использовать спец. шаблон
+  name_template: "Дракон {name}" 
   culture:
-    aggression: 10 # Всегда атакует
+    aggression: 10
     collectivism: 0
-    revered: [gold, fire] # Любит золото (механика?)
+    revered: [gold, fire]
 
 - id: boss_kraken
   creature_type: beast
   role: monster
+  allowed_biomes: ["biome_coast", "biome_ocean", "biome_island"]
   tags: [boss, water, huge]
   name_template: "Кракен {name}"
   culture:
     aggression: 8
     collectivism: 0
 
-# === СТИХИЙНЫЕ БЕДСТВИЯ (Disaster Bosses) ===
-# Мы используем ту же структуру, но creature_type = spirit/construct
-# или новый тип "phenomenon"
-
-- id: disaster_volcano
-  creature_type: spirit 
-  role: disaster
-  tags: [boss, disaster, fire, static] # static = не может ходить в рейды
-  name_template: "Пробуждение Вулкана"
-  culture:
-    aggression: 10
-    taboo: [life] # Уничтожает всё живое
-
 - id: disaster_plague
   creature_type: undead
   role: disaster
+  # "default" или пустой список можно использовать как "везде" или "где есть люди"
+  allowed_biomes: ["biome_swamp", "biome_forest"] 
   tags: [boss, disaster, disease]
   name_template: "Чума «{adj} Смерть»"
   culture:
-    aggression: 5 # Медленная смерть
-    collectivism: 10 # Распространяется
+    aggression: 5 
+    collectivism: 10

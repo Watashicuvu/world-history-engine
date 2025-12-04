@@ -95,7 +95,7 @@ graph TD
 Build the container image from the root of your repository:
 
 ```bash
-docker build -t world-engine .
+docker build -t world-engine-mcp .
 ````
 
 #### 2\. Run the Container

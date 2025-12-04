@@ -101,6 +101,51 @@ class NarrativeEngine:
             if rid not in rt:
                 rt[rid] = RelationType(id=rid, from_type=from_t, to_type=to_t, description=desc)
 
+    def _sync_spatial_data(self):
+        """
+        Проходит по графу и обновляет координаты (data.x, data.y) 
+        для подвижных сущностей (персонажи, армии), 
+        синхронизируя их с локацией, в которой они находятся.
+        """
+        graph = self.qs.graph # Используем QueryService для доступа к графу
+        
+        # Типы связей, определяющие местоположение
+        locating_relations = ["located_in", "fled_to", "occurred_at"]
+        
+        for entity in graph.entities.values():
+            # Пропускаем сущности, которые сами являются локациями или биомами
+            if entity.type in [EntityType.LOCATION, EntityType.BIOME]:
+                continue
+                
+            # Ищем, где находится сущность
+            target_location = None
+            
+            # Перебираем связи "исходящие от сущности"
+            # (Это упрощенный перебор, в идеале использовать graph.get_relations_from(entity.id))
+            for rel in graph.relations:
+                if rel.from_entity.id == entity.id:
+                    # Проверяем ID связи (строка или объект)
+                    rel_type_id = rel.relation_type.id if hasattr(rel.relation_type, 'id') else str(rel.relation_type)
+                    
+                    if rel_type_id in locating_relations:
+                        target_location = rel.to_entity
+                        break
+            
+            # Если нашли локацию и у неё есть координаты, копируем их
+            if target_location and target_location.data:
+                loc_x = target_location.data.get("x") or target_location.data.get("grid_x")
+                loc_y = target_location.data.get("y") or target_location.data.get("grid_y")
+                
+                if loc_x is not None and loc_y is not None:
+                    if entity.data is None:
+                        entity.data = {}
+                    
+                    # Обновляем координаты сущности
+                    entity.data["x"] = loc_x
+                    entity.data["y"] = loc_y
+                    # Можно добавить метку времени обновления
+                    entity.data["last_moved_at"] = self.age
+
     # === EVOLVE LOOP ===
 
     def evolve(self, num_ages: int = 3) -> List[Entity]:
@@ -159,6 +204,8 @@ class NarrativeEngine:
             
             if resolved:
                 logger.info(f"Conflicts resolved: {len(resolved)}")
+
+            self._sync_spatial_data()
             
         return all_events
 
