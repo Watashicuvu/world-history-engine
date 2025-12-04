@@ -4,7 +4,7 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![MCP Ready](https://img.shields.io/badge/MCP-Ready-green)](https://modelcontextprotocol.io/)
 
-**A narrative graph engine used to generate, track, and visualize fictional worlds using LLMs.**
+**A narrative graph engine used to generate, track, and visualize fictional worlds using LLMs or from scratch.**
 
 [History graph viewer](assets/graph.png)
 
@@ -93,10 +93,13 @@ And add [description](system_prompt.md)
 
 The engine comes with a HTML visualizers.
 
-1.  Generate some history using Claude.
-2.  Open `static/world_viz.html` or `static/index.html` (after running `uv run server`) in your browser.
-3.  Upload the JSON export of your world (generated via the `get_world_metadata` or export tools).
-4.  **Explore:** Drag nodes, filter by factions, and use the **Timeline Slider** at the bottom to replay history.
+1.  Generate some history using AI,
+-  or from scratch with GUI,
+-  or with `uv run main`,
+-  or use pregened wrom `world_output`.
+3.  Open `static/world_viz.html` or `static/index.html` (after running `uv run server`) in your browser.
+4.  Upload the JSON export of your world (generated via the `get_world_metadata` or export tools).
+5.  **Explore:** Drag nodes, filter by factions, and use the **Timeline Slider** at the bottom to replay history.
 
 [Templates AI generator](assets/workbench.png)
 
