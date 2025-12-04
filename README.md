@@ -107,6 +107,80 @@ Example `factions.yaml`:
     collectivism: 8
 ```
 
+## 🏗 Architecture
+
+Here is the internal structure of the world engine entities:
+
+```mermaid
+graph TD
+    subgraph "Frontend (Browser)"
+        UI[index.html + app.js]
+        
+        subgraph "Modules"
+            WB_JS[workbench.js<br>Редактор шаблонов]
+            SIM_JS[simulation.js<br>Карта и управление]
+            CH_JS[chronicles.js<br>Граф истории]
+        end
+        
+        API_JS[api.js<br>HTTP Client]
+        UTILS_JS[utils.js<br>Colors & Icons]
+        
+        UI --> WB_JS
+        UI --> SIM_JS
+        UI --> CH_JS
+        
+        WB_JS --> API_JS
+        SIM_JS --> API_JS & UTILS_JS
+        CH_JS --> API_JS & UTILS_JS
+    end
+
+    subgraph "Backend (FastAPI + Dishka)"
+        Server[server.py<br>Entry Point]
+        Router[API Routers]
+        
+        subgraph "Services (Business Logic)"
+            TES[TemplateEditorService]
+            SIM_S[SimulationService]
+            ST_S[StorytellerService]
+            LLM_S[LLMService]
+        end
+        
+        subgraph "Core Engine"
+            WG[WorldGenerator]
+            NE[NarrativeEngine]
+            NS[NamingService]
+            Repo[InMemoryRepository]
+        end
+
+        Server --> Router
+        Router --> TES & SIM_S & ST_S & LLM_S
+        
+        SIM_S --> WG
+        SIM_S --> NE
+        WG --> NS
+        ST_S --> LLM_S
+        ST_S --> Repo
+        
+        %% Связь редактора с LLM
+        TES -.-> LLM_S
+    end
+
+    subgraph "Storage & External"
+        YAML[(YAML Templates<br>data/templates)]
+        JSON[(World Snapshots<br>world_output/)]
+        OpenAI(OpenAI API)
+    end
+
+    %% Data Flows
+    TES <--> YAML
+    SIM_S <--> JSON
+    Repo <--> JSON
+    LLM_S <--> OpenAI
+    
+    %% API Connections
+    API_JS <== JSON ==> Router
+```
+
 ## 🗺️ Roadmap
 
   * [ ] Persistent storage (PostgreSQL/Neo4j support)
