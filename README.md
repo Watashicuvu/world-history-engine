@@ -161,6 +161,7 @@ graph TD
             SIM_S[SimulationService]
             ST_S[StorytellerService]
             WQS[WorldQueryService]
+            NS[NamingService]
         end
         
         %% Core Logic
