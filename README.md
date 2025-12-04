@@ -90,10 +90,6 @@ graph TD
 
 ### 🐳 Docker Deployment
 
-The recommended way to run the *World History Engine* in both Web UI (8000) and MCP (8001) modes simultaneously is via Docker.
-
-This setup uses **Supervisord** to manage the two distinct processes (`server.py` and `mcp_server.py`) within a single container, offering a robust "all-in-one" solution.
-
 #### 1. Build the Image
 
 Build the container image from the root of your repository:
