@@ -57,6 +57,8 @@ graph TD
             TES[TemplateEditorService]
             SIM_S[SimulationService]
             ST_S[StorytellerService]
+            WQS[WorldQueryService]
+            NS[NamingService]
         end
         
         %% Core Logic
@@ -148,6 +150,17 @@ Add this to your `claude_desktop_config.json`:
 }
 ```
 
+To use this engine as a tool inside Qwen Desktop, paste the following configuration in the MCP settings:
+```json
+{
+    "mcpServers": {
+        "world-builder": {
+            "url": "http://0.0.0.0:8000"
+        }
+    }
+```
+And add [description](system_prompt.md)
+
 ## 📊 Visualizing Your World
 
 The engine comes with a standalone HTML visualizer.
@@ -164,6 +177,8 @@ The engine's logic is data-driven. You can modify the simulation rules in `data/
   * `factions.yaml`: Define cultures, taboos, and aggression levels.
   * `biomes.yaml`: Configure environmental generation.
   * `resources.yaml`: Manage economy items.
+
+And more other rules of naming in `data/naming`
 
 ## 🗺️ Roadmap
 
