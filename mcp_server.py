@@ -1,7 +1,6 @@
-# mcp_server.py
 import contextlib
 import json
-from typing import AsyncIterator, List, Literal, Optional
+from typing import AsyncIterator, Literal, Optional
 from mcp.server.fastmcp import FastMCP
 from dishka import make_async_container
 from src.ioc import RepositoryProvider, GeneralProvider, AppProvider
@@ -12,17 +11,15 @@ import logging
 from mcp.server.streamable_http import EventCallback, EventMessage, EventStore
 from mcp.types import JSONRPCMessage
 
-# Настройка логгера
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# --- 1. Event Store (Обязательно для стабильного SSE) ---
-# Это boilerplate код из официального примера для поддержки переподключений
+# --- 1. Event Store (for stability of SSE) ---
 StreamId = str
 EventId = str
 
 class InMemoryEventStore(EventStore):
-    """Хранит события в памяти, чтобы клиент мог восстановить связь."""
+    """Store events in the memory for reconnection ability."""
     def __init__(self) -> None:
         self._events: list[tuple[StreamId, EventId, JSONRPCMessage | None]] = []
         self._event_id_counter = 0
@@ -48,10 +45,8 @@ class InMemoryEventStore(EventStore):
                     await send_callback(EventMessage(message, event_id))
         return target_stream_id
 
-# Глобальный контейнер
-container = None
 
-# --- 2. Жизненный цикл (Lifespan) ---
+# --- 2. Lifespan ---
 @contextlib.asynccontextmanager
 async def server_lifespan(server: FastMCP) -> AsyncIterator[None]:
     global container
@@ -68,18 +63,17 @@ async def server_lifespan(server: FastMCP) -> AsyncIterator[None]:
         if container:
             await container.close()
 
-# --- 3. Инициализация сервера ---
-# Важно: передаем event_store
+# --- 3. Server init ---
 event_store = InMemoryEventStore()
 
 mcp = FastMCP(
     "WorldBuilder Engine",
     lifespan=server_lifespan,
     event_store=event_store,
-    retry_interval=1000 # 1 секунда на ретрай
+    retry_interval=1000 # 1 second
 )
 
-# --- 4. Инструменты (Tools) ---
+# --- 4. Tools ---
 
 @mcp.tool()
 async def get_world_metadata() -> str:
@@ -105,13 +99,13 @@ async def query_entities(
         return service.query_entities(include_tags, exclude_tags, type_filter, limit)
 
 @mcp.tool()
-async def define_new_archetype(config_type: str, template_json: str) -> str:
+async def define_new_archetype(config_type: Literal['templates'], config_file: str, template_json: str) -> str:
     """Add a NEW template to the database."""
     async with container() as request_container:
         service = await request_container.get(TemplateEditorService)
         try:
             data = json.loads(template_json)
-            new_id = service.append_template(config_type, data)
+            new_id = service.append_template(config_file=config_file, config_type=config_type, new_item=data)
             return f"Success: Template '{new_id}' saved."
         except Exception as e:
             return f"Error: {str(e)}"
@@ -212,8 +206,6 @@ async def get_template_list(config_type: str) -> str:
         except Exception as e:
             return f"Error: {str(e)}"
 
-# --- 5. Запуск ---
+# --- 5. Start ---
 if __name__ == "__main__":
-    # Запускаем через встроенный метод run с указанием транспорта "sse"
-    # Это поднимет uvicorn внутри с правильными настройками
     mcp.run(transport="sse")
