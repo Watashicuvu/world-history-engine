@@ -17,10 +17,8 @@ class ResourceTemplate(BaseModel):
 
 # --- 1. Вектор Культуры ---
 class CultureVector(BaseModel):
-    """
-    Описывает культурные/психологические параметры сущности или модификаторы.
-    Диапазон обычно от -10 до 10.
-    """
+    # === Числовые оси (Axes) ===
+    # Делаем default=0, чтобы Trait мог содержать только aggression, например.
     aggression: int = Field(
         default=0, 
         ge=-20, le=20, 
@@ -36,9 +34,13 @@ class CultureVector(BaseModel):
         ge=-20, le=20, 
         description="Коллективизм. Высокий — ульи/империи, низкий — одиночки/анархисты."
     )
-    # Используем Set для быстрого пересечения множеств
+    
+    # Можно добавить generic поле для будущих осей, которых нет в схеме
+    # extra_axes: Dict[str, float] = Field(default_factory=dict)
+
+    # === Категориальные множества (Sets) ===
     taboo: Set[str] = Field(
-        default_factory=set, 
+        default_factory=set,
         description="Набор запретных тем/действий (напр. 'cannibalism', 'technology')"
     )
     revered: Set[str] = Field(
@@ -46,22 +48,94 @@ class CultureVector(BaseModel):
         description="Набор почитаемых вещей (напр. 'ancestors', 'fire', 'gold')"
     )
 
+    def get_numerical_axes(self) -> Dict[str, float]:
+        """Возвращает словарь только с числовыми осями для итерации."""
+        return {
+            k: v for k, v in self.model_dump().items() 
+            if isinstance(v, (int, float)) and k not in ['taboo', 'revered']
+        }
+
+    # === Операторы ===
+
     def __add__(self, other: 'CultureVector') -> 'CultureVector':
-        """
-        Магический метод сложения двух культур.
-        Числа складываются, множества (Sets) объединяются.
-        """
+        """Сложение векторов (например, База + Вера + Черты)."""
         if not isinstance(other, CultureVector):
             return self
 
-        return CultureVector(
-            aggression=self.aggression + other.aggression,
-            magic_affinity=self.magic_affinity + other.magic_affinity,
-            collectivism=self.collectivism + other.collectivism,
-            taboo=self.taboo | other.taboo,       
-            revered=self.revered | other.revered  
-        )
+        new_data = {}
+        
+        # 1. Складываем числа
+        my_axes = self.get_numerical_axes()
+        other_axes = other.get_numerical_axes()
+        all_keys = set(my_axes.keys()) | set(other_axes.keys())
+        
+        for k in all_keys:
+            val = my_axes.get(k, 0.0) + other_axes.get(k, 0.0)
+            # Можно добавить клемпинг (ограничение), например от -10 до 10, если нужно
+            new_data[k] = val
 
+        # 2. Объединяем множества
+        new_data['taboo'] = self.taboo | other.taboo
+        new_data['revered'] = self.revered | other.revered
+        
+        return CultureVector(**new_data)
+
+    def __mul__(self, scalar: float) -> 'CultureVector':
+        """Умножение на скаляр (например, влияние слабого лидера: culture * 0.5)."""
+        new_data = {}
+        
+        # Умножаем только числа
+        for k, v in self.get_numerical_axes().items():
+            new_data[k] = v * scalar
+            
+        # Множества остаются без изменений (нельзя умножить табу на 0.5)
+        new_data['taboo'] = self.taboo
+        new_data['revered'] = self.revered
+        
+        return CultureVector(**new_data)
+
+    def distance_to(self, other: 'CultureVector', weights: Optional[Dict[str, float]] = None) -> float:
+        """
+        Рассчитывает культурное напряжение (расстояние).
+        Используем Манхэттенское расстояние (сумма модулей разностей), 
+        так как оно интуитивнее для игровых параметров, чем Евклидово.
+        """
+        if weights is None:
+            weights = {}
+            
+        tension = 0.0
+        
+        # 1. Числовые оси
+        my_axes = self.get_numerical_axes()
+        other_axes = other.get_numerical_axes()
+        all_keys = set(my_axes.keys()) | set(other_axes.keys())
+
+        for k in all_keys:
+            v1 = my_axes.get(k, 0)
+            v2 = other_axes.get(k, 0)
+            diff = abs(v1 - v2)
+            
+            # Если разница незначительна (например < 2), напряжение не растет
+            # Это аналог вашего "if abs > 5", но более плавный
+            if diff > 2.0:
+                # Вес по умолчанию 1.0, для aggression можно передать другой
+                w = weights.get(k, 0.1) 
+                tension += (diff - 2.0) * w
+
+        # 2. Идеологические конфликты (Sets)
+        # Табу одной стороны vs Святыни другой
+        conflict_set_1 = self.taboo & other.revered
+        conflict_set_2 = other.taboo & self.revered
+        
+        # Каждое пересечение дает большой скачок напряжения
+        tension += (len(conflict_set_1) + len(conflict_set_2)) * 1.5
+        
+        # Общие ценности снижают напряжение
+        shared_values = self.revered & other.revered
+        tension -= len(shared_values) * 0.5
+
+        return max(0.0, tension)
+    
 # --- 2. Шаблон Веры (НОВЫЙ) ---
 class BeliefVariation(BaseModel):
     """Подвид веры (ересь, секта, ортодоксы)"""

@@ -801,48 +801,35 @@ class ConflictSystem:
         return risk
 
     def _calculate_cultural_tension(self, f1, f2, active_global_wars: Optional[List[Entity]] = None) -> float:
-        tension = 0.0
-        
-        # Получаем эффективные вектора (уже с учетом религии!)
+        # 1. Получаем полные вектора (со сложением базы, веры и лидеров)
         c1 = self._get_effective_culture(f1)
         c2 = self._get_effective_culture(f2)
         
-        # 1. Базовые оси (теперь обращаемся как к атрибутам)
-        # Агрессивные фракции в принципе создают больше напряжения
-        tension += (c1.aggression + c2.aggression) * 0.05
+        # 2. Настраиваем веса для осей
+        # Агрессия важнее магии для расчета шанса войны
+        weights = {
+            "aggression": 0.2,      # Агрессия вносит больший вклад
+            "magic_affinity": 0.1, 
+            "collectivism": 0.1
+        }
+        
+        # 3. Элегантный расчет через метод класса
+        base_tension = c1.distance_to(c2, weights)
+        
+        # Дополнительная логика для "Агрессоров" (по запросу: aggression обрабатывать особо)
+        # Если обе фракции агрессивны (сумма > 10), напряжение растет само по себе,
+        # даже если их уровни агрессии равны (distance = 0).
+        total_aggression = c1.aggression + c2.aggression
+        if total_aggression > 5:
+            base_tension += total_aggression * 0.05
 
-        # Разница в магии (маги vs технократы/варвары)
-        if abs(c1.magic_affinity - c2.magic_affinity) > 5:
-            tension += 0.5
-            
-        # Разница в коллективизме (индивидуалисты vs улей)
-        if abs(c1.collectivism - c2.collectivism) > 5:
-            tension += 0.5
+        # Нормализация
+        final_tension = max(0.1, min(10.0, base_tension + 1.0))
 
-        # 2. Табу и Фетиши (Идеологический конфликт)
-        # CultureVector хранит это как set, так что работаем с множествами
-        
-        # Если то, что одни почитают (revered), для других табу (taboo)
-        conflict_ideas = len(c1.taboo & c2.revered) + len(c2.taboo & c1.revered)
-        tension += conflict_ideas * 1.0 # Сильный штраф за нарушение табу
-        
-        # Бонус за общие ценности (снижает напряжение)
-        shared_values = len(c1.revered & c2.revered)
-        tension -= shared_values * 0.2
-
-        # 3. Различие в тегах (как и раньше)
-        diff_tags = len(set(f1.tags) ^ set(f2.tags))
-        tension += diff_tags * 0.05
-        
-        # Нормализация (чтобы не ушло в минус)
-        base_tension = max(0.1, min(5.0, tension + 1.0))
-        
-        # 4. ВЛИЯНИЕ РЕЛИГИИ (Как "Свой-Чужой")
-        # Мы уже учли цифры (aggression), но теперь нужен именно статус отношений
+        # 4. Влияние Религии (статус отношений)
         belief_mod = self._get_belief_tension_modifier(f1, f2, active_global_wars)
         
-        final_tension = base_tension * belief_mod
-        return final_tension
+        return final_tension * belief_mod
 
     def _determine_dispute_reason(self, factions, loc) -> str:
         resources = self.qs.get_children(loc.id, EntityType.RESOURCE)
@@ -854,26 +841,36 @@ class ConflictSystem:
         return "ideological"
     
     def _get_effective_culture(self, faction: Entity) -> CultureVector:
-        # 1. База фракции
-        base_data = faction.data.get("culture_vector", {})
-        culture = CultureVector(**base_data)
+        # База
+        # Pydantic сам подставит нули для отсутствующих полей
+        culture = CultureVector(**faction.data.get("culture_vector", {}))
 
-        # 2. Религия
+        # Вера (Сложение)
         if hasattr(self.qs, 'get_belief'):
             belief = self.qs.get_belief(faction)
             if belief and "modifiers" in belief.data:
+                # modifiers веры могут содержать только часть полей, это ок
                 belief_mods = CultureVector(**belief.data["modifiers"])
                 culture = culture + belief_mods
 
-        # 3. === НОВОЕ: Влияние Лидера ===
-        # Нам нужен хелпер get_leader в WorldQueryService, или ищем вручную
+        # Лидер (Сложение и Умножение)
         leader = self._find_leader(faction) 
-        if leader and "culture_vector" in leader.data:
-            leader_mods = CultureVector(**leader.data["culture_vector"])
+        if leader:
+            # Предположим, у лидера есть "traits_modifiers" (вектор)
+            # и "influence" (скаляр, например, харизма/10)
             
-            # ВАЖНО: Личность лидера накладывается сверху
-            # Можно добавить коэффициент влияния (например, x0.5 или x1.0)
-            culture = culture + leader_mods
+            # Пример: Лидер "Warlord" добавляет агрессию
+            if "culture_vector" in leader.data:
+                leader_mods = CultureVector(**leader.data["culture_vector"])
+                
+                # Пример логики: безумный король влияет сильнее (умножение)
+                influence_factor = 1.0
+                if "mad" in leader.tags:
+                    influence_factor = 1.5
+                
+                # (Culture + LeaderVec) * Influence ? 
+                # Или просто Culture + (LeaderVec * Influence) - логичнее второе
+                culture = culture + (leader_mods * influence_factor)
 
         return culture
 
