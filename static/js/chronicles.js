@@ -8,10 +8,11 @@ const TYPE_COLORS = {
     'Character': '#f4a261',
     'Resource': '#2a9d8f',
     'Event': '#1d3557',
-    'Conflict': '#d62828',
+    'Conflict': '#641414ff',
     'Item': '#ffd700',
     'Ritual': '#9b5de5',
     'Belief': '#00bbf9',
+    'Boss': '#614327ff',
     'default': '#999999'
 };
 
@@ -52,7 +53,7 @@ export function initChronicles() {
 // --- 2. ЗАГРУЗКА ДАННЫХ (ОБНОВЛЕНО) ---
 export async function loadWorldData() {
     console.log("Loading graph data...");
-    
+    // TODO: добавить include в запрос и в GUI!
     // Пытаемся найти инпут с тегами (если он уже отрисован)
     const tagsInput = document.getElementById('server-filter-tags');
     let excludeParams = '';
@@ -131,7 +132,7 @@ export async function loadWorldData() {
     }
 }
 
-// --- ПАРСИНГ ДАННЫХ (ИСПРАВЛЕН БАГ СО СВЯЗЯМИ) ---
+// --- ПАРСИНГ ДАННЫХ ---
 function prepareData(json) {
     // 1. Сначала собираем узлы
     const nodes = Object.values(json.entities).map(e => ({
@@ -380,8 +381,6 @@ function addShuffleButton(parentContainer) {
 }
 
 // --- INFO PANEL & LLM ---
-// (Остальная часть файла без изменений: showNodeDetails, getLlmDescription, generateStory)
-// Убедитесь, что функции экспортируются или находятся в области видимости, если они используются модульно
 function showNodeDetails(node) {
     selectedNodeId = node.id();
     const data = node.data('raw');
@@ -416,7 +415,6 @@ function showNodeDetails(node) {
     document.getElementById('btn-describe-entity').onclick = () => getLlmDescription(selectedNodeId);
 }
 
-// ... Оставшиеся функции getLlmDescription и generateStory остаются как были ...
 async function getLlmDescription(entityId) {
     const outDiv = document.getElementById('ai-description-output');
     const btn = document.getElementById('btn-describe-entity');

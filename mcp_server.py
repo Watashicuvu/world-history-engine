@@ -47,10 +47,10 @@ class InMemoryEventStore(EventStore):
                     await send_callback(EventMessage(message, event_id))
         return target_stream_id
 
-
+# TODO CHANGE!
 class WorldGenPlan(BaseModel):
     existing_biomes_to_use: list[str] = Field(description="List of EXISTING biomes that are suitable")
-    new_biomes_to_create: list[str] = Field(description="List of names for NEW biomes that are missing (for example 'Cyberpunk City', 'Crystal Caves')")
+    new_biomes_to_create: list[str] = Field(description="List of names for NEW biomes that are missing (for example 'Hill', 'Coast')")
     width: int = Field(default=3, description="Map width (usually 2-3)")
     height: int = Field(default=3, description="The height of the map (usually 2-3)")
     reasoning: str = Field(description="A brief explanation of the choice of biomes")
@@ -90,6 +90,7 @@ mcp = FastMCP(
 
 # --- 4. Tools ---
 
+# TODO переделать!
 @mcp.tool()
 async def generate_new_world(description: str) -> str:
     """
@@ -97,7 +98,7 @@ async def generate_new_world(description: str) -> str:
     Example: "A post-apocalyptic wasteland with radiation oases."
     This operation overwrites the current world!
     """
-    from src.models.registries import BIOME_REGISTRY
+    from src.models.registries import (BIOME_REGISTRY, FACTION_REGISTRY)
     from src.models.templates_schema import BiomeTemplate
     from src.services.llm_service import LLMService
     from src.services.template_editor import TemplateEditorService
@@ -120,6 +121,7 @@ async def generate_new_world(description: str) -> str:
         # 1. Анализ существующих ресурсов
         # Мы больше не хардкодим, а берем реальные ключи из реестра
         available_ids = list(BIOME_REGISTRY.keys())
+        avaibable_fraction_ids = list(FACTION_REGISTRY.keys())
         
         log_output.append(f"🔍 Analyzing request against {len(available_ids)} existing biomes...")
 
@@ -128,6 +130,7 @@ async def generate_new_world(description: str) -> str:
             prompt = (
                 f"User wants: '{description}'.\n"
                 f"Available Biome IDs: {', '.join(available_ids)}\n"
+                f"Available Faction IDs: {', '.join(avaibable_fraction_ids)}\n"
                 "Decide which existing biomes to use and which NEW ones to create to match the description."
             )
             plan: WorldGenPlan = await llm.generate_structure(prompt, WorldGenPlan)
@@ -302,6 +305,7 @@ async def add_fact(from_id: str, to_id: str, relation_type: str) -> str:
         return f"Linked: {e1.name} --[{relation_type}]--> {e2.name}"
 
 @mcp.tool()
+# TODO: в какой-то момент будет не хватать имён
 async def get_relationship_table(
     source_type: Optional[str] = None, 
     target_type: Optional[str] = None

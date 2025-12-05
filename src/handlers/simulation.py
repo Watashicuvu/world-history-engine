@@ -67,6 +67,17 @@ async def narrate_history(
         print(f"Narrate error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.get("/metadata")
+async def get_metadata(
+    service: FromDishka[WorldQueryService]
+):
+    try:
+        text = service.get_world_metadata()
+        return text
+    except Exception as e:
+        print(f"Narrate error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.get("/history_logs")
 async def get_history_logs():
     """Возвращает содержимое history.jsonl"""

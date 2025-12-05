@@ -249,7 +249,7 @@ class WorldGenerator:
                 biome_pool=biome_ids,
                 fill_ratio=1.0,
                 # Fallback на первый попавшийся биом, если списка нет
-                fallback_biome_id=biome_ids[0] if biome_ids else "default"
+                fallback_biome_id=biome_ids[0] if biome_ids else "biome_plains"
             )
             if layout_to_json:
                 save_spatial_layout_to_json(layout, './layouts/layout.json')

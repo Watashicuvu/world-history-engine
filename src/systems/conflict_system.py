@@ -800,7 +800,7 @@ class ConflictSystem:
         
         return risk
 
-    def _calculate_cultural_tension(self, f1, f2, active_global_wars: List[Entity] = None) -> float:
+    def _calculate_cultural_tension(self, f1, f2, active_global_wars: Optional[List[Entity]] = None) -> float:
         tension = 0.0
         
         # Получаем эффективные вектора (уже с учетом религии!)

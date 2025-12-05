@@ -226,12 +226,35 @@ def load_spatial_layout_from_json(filepath: str, biome_enum_class) -> SpatialLay
 
     return layout
 
-def save_world_to_json(world: World, filepath: str | Path):
-    """Сохраняет мир в JSON-файл."""
-    data = world.model_dump(mode="json", exclude_none=True)
-    with open(filepath, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-    print(f"✅ Мир сохранён в {filepath}")
+# def save_world_to_json(world: World, filepath: str | Path):
+#     """Сохраняет мир в JSON-файл."""
+#     data = world.model_dump(mode="json", exclude_none=True)
+#     with open(filepath, "w", encoding="utf-8") as f:
+#         json.dump(data, f, ensure_ascii=False, indent=2)
+#     print(f"✅ Мир сохранён в {filepath}")
+def save_world_to_json(world: World, path: str):
+    # Превращаем в dict
+    data = {
+        "graph": {
+            "entities": {k: v.model_dump(mode='json') for k, v in world.graph.entities.items()},
+            "relations": [r.model_dump(mode='json') for r in world.graph.relations],
+            "relation_types": {k: v.model_dump(mode='json') for k, v in world.graph.relation_types.items()}
+        }
+    }
+    
+    # Записываем атомарно (сначала во временный файл, потом переименовываем)
+    # Это предотвратит битые файлы при краше
+    temp_path = f"{path}.tmp"
+    try:
+        with open(temp_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        
+        import os
+        if os.path.exists(path):
+            os.remove(path)
+        os.rename(temp_path, path)
+    except Exception as e:
+        print(f"Failed to save world: {e}")
 
 def load_world_from_json(filepath: str | Path) -> World:
     """Загружает мир из JSON и восстанавливает RelationType."""

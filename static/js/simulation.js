@@ -3,14 +3,28 @@ import { utils } from './utils.js';
 
 // === КОНФИГУРАЦИЯ ===
 const CFG = {
-    TILE_SIZE: 64,
-    ICON_SIZE: 20,       // Размер иконки локации
-    EVENT_SIZE: 24,      // Размер иконки события
-    ANIMATION_SPEED: 800, // мс на эпоху
+    TILE_SIZE: 80,       // Увеличил размер тайла (было 64), чтобы влезало больше иконок
+    ICON_SIZE: 22,       
+    EVENT_SIZE: 26,      
+    ANIMATION_SPEED: 800,
     COLORS: {
         'plain': '#4ade80', 'forest': '#166534', 'desert': '#fde047',
         'mountain': '#57534e', 'coast': '#3b82f6', 'swamp': '#4d7c0f',
         'tundra': '#cffafe', 'wasteland': '#78350f', 'default': '#2b2b2b'
+    },
+    // Описания для легенды
+    LEGEND: {
+        biomes: {
+            'plain': 'Равнины', 'forest': 'Леса', 'desert': 'Пустыни',
+            'mountain': 'Горы', 'swamp': 'Болота', 'coast': 'Побережье'
+        },
+        events: {
+            '⚔️': 'Война / Набег',
+            '💀': 'Смерть / Истощение',
+            '✨': 'Рождение / Открытие',
+            '🏃': 'Миграция / Бегство',
+            '🤝': 'Дипломатия'
+        }
     }
 };
 
@@ -24,7 +38,6 @@ class WorldRenderer {
         this.entities = [];      
         this.history = {};       
         
-        // Map<EntityID, {x, y, icon, created_at}>
         this.renderCache = new Map(); 
 
         this.camera = { x: 0, y: 0, zoom: 1.0 };
@@ -32,6 +45,7 @@ class WorldRenderer {
         this.lastMouse = { x: 0, y: 0 };
 
         this._setupInput();
+        this._createLegendOverlay(); // Создаем легенду при старте
     }
 
     _setupInput() {
@@ -76,50 +90,75 @@ class WorldRenderer {
         });
     }
 
+    // === НОВОЕ: Создание легенды ===
+    _createLegendOverlay() {
+        // Удаляем старую, если есть
+        const old = document.getElementById('map-legend-overlay');
+        if (old) old.remove();
+
+        const container = document.createElement('div');
+        container.id = 'map-legend-overlay';
+        container.style.cssText = `
+            position: absolute; top: 10px; right: 10px;
+            background: rgba(30, 30, 30, 0.85); color: white;
+            padding: 10px; border-radius: 8px; font-size: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            backdrop-filter: blur(4px); pointer-events: none;
+            max-width: 200px;
+        `;
+
+        // Генерируем HTML для биомов
+        let biomeHtml = '<div style="margin-bottom:8px; font-weight:bold; border-bottom:1px solid #555;">Биомы</div>';
+        for (const [key, label] of Object.entries(CFG.LEGEND.biomes)) {
+            const color = CFG.COLORS[key];
+            biomeHtml += `
+                <div style="display:flex; align-items:center; margin-bottom:2px;">
+                    <div style="width:12px; height:12px; background:${color}; margin-right:8px; border:1px solid #fff;"></div>
+                    <span>${label}</span>
+                </div>`;
+        }
+
+        // Генерируем HTML для событий
+        let eventHtml = '<div style="margin-top:8px; margin-bottom:4px; font-weight:bold; border-bottom:1px solid #555;">События</div>';
+        for (const [icon, label] of Object.entries(CFG.LEGEND.events)) {
+            eventHtml += `
+                <div style="display:flex; align-items:center; margin-bottom:2px;">
+                    <div style="width:16px; text-align:center; margin-right:8px;">${icon}</div>
+                    <span>${label}</span>
+                </div>`;
+        }
+
+        container.innerHTML = biomeHtml + eventHtml;
+        
+        // Вставляем внутрь родителя канваса
+        this.canvas.parentElement.style.position = 'relative';
+        this.canvas.parentElement.appendChild(container);
+    }
+
     loadWorld(layout, entities) {
         this.layout = layout;
         this.updateEntities(entities);
         this.centerCamera();
     }
 
-    // === ГЛАВНЫЙ МЕТОД ПАРСИНГА ИСТОРИИ ===
     loadHistory(historyLogs) {
         this.history = {};
         let maxAge = 0;
-        let debugOnce = false;
         
         historyLogs.forEach(line => {
             try {
                 const evt = (typeof line === 'string') ? JSON.parse(line) : line;
-                
-                // ОТЛАДКА: Выводим структуру первого события в консоль
-                if (!debugOnce) {
-                    console.log("🔍 Sample Event Structure:", evt);
-                    debugOnce = true;
-                }
-
-                // === ИСПРАВЛЕНИЕ ЗДЕСЬ ===
-                // 1. Проверяем created_at (стандарт Pydantic)
-                // 2. Проверяем age (если есть в корне)
-                // 3. Проверяем data.age (если вложено)
                 let age = 0;
                 if (evt.created_at !== undefined) age = evt.created_at;
                 else if (evt.age !== undefined) age = evt.age;
                 else if (evt.data?.age !== undefined) age = evt.data.age;
-                
-                // Приводим к числу на всякий случай
                 age = Number(age);
 
                 if (age > maxAge) maxAge = age;
-                
                 if (!this.history[age]) this.history[age] = [];
                 this.history[age].push(evt);
-            } catch (e) {
-                console.error("Parse error:", e);
-            }
+            } catch (e) {}
         });
-        
-        console.log(`✅ History loaded. Max Age found: ${maxAge}`);
         return maxAge;
     }
 
@@ -128,87 +167,70 @@ class WorldRenderer {
         this._rebuildCache();
     }
 
+    // === ИСПРАВЛЕННЫЙ РАСЧЕТ ПОЗИЦИЙ (Anti-Overlap) ===
     _rebuildCache() {
         this.renderCache.clear();
-        
-        console.group("🛠️ Debug: Rebuilding Cache");
-        
-        // 1. ПРОВЕРКА СПИСКА
-        if (!this.entities || this.entities.length === 0) {
-            console.warn("⚠️ Entities list is EMPTY! Check handleBuild/handleRun parsing.");
-            console.groupEnd();
-            return;
-        }
+        if (!this.layout) return;
 
-        console.log(`Total entities to process: ${this.entities.length}`);
-        
-        // 2. ВЫВОД ПРИМЕРА (Первый элемент)
-        console.log("🔍 First entity structure:", this.entities[0]);
-
-        // 3. СБОР КООРДИНАТ БИОМОВ
+        // 1. Индексируем координаты биомов
         const biomeCoords = {};
-        const stats = { biomes: 0, locations: 0, others: 0 };
-        
         this.entities.forEach(e => {
-            // Приводим тип к строке и нижнему регистру для сравнения
-            const type = String(e.type || "unknown").toLowerCase();
+            if (e.type === 'Biome' && e.data?.coord) {
+                biomeCoords[e.id] = e.data.coord;
+            }
+        });
+
+        // 2. Группируем локации по родителям (биомам)
+        // Map<BiomeID, Array<LocationEntity>>
+        const locationsByBiome = {};
+
+        this.entities.forEach(e => {
+            if (e.type !== 'Location') return;
+            if (!locationsByBiome[e.parent_id]) locationsByBiome[e.parent_id] = [];
+            locationsByBiome[e.parent_id].push(e);
+        });
+
+        // 3. Распределяем локации внутри тайла
+        Object.entries(locationsByBiome).forEach(([parentId, locs]) => {
+            const bCoord = biomeCoords[parentId];
+            if (!bCoord) return;
+
+            // Сортируем по ID, чтобы порядок был детерминированным (не прыгал)
+            locs.sort((a, b) => a.id.localeCompare(b.id));
+
+            const count = locs.length;
             
-            if (type === 'biome') {
-                // Ищем координаты в data.coord
-                if (e.data && e.data.coord) {
-                    biomeCoords[e.id] = e.data.coord;
-                    stats.biomes++;
+            locs.forEach((loc, index) => {
+                let lx = 0.5, ly = 0.5;
+
+                // --- АЛГОРИТМ РАСКЛАДКИ ---
+                if (count === 1) {
+                    // Одна локация — строго по центру
+                    lx = 0.5; ly = 0.5;
+                } else if (count === 2) {
+                    // Две — по диагонали
+                    if (index === 0) { lx = 0.35; ly = 0.35; }
+                    else { lx = 0.65; ly = 0.65; }
                 } else {
-                    console.warn(`⚠️ Biome ${e.id} missing data.coord`, e);
+                    // 3 и более — по кругу
+                    const radius = 0.3; // Радиус круга (30% от тайла)
+                    const angle = (2 * Math.PI / count) * index - (Math.PI / 2); // -90deg (начинаем сверху)
+                    lx = 0.5 + radius * Math.cos(angle);
+                    ly = 0.5 + radius * Math.sin(angle);
                 }
-            } else if (type === 'location') {
-                stats.locations++;
-            } else {
-                stats.others++;
-            }
-        });
+                // ---------------------------
 
-        console.log(`Stats: ${stats.biomes} biomes (with coords), ${stats.locations} locations found.`);
+                const pixelX = (bCoord[0] * CFG.TILE_SIZE) + (lx * CFG.TILE_SIZE);
+                const pixelY = (bCoord[1] * CFG.TILE_SIZE) + (ly * CFG.TILE_SIZE);
 
-        if (stats.biomes === 0) {
-            console.error("❌ No biomes with coordinates found! Map will be empty.");
-            console.groupEnd();
-            return;
-        }
-
-        // 4. КЭШИРОВАНИЕ ЛОКАЦИЙ
-        let cachedCount = 0;
-        
-        this.entities.forEach(e => {
-            const type = String(e.type || "").toLowerCase();
-            if (type !== 'location') return;
-
-            const bCoord = biomeCoords[e.parent_id];
-            
-            if (!bCoord) {
-                // Это частая ошибка: локация ссылается на биом, которого нет или у которого нет координат
-                // console.debug(`Skipping location ${e.name}: parent ${e.parent_id} coords not found`);
-                return;
-            }
-
-            // Координаты внутри тайла (local_coord)
-            const local = e.data?.local_coord || [0.5, 0.5];
-            
-            // Расчет позиции на экране
-            const pixelX = (bCoord[0] * CFG.TILE_SIZE) + (local[0] * CFG.TILE_SIZE);
-            const pixelY = (bCoord[1] * CFG.TILE_SIZE) + (local[1] * CFG.TILE_SIZE);
-
-            this.renderCache.set(e.id, {
-                x: pixelX,
-                y: pixelY,
-                icon: utils.getIcon(e) || "📍",
-                created_at: (e.created_at !== undefined) ? Number(e.created_at) : 0
+                this.renderCache.set(loc.id, {
+                    x: pixelX,
+                    y: pixelY,
+                    icon: utils.getIcon(loc) || "📍",
+                    created_at: (loc.created_at !== undefined) ? Number(loc.created_at) : 0
+                });
             });
-            cachedCount++;
         });
-
-        console.log(`✅ Successfully cached ${cachedCount} locations.`);
-        console.groupEnd();
     }
 
     centerCamera() {
@@ -236,7 +258,7 @@ class WorldRenderer {
         ctx.scale(this.camera.zoom, this.camera.zoom);
 
         this._drawTerrain(ctx);
-        this._drawGrid(ctx); // Рисуем сетку для наглядности
+        this._drawGrid(ctx);
         this._drawLocations(ctx, epoch);
         this._drawEvents(ctx, epoch, progress);
     }
@@ -263,15 +285,12 @@ class WorldRenderer {
         }
     }
 
-    // Вспомогательная сетка (тонкие линии)
     _drawGrid(ctx) {
-        if (this.camera.zoom < 0.5) return; // Оптимизация
+        if (this.camera.zoom < 0.5) return;
         const { width, height } = this.layout;
-        
         ctx.strokeStyle = 'rgba(0,0,0,0.15)';
         ctx.lineWidth = 1;
         
-        // Внешние границы тайлов
         for (let y = 0; y <= height; y++) {
             ctx.beginPath();
             ctx.moveTo(0, y * CFG.TILE_SIZE);
@@ -288,71 +307,45 @@ class WorldRenderer {
 
     _drawLocations(ctx, epoch) {
         this.renderCache.forEach(item => {
-            // Если локация еще не родилась — пропускаем
             if (item.created_at > epoch) return;
 
-            // Рисуем полупрозрачную подложку
+            // Подложка
             ctx.beginPath();
-            ctx.arc(item.x, item.y, CFG.ICON_SIZE / 1.5, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(0,0,0,0.5)'; // Темная подложка
+            ctx.arc(item.x, item.y, CFG.ICON_SIZE/1.3, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0,0,0,0.4)';
             ctx.fill();
-            
-            // Если это новая локация (текущей эпохи), можно подсветить
-            if (item.created_at === epoch && epoch > 0) {
-                 ctx.strokeStyle = '#ffff00';
-                 ctx.lineWidth = 2;
-                 ctx.stroke();
-            }
 
-            // Рисуем иконку
-            this._drawIcon(ctx, item.icon, item.x, item.y);
+            // Иконка
+            this._drawIcon(ctx, item.icon, item.x, item.y, CFG.ICON_SIZE);
         });
     }
 
-    // TODO: проверить парсинг
     _drawEvents(ctx, epoch, progress) {
-        const events = this.history[epoch] || [];
+        const epochInt = Math.floor(epoch);
+        const events = this.history[epochInt] || [];
         
-        const getAnimStyle = (type) => {
-            const t = String(type).toLowerCase(); // Приводим к строке и нижнему регистру
-
-            // 1. ВОЙНА (Красные мечи)
-            if (t.match(/raid|conflict|war|siege|battle|fight|attack/)) 
-                return { icon: '⚔️', effect: 'pulse', color: 'red' };
-            
-            // 2. СМЕРТЬ И РАЗРУШЕНИЕ (Серый череп) + ИСТОЩЕНИЕ РЕСУРСОВ
-            if (t.match(/death|kill|execut|starve|destroy|depleted|perished/)) 
-                return { icon: '💀', effect: 'float', color: 'gray' };
-            
-            // 3. ДВИЖЕНИЕ (Синий бегун)
-            if (t.match(/mov|fled|migrat|run|exile|wander/)) 
-                return { icon: '🏃', effect: 'drop', color: 'blue' };
-            
-            // 4. ПОЗИТИВ / РОСТ (Золотая искра)
-            if (t.match(/new|settl|birth|found|discover|construct|transform|growth|resource/)) 
-                return { icon: '✨', effect: 'pop', color: 'gold' };
-            
-            // 5. ДИПЛОМАТИЯ (Белое рукопожатие)
-            if (t.match(/truce|alliance|peace/)) 
-                return { icon: '🤝', effect: 'pop', color: 'white' };
-            
-            // Фоллбэк (если тип не распознан)
+        const getAnimStyle = (typeRaw) => {
+            const t = String(typeRaw).toLowerCase();
+            if (t.match(/raid|conflict|war|siege|battle|fight|attack/)) return { icon: '⚔️', effect: 'pulse', color: 'red' };
+            if (t.match(/death|kill|execut|starve|destroy|depleted|perished/)) return { icon: '💀', effect: 'float', color: 'gray' };
+            if (t.match(/mov|fled|migrat|run|exile|wander/)) return { icon: '🏃', effect: 'drop', color: 'blue' };
+            if (t.match(/new|settl|birth|found|discover|construct|transform|growth|resource|regrowth/)) return { icon: '✨', effect: 'pop', color: 'gold' };
+            if (t.match(/truce|alliance|peace/)) return { icon: '🤝', effect: 'pop', color: 'white' };
             return { icon: '❗', effect: 'pop', color: 'white' }; 
         };
 
         events.forEach(evt => {
-            // ИЗВЛЕЧЕНИЕ ТИПА: Сначала смотрим в data.event_type (самый точный), потом fallback
             const type = evt.data?.event_type || evt.event_type || "unknown";
             const data = evt.data || {};
             
-            // Логика поиска координат (без изменений)
-            let targetId = data.location_id;
+            let targetId = data.location_id; 
             if (!targetId && evt.primary_entity) {
                 if (evt.primary_entity.type === 'Location') {
                     targetId = evt.primary_entity.id;
-                } else if (evt.primary_entity.type === 'Faction') {
-                    const fac = this.entities.find(e => e.id === evt.primary_entity.id);
-                    if (fac) targetId = fac.parent_id;
+                } 
+                else if (['Faction', 'Resource', 'Character'].includes(evt.primary_entity.type)) {
+                    const parentEnt = this.entities.find(e => e.id === evt.primary_entity.id);
+                    if (parentEnt) targetId = parentEnt.parent_id;
                 }
             }
 
@@ -364,41 +357,35 @@ class WorldRenderer {
             ctx.save();
             ctx.translate(pos.x, pos.y);
 
-            // Отрисовка эффектов (без изменений)
             if (style.effect === 'pulse') {
                 const s = 1 + Math.sin(progress * Math.PI * 5) * 0.4;
                 ctx.scale(s, s);
-                this._drawIcon(ctx, style.icon, 0, -20);
+                this._drawIcon(ctx, style.icon, 0, -20, CFG.EVENT_SIZE);
             } else if (style.effect === 'float') {
-                ctx.globalAlpha = 1.0 - progress;
-                this._drawIcon(ctx, style.icon, 0, -15 - (progress * 30));
+                ctx.globalAlpha = Math.max(0.2, 1.0 - progress);
+                this._drawIcon(ctx, style.icon, 0, -15 - (progress * 30), CFG.EVENT_SIZE);
             } else if (style.effect === 'drop') {
                 const y = -40 * (1 - progress);
-                ctx.globalAlpha = progress;
-                this._drawIcon(ctx, style.icon, 0, y - 10);
+                ctx.globalAlpha = Math.max(0.2, progress);
+                this._drawIcon(ctx, style.icon, 0, y - 10, CFG.EVENT_SIZE);
             } else {
                 const s = Math.min(1, progress * 2);
                 ctx.scale(s, s);
-                this._drawIcon(ctx, style.icon, 0, -15);
+                this._drawIcon(ctx, style.icon, 0, -15, CFG.EVENT_SIZE);
             }
             ctx.restore();
         });
     }
 
-    _drawIcon(ctx, icon, x, y) {
-        // Настройка шрифта
-        ctx.font = `bold ${CFG.ICON_SIZE}px sans-serif`; // Используем sans-serif для эмодзи
+    _drawIcon(ctx, icon, x, y, size) {
+        ctx.font = `bold ${size}px sans-serif`; 
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         
-        // 1. Рисуем жирную черную обводку
-        ctx.lineWidth = 4;
-        ctx.lineJoin = 'round';
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = 'rgba(0,0,0,0.8)';
         ctx.strokeText(icon, x, y);
         
-        // 2. Рисуем саму иконку белым (хотя эмодзи имеют свой цвет, 
-        // fillText важен для некоторых символов)
         ctx.fillStyle = '#ffffff';
         ctx.fillText(icon, x, y);
     }
@@ -480,15 +467,15 @@ async function handleRun() {
         await api.post('/api/simulation/run', { epochs });
         
         const logs = await pollLogs(epochs);
-        
-        // ВАЖНО: Парсим историю и получаем реальный Max Age
         maxEpoch = renderer.loadHistory(logs);
         
-        // Обновляем сущности (чтобы увидеть новые города)
         const entRes = await api.get('/api/simulation/latest_entities');
-        renderer.updateEntities(entRes.entities || []);
+        const newEntities = entRes.entities || [];
 
-        // Ставим слайдер в конец, но запускаем анимацию с 0 (или текущей)
+        if (newEntities.length > 0) {
+            renderer.updateEntities(newEntities);
+        }
+
         updateSlider(maxEpoch, currentEpoch);
         updateStatus("Воспроизведение...", false);
         
@@ -572,19 +559,16 @@ async function pollLogs(target) {
         await new Promise(r => setTimeout(r, 1000));
         const res = await api.get('/api/simulation/history_logs');
         const logs = res.logs || [];
-        
         if (logs.length === 0) continue;
 
         let max = 0;
         logs.forEach(l => {
             try { 
                 const evt = (typeof l === 'string') ? JSON.parse(l) : l;
-                // ИСПРАВЛЕНИЕ ПАРСИНГА ДЛЯ СТАТУС БАРА
                 let age = 0;
                 if(evt.created_at) age = evt.created_at;
                 else if(evt.age) age = evt.age;
                 else if(evt.data && evt.data.age) age = evt.data.age;
-                
                 if(age > max) max = age; 
             } catch(e){}
         });
@@ -592,7 +576,6 @@ async function pollLogs(target) {
         updateStatus(`Эпоха: ${max}/${target}`, true);
         if(max >= target) return logs;
     }
-    console.warn("Polling timeout");
     return [];
 }
 

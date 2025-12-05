@@ -85,8 +85,7 @@ class SpatialLayoutGenerator:
 
     def _apply_organic_mask(self, layout: SpatialLayout):
         """
-        Вырезает углы.
-        ИСПРАВЛЕНИЕ: Для малых карт делаем маску мягче, иначе она удаляет всё.
+        Вырезает углы
         """
         # Если карта слишком узкая, не применяем маску или делаем её минимальной
         if layout.width <= 4 or layout.height <= 4:
@@ -107,7 +106,7 @@ class SpatialLayoutGenerator:
                 noise = random.uniform(-0.1, 0.1)
                 
                 # Было > 0.85. Увеличим порог для надежности на краях
-                if dist_sq + noise > 0.90: 
+                if dist_sq + noise > 0.75: 
                     if (x, y) in layout.cells:
                         del layout.cells[(x, y)]
     

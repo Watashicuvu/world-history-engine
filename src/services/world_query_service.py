@@ -337,6 +337,37 @@ class WorldQueryService:
             "summary": summary
         })
 
+        # === НОВОЕ: Автоматическое определение локации ===
+        # Пытаемся понять, где произошло событие, и записать это в data,
+        # чтобы фронтенд мог нарисовать иконку в нужном месте.
+        location_id = data.get("location_id")
+        
+        if not location_id and primary_entity:
+            # 1. Если главный объект - Локация
+            if primary_entity.type == EntityType.LOCATION:
+                location_id = primary_entity.id
+            # 2. Если главный объект внутри чего-то (Фракция, Ресурс)
+            else:
+                loc = self.get_location_of(primary_entity)
+                if loc:
+                    location_id = loc.id
+        
+        # Если не нашли по первичному, ищем во вторичных (например, цель набега)
+        if not location_id and secondary_entities:
+            for ent in secondary_entities:
+                if ent.type == EntityType.LOCATION:
+                    location_id = ent.id
+                    break
+        
+        # Если нашли локацию, сохраняем ID в данные события
+        if location_id:
+            data["location_id"] = location_id
+            # ОПЦИОНАЛЬНО: Можно сразу сохранить координаты, чтобы не зависеть от кэша фронта
+            # loc_ent = self.get_entity(location_id)
+            # if loc_ent and loc_ent.data and "coord" in loc_ent.data:
+            #    data["target_coord"] = loc_ent.data["coord"]
+        # ================================================
+
         event_id = f"evt_{str(uuid.uuid4())[:8]}"
         event = Entity(
             id=event_id,
