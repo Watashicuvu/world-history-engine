@@ -16,7 +16,7 @@ const CFG = {
     LEGEND: {
         biomes: {
             'plain': 'Равнины', 'forest': 'Леса', 'desert': 'Пустыни',
-            'mountain': 'Горы', 'swamp': 'Болота', 'coast': 'Побережье'
+            'mountain': 'Горы', 'swamp': 'Болота', 'coast': 'Побережье', 'tundra': 'Тундра'
         },
         events: {
             '⚔️': 'Война / Набег',
@@ -326,11 +326,11 @@ class WorldRenderer {
         
         const getAnimStyle = (typeRaw) => {
             const t = String(typeRaw).toLowerCase();
-            if (t.match(/raid|conflict|war|siege|battle|fight|attack/)) return { icon: '⚔️', effect: 'pulse', color: 'red' };
-            if (t.match(/death|kill|execut|starve|destroy|depleted|perished/)) return { icon: '💀', effect: 'float', color: 'gray' };
-            if (t.match(/mov|fled|migrat|run|exile|wander/)) return { icon: '🏃', effect: 'drop', color: 'blue' };
-            if (t.match(/new|settl|birth|found|discover|construct|transform|growth|resource|regrowth/)) return { icon: '✨', effect: 'pop', color: 'gold' };
-            if (t.match(/truce|alliance|peace/)) return { icon: '🤝', effect: 'pop', color: 'white' };
+            if (t.match(/raid|conflict|war|absorbed_by|raid_start|boss_spawn|attack/)) return { icon: '⚔️', effect: 'pulse', color: 'red' };
+            if (t.match(/death|kill|famine|starve|destroy|depleted|perished/)) return { icon: '💀', effect: 'float', color: 'gray' };
+            if (t.match(/mov|fled_to|migrat|run|expansion|splintered_from/)) return { icon: '🏃', effect: 'drop', color: 'blue' };
+            if (t.match(/new|settl|resource_regrowth|found|discover|believes_in|transform|growth|resource|regrowth/)) return { icon: '✨', effect: 'pop', color: 'gold' };
+            if (t.match(/truce|allied_with|joined/)) return { icon: '🤝', effect: 'pop', color: 'white' };
             return { icon: '❗', effect: 'pop', color: 'white' }; 
         };
 

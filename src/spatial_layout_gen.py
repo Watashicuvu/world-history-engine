@@ -88,7 +88,7 @@ class SpatialLayoutGenerator:
         Вырезает углы
         """
         # Если карта слишком узкая, не применяем маску или делаем её минимальной
-        if layout.width <= 4 or layout.height <= 4:
+        if layout.width <= 2 or layout.height <= 2:
             return
 
         center_x = layout.width / 2
@@ -105,8 +105,7 @@ class SpatialLayoutGenerator:
                 
                 noise = random.uniform(-0.1, 0.1)
                 
-                # Было > 0.85. Увеличим порог для надежности на краях
-                if dist_sq + noise > 0.75: 
+                if dist_sq + noise > 0.6: 
                     if (x, y) in layout.cells:
                         del layout.cells[(x, y)]
     

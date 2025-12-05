@@ -1,0 +1,62 @@
+# type=missing, input_value={'default_calendar'
+default_calendar: "cal_imperial"
+
+calendars:
+  four_seasons:
+    id: "cal_imperial" 
+    name: "Имперский Календарь"
+    epochs_per_year: 4
+    season_order: ["season_spring", "season_summer", "season_autumn", "season_winter"] 
+    
+    seasons:
+      season_spring:    
+        id: "season_spring" 
+        name: "Сезон Всходов"
+        description: "Время, когда тают снега и просыпается жизнь."
+        modifiers:
+          expansion_weight: 1.5
+          conflict_weight: 0.8
+          trade_weight: 1.2
+          
+      season_summer:
+        id: "season_summer" 
+        name: "Сезон Огня"
+        description: "Жаркое время, идеально подходящее для походов."
+        modifiers:
+          expansion_weight: 1.0
+          conflict_weight: 2.0
+          resource_decay: 1.1
+          
+      season_autumn:
+        id: "season_autumn" 
+        name: "Сезон Урожая"
+        description: "Время сбора плодов и подготовки к холодам."
+        modifiers:
+          trade_weight: 1.5
+          conflict_weight: 1.0
+          
+      season_winter:
+        id: "season_winter" 
+        name: "Сезон Сна"
+        description: "Холодное время, когда жизнь замирает."
+        modifiers:
+          conflict_weight: 0.1
+          survival_difficulty: 2.0
+          movement_weight: 0.2
+
+  cataclysm_cycles:
+    id: "cal_cataclysm" 
+    name: "Циклы Бури"
+    epochs_per_year: 2
+    season_order: ["season_calm", "season_storm"] 
+    seasons:
+      season_calm:
+        id: "season_calm" 
+        name: "Затишье"
+        modifiers: { expansion_weight: 2.0, conflict_weight: 2.0 }
+        description: "Мир перед бурей." 
+      season_storm:
+        id: "season_storm" 
+        name: "Буря Хаоса"
+        modifiers: { destruction_weight: 3.0, survival_difficulty: 5.0 }
+        description: "Всё рушится."

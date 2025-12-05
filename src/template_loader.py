@@ -12,7 +12,8 @@ from src.models.registries import (
     RESOURCE_REGISTRY, 
     FACTION_REGISTRY,
     TRAIT_REGISTRY,
-    TRANSFORMATION_REGISTRY
+    TRANSFORMATION_REGISTRY,
+    CALENDAR_REGISTRY
 )
 
 # Импорт схем
@@ -20,6 +21,7 @@ from src.models.templates_schema import (
     BeliefTemplate,
     BiomeTemplate,
     BossesTemplate,
+    CalendarTemplate,
     FactionTemplate, 
     LocationTemplate, 
     ResourceTemplate,
@@ -47,6 +49,7 @@ class TemplateLoader:
         self.load_transformations()
         self.load_traits()
         self.load_beliefs()
+        #self.load_calendars()
         logger.info("Template loading finished.")
 
     def _load_yaml(self, filename: str) -> List[Dict[str, Any]]:
@@ -154,6 +157,20 @@ class TemplateLoader:
             except Exception as e:
                 logger.error(f"Failed to load biome {item.get('id')}: {e}")
         logger.info(f"Loaded {count} biomes.")
+
+    # def load_calendars(self):
+    #     data = self._load_yaml("calendar.yaml")
+    #     count = 0
+    #     for item in data:
+    #         try:
+    #             # Валидация через Pydantic
+    #             calendar = CalendarTemplate(**item)
+    #             CALENDAR_REGISTRY.register(calendar.id, calendar)
+    #             count += 1
+    #         except Exception as e:
+    #             logger.error(f"Failed to load calendar {item.get('id')}: {e}")
+        
+    #     logger.info(f"Loaded {count} calendars.")
 
 # Функции для загрузки NamingService (лексиконы)
 def load_naming_data(naming_service, base_dir: str = "data/naming"):

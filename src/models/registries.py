@@ -22,6 +22,8 @@ class Registry(Generic[T]):
         return self._items.keys()
 
 # Глобальные инстансы реестров
+# чтобы можно было легко подменять
+# и держать в памяти несколько экземпляров
 BIOME_REGISTRY = Registry()
 LOCATION_REGISTRY = Registry()
 RESOURCE_REGISTRY = Registry()
@@ -30,3 +32,4 @@ BOSSES_REGISTRY = Registry()
 TRANSFORMATION_REGISTRY = Registry()
 BELIEF_REGISTRY = Registry()
 TRAIT_REGISTRY = Registry()
+CALENDAR_REGISTRY = Registry()

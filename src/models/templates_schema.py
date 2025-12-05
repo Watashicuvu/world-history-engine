@@ -246,3 +246,26 @@ class TransformationRule(BaseModel):
     chance: float = Field(..., ge=0.0, le=1.0, description="Вероятность срабатывания (0.0 - 1.0)")
     verb: str = Field(..., description="Глагол для логов ('разрушилась', 'заросла')")
     narrative: str = Field(..., description="Текст события для хроники")
+
+# --- Calendar Template ---
+
+class Season(BaseModel):
+    id: str = Field(description='example: season_fire')
+    name: str = Field(description='example: Season of the Fire')
+    description: str = Field(description='lore decription', default='')
+    # Модификаторы вероятностей для движка (например, {"conflict_weight": 0.5})
+    modifiers: Dict[str, float] = Field(description= 'example: {"conflict_weight": 0.5}', default_factory=dict)
+
+class CalendarTemplate(BaseModel):
+    id: str  # например "cal_imperial"
+    name: str
+    epochs_per_year: int = Field(..., ge=1, description="Сколько ходов (age) длится один год")
+    season_order: List[str] = Field(..., description="Порядок смены сезонов по ID")
+    seasons: Dict[str, Season] = Field(..., description="Словарь сезонов")
+
+    def get_season_by_age(self, age: int) -> Season:
+        """Вспомогательный метод для получения текущего сезона"""
+        # age начинается с 1, приводим к 0-index внутри цикла
+        step_in_year = (age - 1) % len(self.season_order)
+        season_id = self.season_order[step_in_year]
+        return self.seasons[season_id]
