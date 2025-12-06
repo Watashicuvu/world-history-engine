@@ -1,12 +1,15 @@
 import contextlib
 import json
-from typing import AsyncIterator, Literal, Optional
+from typing import AsyncIterator, List, Literal, Optional, Set
 from mcp.server.fastmcp import FastMCP
 from dishka import make_async_container
 from pydantic import BaseModel, Field
+from src.services.llm_service import LLMService
 from src.ioc import RepositoryProvider, GeneralProvider, AppProvider
 from src.services.world_query_service import WorldQueryService
 from src.services.template_editor import TemplateEditorService
+from src.models.registries import (BIOME_REGISTRY, FACTION_REGISTRY, LOCATION_REGISTRY)
+from src.models.templates_schema import BiomeTemplate, FactionTemplate, LocationTemplate
 
 import logging
 from mcp.server.streamable_http import EventCallback, EventMessage, EventStore
@@ -47,14 +50,86 @@ class InMemoryEventStore(EventStore):
                     await send_callback(EventMessage(message, event_id))
         return target_stream_id
 
-# TODO CHANGE!
+class NewEntityRequest(BaseModel):
+    """Request to create a missing dependency."""
+    name: str = Field(description="Name of the entity, e.g., 'Neon Bar'")
+    type: Literal["biome", "location", "faction"] = Field(description="Type of template")
+    context: str = Field(description="Brief description of what this is")
+
 class WorldGenPlan(BaseModel):
-    existing_biomes_to_use: list[str] = Field(description="List of EXISTING biomes that are suitable")
-    new_biomes_to_create: list[str] = Field(description="List of names for NEW biomes that are missing (for example 'Hill', 'Coast')")
+    existing_biomes_to_use: list[str] = Field(description="List of EXISTING biome IDs to use")
+    
+    # Теперь мы явно просим LLM подумать о недостающих частях
+    new_biomes: list[str] = Field(description="Names of NEW biomes to create")
+    
     width: int = Field(default=3, description="Map width (usually 2-3)")
     height: int = Field(default=3, description="The height of the map (usually 2-3)")
-    reasoning: str = Field(description="A brief explanation of the choice of biomes")
+    reasoning: str = Field(description="Explanation of the world composition")
 
+async def resolve_dependencies(
+    llm: LLMService, 
+    editor: TemplateEditorService, 
+    biome_ids: List[str],
+    log_output: List[str]
+) -> None:
+    """
+    Рекурсивно проверяет зависимости выбранных биомов.
+    """
+    required_locations: Set[str] = set()
+    required_factions: Set[str] = set()
+
+    # 1. Сбор требований
+    for b_id in biome_ids:
+        tmpl: BiomeTemplate = BIOME_REGISTRY.get(b_id)
+        if not tmpl: continue
+        
+        for loc_id in tmpl.allowed_locations:
+            required_locations.add(loc_id)
+        for rule in tmpl.factions:
+            required_factions.add(rule.definition_id)
+
+    # 2. Разрешение ЛОКАЦИЙ
+    for loc_id in required_locations:
+        if loc_id not in LOCATION_REGISTRY:
+            log_output.append(f"  Start creating missing LOCATION: {loc_id}...")
+            try:
+                readable_name = loc_id.replace("loc_", "").replace("_", " ").title()
+                
+                new_tmpl_data = await llm.generate_template(
+                    prompt_text=f"Create a LocationTemplate for '{readable_name}'. ID must be '{loc_id}'.",
+                    model_class=LocationTemplate
+                )
+                new_tmpl_data['id'] = loc_id
+                
+                # ИСПРАВЛЕНО: используем ключ 'locations' вместо пути к файлу
+                editor.append_template("locations", new_tmpl_data)
+                
+                # Обновляем реестр в памяти
+                LOCATION_REGISTRY.register(loc_id, LocationTemplate(**new_tmpl_data))
+                log_output.append(f"    ✅ Created Location: {loc_id}")
+            except Exception as e:
+                 log_output.append(f"    ❌ Failed Location {loc_id}: {e}")
+
+    # 3. Разрешение ФРАКЦИЙ
+    for fac_id in required_factions:
+        if fac_id not in FACTION_REGISTRY:
+            log_output.append(f"  Start creating missing FACTION: {fac_id}...")
+            try:
+                readable_name = fac_id.replace("fac_", "").replace("_", " ").title()
+                
+                new_tmpl_data = await llm.generate_template(
+                    prompt_text=f"Create a FactionTemplate for '{readable_name}'. ID must be '{fac_id}'.",
+                    model_class=FactionTemplate
+                )
+                new_tmpl_data['id'] = fac_id
+                
+                # ИСПРАВЛЕНО: используем ключ 'factions'
+                editor.append_template("factions", new_tmpl_data)
+                
+                FACTION_REGISTRY.register(fac_id, FactionTemplate(**new_tmpl_data))
+                log_output.append(f"    ✅ Created Faction: {fac_id}")
+            except Exception as e:
+                 log_output.append(f"    ❌ Failed Faction {fac_id}: {e}")
 
 # --- 2. Lifespan ---
 @contextlib.asynccontextmanager
@@ -90,106 +165,85 @@ mcp = FastMCP(
 
 # --- 4. Tools ---
 
-# TODO переделать!
 @mcp.tool()
 async def generate_new_world(description: str) -> str:
     """
-    Creates a world based on the description. AUTOMATICALLY creates the missing biomes.
-    Example: "A post-apocalyptic wasteland with radiation oases."
-    This operation overwrites the current world!
+    Creates a new world. 
+    1. Analyzes request.
+    2. Generates MISSING Biomes.
+    3. Recursively generates MISSING Locations/Factions required by those biomes.
+    4. Builds the world graph.
     """
-    from src.models.registries import (BIOME_REGISTRY, FACTION_REGISTRY)
-    from src.models.templates_schema import BiomeTemplate
-    from src.services.llm_service import LLMService
     from src.services.template_editor import TemplateEditorService
     from src.word_generator import WorldGenerator
     from src.models.generation import World
     from src.utils import save_world_to_json
     from config import fallback_template_path
 
-    if not container:
-        return "Error: Container not initialized"
+    if not container: return "Error: Container not initialized"
 
     log_output = []
-
+    
     async with container() as request_container:
         llm = await request_container.get(LLMService)
         generator = await request_container.get(WorldGenerator)
-        editor = await request_container.get(TemplateEditorService) # Для сохранения новых шаблонов
+        editor = await request_container.get(TemplateEditorService)
         current_world = await request_container.get(World)
 
-        # 1. Анализ существующих ресурсов
-        # Мы больше не хардкодим, а берем реальные ключи из реестра
-        available_ids = list(BIOME_REGISTRY.keys())
-        avaibable_fraction_ids = list(FACTION_REGISTRY.keys())
+        # 1. Planning
+        available_biomes = list(BIOME_REGISTRY.keys())
+        log_output.append(f"🔍 Planning world for: '{description}'...")
         
-        log_output.append(f"🔍 Analyzing request against {len(available_ids)} existing biomes...")
-
-        # 2. Планирование (LLM решает, что взять, а что создать)
         try:
-            prompt = (
-                f"User wants: '{description}'.\n"
-                f"Available Biome IDs: {', '.join(available_ids)}\n"
-                f"Available Faction IDs: {', '.join(avaibable_fraction_ids)}\n"
-                "Decide which existing biomes to use and which NEW ones to create to match the description."
+            plan: WorldGenPlan = await llm.generate_structure(
+                f"User request: '{description}'.\n"
+                f"Available Biomes: {available_biomes}\n"
+                "Create a plan. If you need a biome not in the list, add it to 'new_biomes'.",
+                WorldGenPlan
             )
-            plan: WorldGenPlan = await llm.generate_structure(prompt, WorldGenPlan)
         except Exception as e:
             return f"Planning Error: {e}"
 
         final_biome_ids = list(plan.existing_biomes_to_use)
 
-        # 3. Цикл создания недостающих биомов (Chain of Thought в коде)
-        if plan.new_biomes_to_create:
-            log_output.append(f"🔨 Needs to create {len(plan.new_biomes_to_create)} new biomes: {plan.new_biomes_to_create}")
+        # 2. Create NEW Biomes (First Pass)
+        for new_biome_name in plan.new_biomes:
+            # Generate ID
+            slug = new_biome_name.lower().replace(" ", "_")[:20]
+            new_id = f"biome_{slug}" # Убрали UUID для чистоты, если имена уникальны
             
-            for new_biome_name in plan.new_biomes_to_create:
-                # Генерируем ID
-                import uuid
-                # Делаем читаемый ID (latin letters only ideally, but simple replace works for now)
-                slug = new_biome_name.lower().replace(" ", "_")[:15]
-                new_id = f"biome_{slug}_{str(uuid.uuid4())[:4]}"
+            if new_id in BIOME_REGISTRY:
+                final_biome_ids.append(new_id)
+                continue
+
+            log_output.append(f"🔨 Generating Biome: {new_biome_name} ({new_id})...")
+            try:
+                # ВАЖНО: Просим LLM сразу придумать ID для локаций и фракций, даже если их нет
+                template_data = await llm.generate_template(
+                    f"Create BiomeTemplate for '{new_biome_name}'. "
+                    f"Context: {description}. ID: '{new_id}'. "
+                    f"Make sure to invent IDs for 'allowed_locations' (e.g., ['loc_{slug}_ruins']) "
+                    f"and 'factions' (e.g., definition_id='fac_{slug}_natives').",
+                    BiomeTemplate
+                )
+                editor.append_template("biomes", template_data)
+            
+                BIOME_REGISTRY.register(new_id, BiomeTemplate(**template_data))
+                final_biome_ids.append(new_id)
                 
-                try:
-                    template_data = await llm.generate_template(
-                        f"Create a game design template for a biome named '{new_biome_name}'. "
-                        f"Context: {description}. ID should be '{new_id}'.",
-                        BiomeTemplate
-                    )
-                    
-                    # Принудительно ставим ID (на случай если LLM ошиблась)
-                    template_data['id'] = new_id
-                    
-                    # Сохраняем на диск через EditorService
-                    # config_type='biomes' соответствует ключу в entity_templates.yaml или отдельному файлу
-                    # В вашей архитектуре EditorService.append_template умеет писать в YAML
-                    editor.append_template(
-                        config_file="data/templates/biomes.yaml", # Путь к файлу биомов
-                        config_type="templates", 
-                        new_item=template_data
-                    )
-                    
-                    # ВАЖНО: Регистрируем в реестре памяти немедленно!
-                    # EditorService сохраняет файл, но нам нужно обновить Runtime Registry
-                    # Pydantic модель валидирует данные
-                    new_tmpl_obj = BiomeTemplate(**template_data)
-                    BIOME_REGISTRY.register(new_id, new_tmpl_obj)
-                    
-                    final_biome_ids.append(new_id)
-                    log_output.append(f"  ✅ Created and registered: {new_biome_name} ({new_id})")
-                    
-                except Exception as e:
-                    log_output.append(f"  ❌ Failed to create {new_biome_name}: {e}")
+            except Exception as e:
+                log_output.append(f"  ❌ Error creating biome {new_biome_name}: {e}")
 
-        # 4. Финальная проверка перед генерацией
+        # 3. Dependency Resolution (The Fix)
+        log_output.append("🔗 Resolving dependencies (Locations/Factions)...")
+        await resolve_dependencies(llm, editor, final_biome_ids, log_output)
+
+        # 4. Final Generation
         if not final_biome_ids:
-            # Fallback
-            final_biome_ids = available_ids[:3]
-            log_output.append("⚠️ No valid biomes found/created. Using defaults.")
+            return "❌ Error: No biomes available to generate world."
 
-        # 5. Генерация мира
         try:
-            log_output.append(f"🌍 Generating world {plan.width}x{plan.height} with: {final_biome_ids}...")
+            log_output.append(f"🌍 Assembling world map ({plan.width}x{plan.height})...")
             new_world_obj = generator.generate(
                 biome_ids=final_biome_ids,
                 world_width=plan.width,
@@ -197,12 +251,13 @@ async def generate_new_world(description: str) -> str:
                 num_biomes=plan.width * plan.height
             )
             
-            # Hot Swap
             current_world.graph = new_world_obj.graph
-            save_world_to_json(current_world, fallback_template_path)
+            save_world_to_json(current_world, fallback_template_path.as_uri())
             
         except Exception as e:
-            return "\n".join(log_output) + f"\n💥 Critical Generation Error: {e}"
+            import traceback
+            traceback.print_exc()
+            return "\n".join(log_output) + f"\n💥 Core Generation Error: {e}"
 
         return "\n".join(log_output) + "\n✨ World Generation Complete!"
 
@@ -230,14 +285,20 @@ async def query_entities(
         return service.query_entities(include_tags, exclude_tags, type_filter, limit)
 
 @mcp.tool()
-async def define_new_archetype(config_type: Literal['templates'], config_file: str, template_json: str) -> str:
-    """Add a NEW template to the database."""
+async def define_new_archetype(config_type: str, template_json: str) -> str:
+    """
+    Add a NEW template to the database.
+    Args:
+        config_type: One of ['biomes', 'locations', 'factions', 'resources', 'belief', 'trait']
+        template_json: The JSON body of the template.
+    """
     async with container() as request_container:
         service = await request_container.get(TemplateEditorService)
         try:
             data = json.loads(template_json)
-            new_id = service.append_template(config_file=config_file, config_type=config_type, new_item=data)
-            return f"Success: Template '{new_id}' saved."
+            # ИСПРАВЛЕНО: Убрали лишний аргумент config_file
+            new_id = service.append_template(config_type=config_type, new_item=data)
+            return f"Success: Template '{new_id}' saved to '{config_type}'."
         except Exception as e:
             return f"Error: {str(e)}"
 
@@ -303,6 +364,21 @@ async def add_fact(from_id: str, to_id: str, relation_type: str) -> str:
 
         service.add_relation(e1, e2, relation_type)
         return f"Linked: {e1.name} --[{relation_type}]--> {e2.name}"
+
+@mcp.tool()
+async def get_registry_status() -> str:
+    """Returns a summary of all registered templates (Biomes, Locations, Factions)."""
+    if not container: return "Error: Container not init"
+    
+    summary = []
+    summary.append(f"Biomes ({', '.join(BIOME_REGISTRY.keys())}")
+    summary.append(f"Locations ({', '.join(LOCATION_REGISTRY.keys())}")
+    summary.append(f"Factions ({', '.join(FACTION_REGISTRY.keys())}")
+    
+    # Дополнительно: можно показать связи для помощи LLM
+    # Например: biome_forest needs [loc_ruins, loc_village]
+    
+    return "\n".join(summary)
 
 @mcp.tool()
 # TODO: в какой-то момент будет не хватать имён

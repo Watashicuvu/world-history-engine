@@ -1,4 +1,4 @@
-from typing import Dict, TypeVar, Generic, Optional
+from typing import Dict, Iterator, TypeVar, Generic, Optional
 
 T = TypeVar("T")
 
@@ -20,6 +20,22 @@ class Registry(Generic[T]):
 
     def keys(self):
         return self._items.keys()
+    
+    def __contains__(self, key: str) -> bool:
+        """Позволяет использовать конструкцию: if key in registry"""
+        return key in self._items
+
+    def __getitem__(self, key: str) -> T:
+        """Позволяет получать элемент через registry[key]"""
+        return self._items[key]
+
+    def __iter__(self) -> Iterator[str]:
+        """Позволяет итерироваться по ключам: for key in registry"""
+        return iter(self._items)
+
+    def __len__(self) -> int:
+        """Позволяет использовать len(registry)"""
+        return len(self._items)
 
 # Глобальные инстансы реестров
 # чтобы можно было легко подменять

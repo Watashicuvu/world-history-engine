@@ -296,6 +296,7 @@ class NarrativeEngine:
     #             if total_events < 3:
     #                 tier = "Major"
                     
+    #             # это ломает схему данных; нужно помещать в теги 
     #             evt.data["narrative_tier"] = tier
                 
     #             # Формируем человекочитаемый заголовок для логов
