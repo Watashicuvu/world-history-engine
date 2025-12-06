@@ -310,6 +310,7 @@ async def get_entity_details(entity_id: str) -> str:
         return service.get_entity_details(entity_id)
 
 @mcp.tool()
+# проблема при добавлении кастомной сущности мб тут
 async def add_entity_instance(
     definition_id: str, 
     parent_id: str, 
@@ -350,6 +351,7 @@ async def register_new_relation(relation_id: str, description: str) -> str:
         return f"Relation type '{relation_id}' registered."
 
 @mcp.tool()
+# проблема при добавлении кастомной сущности мб тут
 async def add_fact(from_id: str, to_id: str, relation_type: str) -> str:
     """Create a relationship between two entities."""
     async with container() as request_container:
@@ -382,6 +384,7 @@ async def get_registry_status() -> str:
 
 @mcp.tool()
 # TODO: в какой-то момент будет не хватать имён
+# и таблица просто огромная
 async def get_relationship_table(
     source_type: Optional[str] = None, 
     target_type: Optional[str] = None

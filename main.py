@@ -1,7 +1,6 @@
 import json
 import shutil
 from pathlib import Path
-from typing import List
 
 from src.word_generator import WorldGenerator
 from src.narrative_engine import NarrativeEngine
@@ -41,7 +40,7 @@ def main():
     world = world_gen.generate(num_biomes=-1, layout_to_json=True)
     
     # Сохраняем "Нулевой километр" (изначальный мир до истории)
-    save_world_to_json(world, snapshots_dir / "world_epoch_0.json")
+    save_world_to_json(world, (snapshots_dir / "world_epoch_0.json").as_uri())
 
     print(f"Биомы: {len([e for e in world.graph.entities.values() if e.type == 'Biome'])}")
     print(f"Локации: {len([e for e in world.graph.entities.values() if e.type == 'Location'])}")
@@ -84,7 +83,7 @@ def main():
             #     print(f"📸 Снэпшот сохранен: {filename} (Событий за цикл: {len(events)})")
 
     # 3. Финальное сохранение (перезаписываем основной output для удобства)
-    save_world_to_json(world, output_dir / "world_final.json")
+    save_world_to_json(world, (output_dir / "world_final.json").as_uri())
     print(f"\n✅ История завершена. Данные в папке '{output_dir}'")
 
 if __name__ == "__main__":

@@ -1,0 +1,27 @@
+- id: fac_beastlords
+  creature_type: beast
+  role: bandits
+  icon: null
+  tags:
+  - dangerous
+  - mystical
+  - horde
+  - predator
+  - no_res
+  - hostile
+  - nonhuman
+  - wild
+  - nature
+  - wandering_bandits
+  culture:
+    aggression: 18
+    magic_affinity: 5
+    collectivism: 12
+    taboo:
+    - permanent_settlement
+    - technology
+    revered:
+    - the hunt
+    - the apex predator
+    - the wild
+  default_belief_id: null
