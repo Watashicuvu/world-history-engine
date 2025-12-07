@@ -128,181 +128,183 @@ class NarrativeEngine:
                     entity.data["y"] = loc_y
                     entity.data["last_moved_at"] = self.age
 
-    # === EVOLVE LOOP (UPDATED) ===
+    # === EVOLVE LOOP (old) ===
+    # def evolve(self, num_ages: int = 3) -> List[Entity]:
+    #     all_events = []
+    #     for _ in range(num_ages):
+    #         self.age += 1
+    #         logger.info(f"--- Processing Age {self.age} ---")
+            
+    #         # --- 1. ЖИЗНЕННЫЙ ЦИКЛ ---
+    #         leaders_died = self.lifecycle_system.process_leader_decay(self.age)
+    #         resources_died = self.lifecycle_system.process_resource_decay(self.age)
+    #         all_events.extend(leaders_died)
+    #         all_events.extend(resources_died)
+
+    #         # --- 1.5 РЕЛИГИЯ ---
+    #         belief_events = self.belief_system.process_beliefs(self.age)
+    #         all_events.extend(belief_events)
+    #         if belief_events:
+    #             logger.info(f"Religious shifts: {len(belief_events)}")
+            
+    #         # --- 2. ПОЛИТИКА ---
+    #         # Гарантируем лидеров
+    #         leaders_created = self._ensure_leaders()
+    #         if leaders_created > 0:
+    #             logger.info(f"Created {leaders_created} new leaders.")
+
+    #         conflicts = self.conflict_system.process_conflicts_spawn(self.age)
+    #         raids = self.conflict_system.process_raids(self.age)
+    #         bosses = self.conflict_system.process_bosses(self.age)
+            
+    #         all_events.extend(conflicts)
+    #         all_events.extend(raids)
+    #         all_events.extend(bosses)
+            
+    #         if conflicts or raids:
+    #             logger.info(f"Conflicts started: {len(conflicts)}, Raids: {len(raids)}")
+
+    #         # --- 3. РОСТ ---
+    #         if self.age % 5 == 0:
+    #             discovered = self.transformation_system.process_new_land_discovery(self.age)
+    #             new_res = self.lifecycle_system.process_new_resources(self.age)
+    #             regrown = self.lifecycle_system.process_resource_regrowth(self.age)
+    #             all_events.extend(discovered)
+    #             all_events.extend(new_res)
+    #             all_events.extend(regrown)
+            
+    #         # От перенаселения подчищаем каждую эпоху
+    #         crysis = self.lifecycle_system.process_overcrowding(self.age)
+    #         all_events.extend(crysis)
+
+    #         # --- 4. ТРАНСФОРМАЦИЯ ---
+    #         transforms = self.transformation_system.process_transformations(self.age)
+    #         expansions = self.transformation_system.process_expansions(self.age)
+    #         all_events.extend(transforms)
+    #         all_events.extend(expansions)
+
+    #         # --- 5. РАЗРЕШЕНИЕ КОНФЛИКТОВ ---
+    #         resolved = self.conflict_system.resolve_conflicts(self.age)
+    #         all_events.extend(resolved)
+            
+    #         if resolved:
+    #             logger.info(f"Conflicts resolved: {len(resolved)}")
+
+    #         self._sync_spatial_data()
+            
+    #     return all_events
+
     def evolve(self, num_ages: int = 3) -> List[Entity]:
-        all_events = []
+        """
+        Запускает симуляцию на num_ages вперед.
+        Возвращает список событий, готовых для записи в историю.
+        """
+        # Итоговый список, который мы вернем
+        all_history = [] 
+
+        # Пытаемся получить календарь
+        # Используем .get(), так как get_all() возвращает dict, а нам нужен конкретный объект
+        global_calendar: Optional[CalendarTemplate] = CALENDAR_REGISTRY.get('four_seasons')
+        
+        # Если календаря нет - это не повод крашить всю симуляцию, можно работать без него
+        if not global_calendar:
+            logger.warning("Calendar 'four_seasons' not found! Using defaults.")
+
         for _ in range(num_ages):
             self.age += 1
-            logger.info(f"--- Processing Age {self.age} ---")
             
-            # --- 1. ЖИЗНЕННЫЙ ЦИКЛ ---
-            leaders_died = self.lifecycle_system.process_leader_decay(self.age)
-            resources_died = self.lifecycle_system.process_resource_decay(self.age)
-            all_events.extend(leaders_died)
-            all_events.extend(resources_died)
+            # ВАЖНО: Создаем новый список для каждой эпохи, чтобы не смешивать события
+            age_events = [] 
 
-            # --- 1.5 РЕЛИГИЯ ---
+            # --- 1. Определение контекста времени (Сезон) ---
+            current_season = None
+            season_id = "unknown"
+            modifiers = {}
+            
+            if global_calendar:
+                current_season = global_calendar.get_season_by_age(self.age)
+                # Безопасное получение ID
+                if current_season:
+                    season_id = current_season.id or current_season.name 
+                    modifiers = current_season.modifiers
+                
+            logger.info(f"--- Processing Age {self.age}: {season_id} ---")
+
+            # --- 2. Генерация событий ---
+            
+            # Жизненный цикл
+            age_events.extend(self.lifecycle_system.process_leader_decay(self.age))
+            age_events.extend(self.lifecycle_system.process_resource_decay(self.age))
+
+            # Религия
             belief_events = self.belief_system.process_beliefs(self.age)
-            all_events.extend(belief_events)
+            age_events.extend(belief_events)
             if belief_events:
                 logger.info(f"Religious shifts: {len(belief_events)}")
             
-            # --- 2. ПОЛИТИКА ---
-            # Гарантируем лидеров
-            leaders_created = self._ensure_leaders()
-            if leaders_created > 0:
-                logger.info(f"Created {leaders_created} new leaders.")
+            # Политика
+            self._ensure_leaders() # Создает лидеров (без событий, просто обновляет граф)
 
-            conflicts = self.conflict_system.process_conflicts_spawn(self.age)
-            raids = self.conflict_system.process_raids(self.age)
-            bosses = self.conflict_system.process_bosses(self.age)
+            age_events.extend(self.conflict_system.process_conflicts_spawn(self.age))
+            age_events.extend(self.conflict_system.process_raids(self.age))
+            age_events.extend(self.conflict_system.process_bosses(self.age))
             
-            all_events.extend(conflicts)
-            all_events.extend(raids)
-            all_events.extend(bosses)
-            
-            if conflicts or raids:
-                logger.info(f"Conflicts started: {len(conflicts)}, Raids: {len(raids)}")
-
-            # --- 3. РОСТ ---
+            # Рост (раз в 5 лет)
             if self.age % 5 == 0:
-                discovered = self.transformation_system.process_new_land_discovery(self.age)
-                new_res = self.lifecycle_system.process_new_resources(self.age)
-                regrown = self.lifecycle_system.process_resource_regrowth(self.age)
-                all_events.extend(discovered)
-                all_events.extend(new_res)
-                all_events.extend(regrown)
+                age_events.extend(self.transformation_system.process_new_land_discovery(self.age))
+                age_events.extend(self.lifecycle_system.process_new_resources(self.age))
+                age_events.extend(self.lifecycle_system.process_resource_regrowth(self.age))
             
-            # От перенаселения подчищаем каждую эпоху
-            crysis = self.lifecycle_system.process_overcrowding(self.age)
-            all_events.extend(crysis)
+            # Кризисы перенаселения
+            age_events.extend(self.lifecycle_system.process_overcrowding(self.age))
 
-            # --- 4. ТРАНСФОРМАЦИЯ ---
-            transforms = self.transformation_system.process_transformations(self.age)
-            expansions = self.transformation_system.process_expansions(self.age)
-            all_events.extend(transforms)
-            all_events.extend(expansions)
+            # Трансформация
+            age_events.extend(self.transformation_system.process_transformations(self.age))
+            age_events.extend(self.transformation_system.process_expansions(self.age))
 
-            # --- 5. РАЗРЕШЕНИЕ КОНФЛИКТОВ ---
-            resolved = self.conflict_system.resolve_conflicts(self.age)
-            all_events.extend(resolved)
-            
-            if resolved:
-                logger.info(f"Conflicts resolved: {len(resolved)}")
+            # Разрешение конфликтов
+            age_events.extend(self.conflict_system.resolve_conflicts(self.age))
 
+            # Синхронизация координат
             self._sync_spatial_data()
+
+            # --- 3. ПОСТ-ОБРАБОТКА (Взвешивание и Тэгирование) ---
+
+            weighted_events = []
+            for event in age_events:
+                # Передаем модификаторы сезона для расчета веса
+                weight = self._calculate_importance(event, modifiers)
+                weighted_events.append((weight, event))
             
-        return all_events
-
-    # ломает визуализацию и пока баг со схемой, но принцип неплохой
-    # def evolve(self, num_ages: int = 3) -> List[Entity]:
-    #     """
-    #     Запускает симуляцию на num_ages вперед.
-    #     Возвращает ВСЕ события, но обогащенные метаданными о важности (weight, tier)
-    #     и сгруппированные по времени (age, season).
-    #     """
-    #     all_history_events = [] 
-
-    #     # Пытаемся получить календарь
-    #     global_calendar: Optional[CalendarTemplate] = CALENDAR_REGISTRY.get("cal_standard")
-        
-    #     for _ in range(num_ages):
-    #         self.age += 1
-    #         age_events = [] # События конкретно этой эпохи
-
-    #         # 1. Определение контекста времени (Сезон)
-    #         current_season: Optional[Season] = None
-    #         season_name = "Unknown Season"
-    #         modifiers = {}
+            # Сортировка по важности (самые важные в начале)
+            weighted_events.sort(key=lambda x: x[0], reverse=True)
             
-    #         if global_calendar:
-    #             current_season = global_calendar.get_season_by_age(self.age)
-    #             season_name = current_season.name
-    #             modifiers = current_season.modifiers
+            total_events = len(weighted_events)
+            
+            for rank, (weight, evt) in enumerate(weighted_events):
+                # 1. Тег Сезона
+                evt.tags.add(f"{season_id}")
                 
-    #         logger.info(f"--- Processing Age {self.age}: {season_name} ---")
-
-    #         # 2. Сбор "сырых" событий от систем
-    #         # Системы меняют граф и возвращают Entity типа EVENT
-            
-    #         # --- Жизненный цикл ---
-    #         age_events.extend(self.lifecycle_system.process_leader_decay(self.age))
-    #         age_events.extend(self.lifecycle_system.process_resource_decay(self.age))
-
-    #         # --- Религия ---
-    #         age_events.extend(self.belief_system.process_beliefs(self.age))
-            
-    #         # --- Политика и конфликты ---
-    #         self._ensure_leaders()
-            
-    #         age_events.extend(self.conflict_system.process_conflicts_spawn(self.age))
-    #         age_events.extend(self.conflict_system.process_raids(self.age))
-    #         age_events.extend(self.conflict_system.process_bosses(self.age))
-
-    #         # --- Рост (раз в 5 лет/эпох) ---
-    #         if self.age % 5 == 0:
-    #             age_events.extend(self.transformation_system.process_new_land_discovery(self.age))
-    #             age_events.extend(self.lifecycle_system.process_new_resources(self.age))
-    #             age_events.extend(self.lifecycle_system.process_resource_regrowth(self.age))
-
-    #         age_events.extend(self.lifecycle_system.process_overcrowding(self.age))
-            
-    #         # --- Трансформация ---
-    #         age_events.extend(self.transformation_system.process_transformations(self.age))
-    #         age_events.extend(self.transformation_system.process_expansions(self.age))
-
-    #         # --- Разрешение конфликтов ---
-    #         age_events.extend(self.conflict_system.resolve_conflicts(self.age))
-
-    #         self._sync_spatial_data()
-
-    #         # 3. ПОСТ-ОБРАБОТКА: Взвешивание и Группировка
-    #         # Мы не удаляем события, а сортируем и размечаем их.
-
-    #         weighted_events = []
-    #         for event in age_events:
-    #             weight = self._calculate_importance(event, modifiers)
-    #             weighted_events.append((weight, event))
-            
-    #         # Сортировка: Самые важные события эпохи идут первыми
-    #         weighted_events.sort(key=lambda x: x[0], reverse=True)
-            
-    #         # 4. Присвоение Tier (Уровня важности) и обогащение данными
-    #         # Это поможет UI/LLM группировать их визуально
-    #         total_events = len(weighted_events)
-            
-    #         for rank, (weight, evt) in enumerate(weighted_events):
-    #             if evt.data is None: evt.data = {}
+                # 2. Тег Эпохи (полезно для отладки)
+                #evt.tags.add(f"age:{self.age}")
                 
-    #             # Сохраняем контекст времени прямо в событие
-    #             evt.data["age"] = self.age
-    #             evt.data["season_id"] = current_season.id if current_season else "unknown"
-    #             evt.data["season_name"] = season_name
-    #             evt.data["narrative_weight"] = round(weight, 2)
+                # 3. Тег Важности (Tier)
+                is_top_percentile = (rank < (total_events * 0.2)) and (total_events > 2)
                 
-    #             # Логика Tiers (Ярусов)
-    #             # Top 20% или вес > 80 -> "Major" (Хедлайны эпохи)
-    #             # Середина -> "Average"
-    #             # Хвост -> "Minor" (Фоновый шум)
+                if weight >= 80 or is_top_percentile:
+                    tier = "major"
+                elif weight >= 30:
+                    tier = "average"
+                else:
+                    tier = "minor"
                 
-    #             if weight >= 60: # Можно настроить порог
-    #                 tier = "Major"
-    #             elif weight >= 25:
-    #                 tier = "Average"
-    #             else:
-    #                 tier = "Minor"
+                evt.tags.add(tier)
                 
-    #             # Дополнительная проверка: если событий очень мало, даже мелкие могут стать Major
-    #             if total_events < 3:
-    #                 tier = "Major"
-                    
-    #             # это ломает схему данных; нужно помещать в теги 
-    #             evt.data["narrative_tier"] = tier
-                
-    #             # Формируем человекочитаемый заголовок для логов
-    #             evt.data["display_date"] = f"[{season_name}, Age {self.age}]"
+                # Добавляем обработанное событие в ОБЩИЙ список истории
+                all_history.append(evt)
 
-    #             all_history_events.append(evt)
+        # ВАЖНО: Возвращаем список, иначе вернется None и цикл в simulation.py упадет
+        return all_history
 
     #     # Возвращаем плоский список, но он:
     #     # 1. Отсортирован хронологически (по Age)

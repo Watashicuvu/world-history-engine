@@ -7,7 +7,6 @@ calendars:
     name: "Имперский Календарь"
     epochs_per_year: 4
     season_order: ["season_spring", "season_summer", "season_autumn", "season_winter"] 
-    
     seasons:
       season_spring:    
         id: "season_spring" 
@@ -53,10 +52,14 @@ calendars:
       season_calm:
         id: "season_calm" 
         name: "Затишье"
-        modifiers: { expansion_weight: 2.0, conflict_weight: 2.0 }
+        modifiers: 
+          expansion_weight: 2.0
+          conflict_weight: 2.0 
         description: "Мир перед бурей." 
       season_storm:
         id: "season_storm" 
         name: "Буря Хаоса"
-        modifiers: { destruction_weight: 3.0, survival_difficulty: 5.0 }
+        modifiers: 
+          destruction_weight: 3.0
+          survival_difficulty: 5.0 
         description: "Всё рушится."

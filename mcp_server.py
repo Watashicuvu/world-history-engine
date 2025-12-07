@@ -1,20 +1,35 @@
 import contextlib
 import json
+import traceback
 from typing import AsyncIterator, List, Literal, Optional, Set
 from mcp.server.fastmcp import FastMCP
 from dishka import make_async_container
 from pydantic import BaseModel, Field
+from src.models.generation import World
 from src.services.llm_service import LLMService
 from src.ioc import RepositoryProvider, GeneralProvider, AppProvider
 from src.services.world_query_service import WorldQueryService
 from src.services.template_editor import TemplateEditorService
-from src.models.registries import (BIOME_REGISTRY, FACTION_REGISTRY, LOCATION_REGISTRY)
+from src.models.registries import (
+    BIOME_REGISTRY, LOCATION_REGISTRY, FACTION_REGISTRY, 
+    RESOURCE_REGISTRY, BOSSES_REGISTRY, BELIEF_REGISTRY, 
+    TRAIT_REGISTRY, CALENDAR_REGISTRY, TRANSFORMATION_REGISTRY
+)
 from src.models.templates_schema import BiomeTemplate, FactionTemplate, LocationTemplate
 
 import logging
 from mcp.server.streamable_http import EventCallback, EventMessage, EventStore
 from mcp.types import JSONRPCMessage
-
+# Утилиты и конфиг
+from src.utils import save_world_to_json
+# Предполагаем, что config доступен. Если нет, путь можно хардкодить или передавать через ENV
+try:
+    from config import fallback_template_path
+except ImportError:
+    # Fallback, если config.py не найден в контексте запуска
+    from pathlib import Path
+    fallback_template_path = Path("world_output/world_graph.json")
+    
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -65,6 +80,22 @@ class WorldGenPlan(BaseModel):
     width: int = Field(default=3, description="Map width (usually 2-3)")
     height: int = Field(default=3, description="The height of the map (usually 2-3)")
     reasoning: str = Field(description="Explanation of the world composition")
+
+# --- Helper for Saving ---
+def _save_current_world_state(world: World):
+    """
+    Helper to persist world state to disk.
+    Uses str(path) because open() typically needs a path string, not a URI.
+    """
+    try:
+        # Приводим путь к строке файловой системы
+        # Если fallback_template_path это Path объект
+        path_str = str(fallback_template_path)
+        save_world_to_json(world, path_str)
+        logger.info(f"💾 World state saved to {path_str}")
+    except Exception as e:
+        logger.error(f"❌ Failed to save world state: {e}")
+        traceback.print_exc()
 
 async def resolve_dependencies(
     llm: LLMService, 
@@ -160,7 +191,7 @@ mcp = FastMCP(
     "WorldBuilder Engine",
     lifespan=server_lifespan,
     event_store=event_store,
-    retry_interval=1000 # 1 second
+    retry_interval=250 # 0.25 second
 )
 
 # --- 4. Tools ---
@@ -318,12 +349,18 @@ async def add_entity_instance(
     name: Optional[str] = None,
     extra_data_json: str = "{}"
 ) -> str:
-    """Spawn a specific instance into the world."""
+    """Spawn a specific instance into the world AND save state."""
     async with container() as request_container:
         service = await request_container.get(WorldQueryService)
         try:
             data = json.loads(extra_data_json)
-            return service.spawn_entity(definition_id, parent_id, entity_type, name, data)
+            result = service.spawn_entity(definition_id, parent_id, entity_type, name, data)
+            
+            # --- FIX: Save Changes ---
+            _save_current_world_state(service.world)
+            # -------------------------
+            
+            return result
         except Exception as e:
             return f"Spawn Error: {str(e)}"
 
@@ -333,27 +370,35 @@ async def update_entity_tags(
     add_tags: list[str] = [],
     remove_tags: list[str] = []
 ) -> str:
-    """Update tags."""
+    """Update tags AND save state."""
     async with container() as request_container:
         service = await request_container.get(WorldQueryService)
         try:
             tags = service.update_tags(entity_id, add_tags, remove_tags)
+            
+            # --- FIX: Save Changes ---
+            _save_current_world_state(service.world)
+            # -------------------------
+
             return f"Updated {entity_id}. Tags: {tags}"
         except Exception as e:
             return f"Error: {e}"
 
 @mcp.tool()
 async def register_new_relation(relation_id: str, description: str) -> str:
-    """Register a new relation TYPE."""
+    """Register a new relation TYPE. (Note: Only updates Runtime, usually doesn't need save unless types are persisted separately)"""
     async with container() as request_container:
         service = await request_container.get(WorldQueryService)
         service.register_relation_type(relation_id, description)
-        return f"Relation type '{relation_id}' registered."
+        
+        # Если типы связей хранятся внутри world.graph.relation_types, то тоже надо сохранить
+        _save_current_world_state(service.world)
+        
+        return f"Relation type '{relation_id}' registered and saved."
 
 @mcp.tool()
-# проблема при добавлении кастомной сущности мб тут
 async def add_fact(from_id: str, to_id: str, relation_type: str) -> str:
-    """Create a relationship between two entities."""
+    """Create a relationship between two entities AND save state."""
     async with container() as request_container:
         service = await request_container.get(WorldQueryService)
         e1 = service.get_entity(from_id)
@@ -365,34 +410,96 @@ async def add_fact(from_id: str, to_id: str, relation_type: str) -> str:
              return f"Error: Unknown relation '{relation_type}'. Register it first."
 
         service.add_relation(e1, e2, relation_type)
+        
+        # --- FIX: Save Changes ---
+        _save_current_world_state(service.world)
+        # -------------------------
+
         return f"Linked: {e1.name} --[{relation_type}]--> {e2.name}"
 
 @mcp.tool()
-async def get_registry_status() -> str:
-    """Returns a summary of all registered templates (Biomes, Locations, Factions)."""
+async def get_registry_status(selected_ent: List[str] = []) -> str:
+    """
+    Returns contents of registries.
+    Args:
+        selected_ent: List of registries to inspect (e.g. ["factions", "resources"]). 
+                      If empty, returns a summary count of all.
+                      Valid keys: biomes, locations, factions, resources, bosses, beliefs, traits, calendar.
+    """
     if not container: return "Error: Container not init"
     
+    # Карта реестров
+    registry_map = {
+        "biomes": BIOME_REGISTRY,
+        "locations": LOCATION_REGISTRY,
+        "factions": FACTION_REGISTRY,
+        "resources": RESOURCE_REGISTRY,
+        "bosses": BOSSES_REGISTRY,
+        "beliefs": BELIEF_REGISTRY,
+        "traits": TRAIT_REGISTRY,
+        "calendar": CALENDAR_REGISTRY,
+        "transformations": TRANSFORMATION_REGISTRY
+    }
+
     summary = []
-    summary.append(f"Biomes ({', '.join(BIOME_REGISTRY.keys())}")
-    summary.append(f"Locations ({', '.join(LOCATION_REGISTRY.keys())}")
-    summary.append(f"Factions ({', '.join(FACTION_REGISTRY.keys())}")
     
-    # Дополнительно: можно показать связи для помощи LLM
-    # Например: biome_forest needs [loc_ruins, loc_village]
-    
+    # Режим 1: Краткая сводка (если ничего не выбрано)
+    if not selected_ent:
+        summary.append("📊 **Registry Summary (Counts)**:")
+        for key, reg in registry_map.items():
+            if reg: # Если реестр не None
+                summary.append(f"- **{key.title()}**: {len(reg)} templates")
+        summary.append("\n💡 *Tip: Call with selected_ent=['factions'] to see IDs.*")
+        return "\n".join(summary)
+
+    # Режим 2: Детальный список выбранных
+    for key in selected_ent:
+        key_lower = key.lower()
+        if key_lower in registry_map:
+            reg = registry_map[key_lower]
+            items = list(reg.keys())
+            # Ограничиваем вывод, если там тысячи элементов (на всякий случай)
+            display_items = items[:50] 
+            
+            summary.append(f"📂 **{key.title()}** ({len(items)}):")
+            summary.append(", ".join(display_items))
+            if len(items) > 50:
+                summary.append(f"... and {len(items)-50} more.")
+            summary.append("") # Пустая строка для отступа
+        else:
+            summary.append(f"⚠️ Unknown registry category: {key}")
+
     return "\n".join(summary)
 
+
 @mcp.tool()
-# TODO: в какой-то момент будет не хватать имён
-# и таблица просто огромная
 async def get_relationship_table(
     source_type: Optional[str] = None, 
-    target_type: Optional[str] = None
+    target_type: Optional[str] = None,
+    include_tags: List[str] = [],
+    min_age: Optional[int] = None,
+    max_age: Optional[int] = None
 ) -> str:
-    """Get a Markdown table of relationships."""
+    """
+    Get a Markdown table of relationships with filtering.
+    Useful for tracking events in specific epochs or filtering by importance tags.
+    
+    Args:
+        source_type: Filter by source entity type (e.g. 'Faction')
+        target_type: Filter by target entity type (e.g. 'Event')
+        include_tags: Only show relations where at least one entity has these tags (e.g. ["Major", "War"])
+        min_age: Show relations involving entities created after this age.
+        max_age: Show relations involving entities created before this age.
+    """
     async with container() as request_container:
         service = await request_container.get(WorldQueryService)
-        return service.analyze_relationships(source_type, target_type)
+        return service.analyze_relationships(
+            source_type=source_type, 
+            target_type=target_type,
+            include_tags=include_tags,
+            min_age=min_age,
+            max_age=max_age
+        )
 
 @mcp.tool()
 async def list_template_schemas(config_type: str) -> str:

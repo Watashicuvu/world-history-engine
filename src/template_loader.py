@@ -91,7 +91,7 @@ class TemplateLoader:
         self.load_transformations()
         self.load_traits()
         self.load_beliefs()
-        #self.load_calendars()
+        self.load_calendars()
         logger.info("Template loading finished.")
 
     def load_transformations(self):
@@ -184,19 +184,34 @@ class TemplateLoader:
             except Exception as e:
                 logger.error(f"Error biome {item.get('id')}: {e}")
 
-    # def load_calendars(self):
-    #     data = self._load_merged_yaml("templates/calendar.yaml")
-    #     count = 0
-    #     for item in data:
-    #         try:
-    #             # Валидация через Pydantic
-    #             calendar = CalendarTemplate(**item)
-    #             CALENDAR_REGISTRY.register(calendar.id, calendar)
-    #             count += 1
-    #         except Exception as e:
-    #             logger.error(f"Failed to load calendar {item.get('id')}: {e}")
-        
-    #     logger.info(f"Loaded {count} calendars.")
+    def load_calendars(self):
+        # ИСПРАВЛЕНИЕ 1: .yaml вместо .yml (проверьте, как файл называется на диске)
+        # ИСПРАВЛЕНИЕ 2: is_dict=True, так как структура файла — это словарь
+        data = self._load_merged_yaml("templates/calendar.yaml", is_dict=True)
+
+        if not data:
+            logger.warning("Calendar data is empty or file not found.")
+            return
+
+        # 1. Считываем дефолтное значение (если нужно)
+        # default_cal_id = data.get('default_calendar')
+
+        # 2. Итерируемся по словарю 'calendars'
+        if 'calendars' in data:
+            for cal_id, cal_data in data['calendars'].items():
+                # ВАЖНО: Инжектим ID календаря из ключа YAML в данные
+                cal_data['id'] = cal_id
+                try:
+                    # Создаем объект
+                    calendar_template = CalendarTemplate(**cal_data)
+                    
+                    # Регистрируем
+                    CALENDAR_REGISTRY.register(cal_id, calendar_template)
+                    logger.info(f"Loaded calendar: {calendar_template.name} ({calendar_template.id})")
+                    
+                except Exception as e:
+                    logger.error(f"Failed to load calendar {cal_id}: {e}")
+
 
 # Функции для загрузки NamingService (лексиконы)
 def load_naming_data(naming_service, base_dirs: Optional[List[Path]] = None):

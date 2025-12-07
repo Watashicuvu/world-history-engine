@@ -1,5 +1,5 @@
-from pydantic import BaseModel, Field
-from typing import Dict, List, Set, Optional
+from pydantic import BaseModel, Field, model_validator
+from typing import Any, Dict, List, Set, Optional
 from src.models.generation import Rarity
 
 # --- Resource Template ---
@@ -250,22 +250,55 @@ class TransformationRule(BaseModel):
 # --- Calendar Template ---
 
 class Season(BaseModel):
-    id: str = Field(description='example: season_fire')
+    # ID делаем Optional, так как в YAML его нет внутри блока
+    id: Optional[str] = Field(description='example: season_fire', default=None) 
     name: str = Field(description='example: Season of the Fire')
     description: str = Field(description='lore decription', default='')
-    # Модификаторы вероятностей для движка (например, {"conflict_weight": 0.5})
     modifiers: Dict[str, float] = Field(description= 'example: {"conflict_weight": 0.5}', default_factory=dict)
 
 class CalendarTemplate(BaseModel):
-    id: str  # например "cal_imperial"
+    id: Optional[str] = None
     name: str
-    epochs_per_year: int = Field(..., ge=1, description="Сколько ходов (age) длится один год")
-    season_order: List[str] = Field(..., description="Порядок смены сезонов по ID")
-    seasons: Dict[str, Season] = Field(..., description="Словарь сезонов")
+    epochs_per_year: int
+    
+    # ИСПРАВЛЕНИЕ: Убрали alias="season_rotation", так как в YAML у вас season_order
+    season_order: List[str] 
+    
+    seasons: Dict[str, Season]
 
-    def get_season_by_age(self, age: int) -> Season:
-        """Вспомогательный метод для получения текущего сезона"""
-        # age начинается с 1, приводим к 0-index внутри цикла
-        step_in_year = (age - 1) % len(self.season_order)
-        season_id = self.season_order[step_in_year]
-        return self.seasons[season_id]
+    @model_validator(mode='after')
+    def fill_missing_ids(self):
+        """
+        Автоматически проставляет ID, используя ключи словаря,
+        если они не указаны явно в YAML.
+        """
+        # 1. Заполняем ID сезонов из ключей словаря (spring, summer...)
+        if self.seasons:
+            for key, season_obj in self.seasons.items():
+                if not season_obj.id:
+                    season_obj.id = key
+        
+        return self
+
+    def get_season_by_age(self, age: int) -> Optional[Season]:
+        if not self.season_order:
+            return None
+        # age - 1, т.к. эпохи обычно с 1, а массив с 0
+        idx = (age - 1) % len(self.season_order)
+        season_id = self.season_order[idx]
+        return self.seasons.get(season_id)
+
+    @model_validator(mode='before')
+    @classmethod
+    def prepare_data(cls, data: Any) -> Any:
+        """
+        Инжектим ID из ключей словаря, если они не заданы явно.
+        """
+        if isinstance(data, dict):
+            # Если поле id не передано, но мы знаем, что оно должно быть
+            # (обычно оно проставляется в Loader, но на всякий случай)
+            if 'seasons' in data and isinstance(data['seasons'], dict):
+                for key, val in data['seasons'].items():
+                    if isinstance(val, dict) and 'id' not in val:
+                        val['id'] = key
+        return data

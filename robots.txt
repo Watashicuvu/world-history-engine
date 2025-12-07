@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://watashicuvu.github.io/world-history-engine/sitemap.xml

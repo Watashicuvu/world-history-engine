@@ -6,10 +6,10 @@ let currentConfigType = null;
 export function initWorkbench() {
     loadConfigList();
     
-    // Кнопка сохранения
+    // Save button
     document.getElementById('btn-save-template').addEventListener('click', saveCurrentConfig);
     
-    // Кнопка AI
+    // AI button
     document.getElementById('btn-ai-generate').addEventListener('click', generateWithAI);
 }
 
@@ -37,14 +37,13 @@ async function loadEditor(type, btnElement) {
     // UI Updates
     document.querySelectorAll('#config-list button').forEach(b => b.classList.remove('active'));
     btnElement.classList.add('active');
-    document.getElementById('editor-title').textContent = `Редактирование: ${type}`;
+    document.getElementById('editor-title').textContent = `Editing: ${type}`;
     document.getElementById('btn-save-template').disabled = true;
     
     const holder = document.getElementById('json-editor-holder');
     holder.innerHTML = '<div class="text-center mt-5"><div class="spinner-border"></div></div>';
 
     try {
-        // Параллельная загрузка схемы и данных
         const [schema, data] = await Promise.all([
             api.get(`/api/configs/${type}/schema`),
             api.get(`/api/configs/${type}/data`)
@@ -61,28 +60,26 @@ async function loadEditor(type, btnElement) {
             iconlib: 'fontawesome5',
             disable_edit_json: true,
             disable_properties: true,
-            collapsed: true
+            collapsed: true // Keeps original templates closed by default
         });
 
         editor.on('ready', () => {
             document.getElementById('btn-save-template').disabled = false;
         });
 
-        // После успешной загрузки редактора добавляем warning, если это нейминг
+        // Naming advice translated
         if (type === 'naming_biomes') {
             const holder = document.getElementById('json-editor-holder');
             
             const alertDiv = document.createElement('div');
             alertDiv.className = 'alert alert-info mt-3';
             alertDiv.innerHTML = `
-                <i class="fas fa-info-circle"></i> <strong>Совет по грамматике:</strong> 
-                Чтобы названия генерировались корректно, используйте слова 
-                <strong>одного рода (лучше мужского)</strong>.
+                <i class="fas fa-info-circle"></i> <strong>Grammar Tip:</strong> 
+                To ensure correct generation, use words of the 
+                <strong>same gender (preferably masculine if relevant)</strong>.
                 <br>
-                <em>Пример:</em> adj=["Старый", "Мрачный"], noun=["Дом", "Лес"]. 
-                Тогда "Старый Лес" звучит верно. ("Старая Лес" — ошибка).
+                <em>Example:</em> adj=["Dark", "Old"], noun=["Forest", "House"].
             `;
-            // Вставляем перед редактором
             holder.prepend(alertDiv);
         }
 
@@ -96,7 +93,7 @@ async function saveCurrentConfig() {
     
     const errors = editor.validate();
     if (errors.length) {
-        alert('Исправьте ошибки валидации!');
+        alert('Please fix validation errors!');
         return;
     }
 
@@ -105,14 +102,13 @@ async function saveCurrentConfig() {
     
     try {
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Сохранение...';
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
         
         const data = editor.getValue();
         await api.post(`/api/configs/${currentConfigType}/data`, data);
         
-        // Визуальное подтверждение
         btn.classList.replace('btn-success', 'btn-outline-success');
-        btn.innerHTML = '<i class="fas fa-check"></i> Сохранено';
+        btn.innerHTML = '<i class="fas fa-check"></i> Saved';
         setTimeout(() => {
             btn.classList.replace('btn-outline-success', 'btn-success');
             btn.innerHTML = originalText;
@@ -120,7 +116,7 @@ async function saveCurrentConfig() {
         }, 2000);
         
     } catch (e) {
-        alert('Ошибка сохранения: ' + e.message);
+        alert('Save error: ' + e.message);
         btn.innerHTML = originalText;
         btn.disabled = false;
     }
@@ -129,14 +125,14 @@ async function saveCurrentConfig() {
 // --- AI GENERATION ---
 async function generateWithAI() {
     if (!editor || !currentConfigType) {
-        alert("Сначала выберите тип шаблона слева.");
+        alert("Please select a template type on the left first.");
         return;
     }
 
     const promptInput = document.getElementById('ai-prompt');
     const prompt = promptInput.value.trim();
     if (!prompt) {
-        alert("Введите описание.");
+        alert("Please enter a description.");
         return;
     }
 
@@ -145,30 +141,37 @@ async function generateWithAI() {
 
     try {
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Магия...';
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Magic...';
 
-        // 1. Запрос к LLM
         const newTemplate = await api.post(`/api/llm/suggest/${currentConfigType}`, { prompt });
         
-        // 2. Добавление в редактор
-        // JSONEditor работает с массивами, так что нам нужно добавить элемент в массив
         const currentData = editor.getValue();
         
-        // Проверяем, массив ли это (должен быть массивом, т.к. наши конфиги - списки)
         if (Array.isArray(currentData)) {
             currentData.push(newTemplate);
             editor.setValue(currentData);
             
-            // Прокрутка вниз к новому элементу (хак для json-editor)
-            // editor.getEditor('root').rows[currentData.length - 1].expand();
-            alert("✨ Шаблон добавлен в конец списка!");
+            // UX Improvement: Expand the newly added item
+            // Get the root editor
+            const root = editor.getEditor('root');
+            if (root && root.rows) {
+                // The last row is the new one
+                const lastRow = root.rows[currentData.length - 1];
+                if (lastRow) {
+                    lastRow.expand();
+                    // Scroll into view
+                    lastRow.container.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+            
+            alert("✨ Template added to the end of the list!");
         } else {
-            console.error("Структура данных не массив", currentData);
-            alert("Ошибка структуры данных");
+            console.error("Data structure is not an array", currentData);
+            alert("Data structure error");
         }
         
     } catch (e) {
-        alert(`Ошибка генерации: ${e.message}`);
+        alert(`Generation error: ${e.message}`);
     } finally {
         btn.innerHTML = originalText;
         btn.disabled = false;

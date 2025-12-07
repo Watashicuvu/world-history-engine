@@ -136,36 +136,83 @@ class WorldQueryService:
         self, 
         source_type: Optional[str] = None, 
         target_type: Optional[str] = None,
-        relation_filter: Optional[str] = None
+        relation_filter: Optional[str] = None,
+        # Новые фильтры
+        include_tags: Optional[List[str]] = None,
+        min_age: Optional[int] = None,
+        max_age: Optional[int] = None
     ) -> str:
         """
-        Строит Markdown-таблицу связей.
-        Позволяет LLM увидеть политическую/религиозную карту мира.
+        Строит Markdown-таблицу связей с фильтрацией по типам, тегам и эпохам.
         """
         rows = []
         
+        # Подготовка множества тегов для быстрого поиска
+        tags_set = set(include_tags) if include_tags else None
+        
         for r in self.graph.relations:
-            # Нормализация relation_type
+            # 1. Базовая фильтрация по типам (как было раньше)
             r_type_id = r.relation_type.id if hasattr(r.relation_type, 'id') else str(r.relation_type)
             
-            # Фильтры
             if relation_filter and r_type_id != relation_filter:
                 continue
             if source_type and r.from_entity.type != source_type:
                 continue
             if target_type and r.to_entity.type != target_type:
                 continue
+            
+            # 2. Фильтрация по Времени (Эпохе)
+            # Логика: Если задан фильтр времени, показываем связь, если хотя бы одна из сущностей
+            # была создана в этот период. Это полезно для поиска событий (Events).
+            if min_age is not None or max_age is not None:
+                # Берем created_at, если его нет - считаем 0
+                t1 = getattr(r.from_entity, 'created_at', 0)
+                t2 = getattr(r.to_entity, 'created_at', 0)
                 
+                # Проверяем source
+                source_ok = True
+                if min_age is not None and t1 < min_age: source_ok = False
+                if max_age is not None and t1 > max_age: source_ok = False
+                
+                # Проверяем target
+                target_ok = True
+                if min_age is not None and t2 < min_age: target_ok = False
+                if max_age is not None and t2 > max_age: target_ok = False
+                
+                # Если ни один край связи не попадает в эпоху - пропускаем
+                if not source_ok and not target_ok:
+                    continue
+
+            # 3. Фильтрация по Тегам
+            # Логика: Если заданы теги (например, "Major"), показываем связь, 
+            # если хотя бы одна сущность имеет этот тег.
+            if tags_set:
+                t1_tags = set(r.from_entity.tags)
+                t2_tags = set(r.to_entity.tags)
+                # Пересечение: есть ли искомый тег хоть где-то?
+                if tags_set.isdisjoint(t1_tags) and tags_set.isdisjoint(t2_tags):
+                    continue
+
             # Формируем строку таблицы
-            # Source Name | Relation | Target Name | Description (если есть в типе)
-            rows.append(f"| {r.from_entity.name} | **{r_type_id}** | {r.to_entity.name} |")
+            # Добавим (Age: X) к имени, чтобы LLM видела хронологию
+            src_name = f"{r.from_entity.name}"
+            if hasattr(r.from_entity, 'created_at'): src_name += f" <sup>T{r.from_entity.created_at}</sup>"
+            
+            tgt_name = f"{r.to_entity.name}"
+            if hasattr(r.to_entity, 'created_at'): tgt_name += f" <sup>T{r.to_entity.created_at}</sup>"
+
+            rows.append(f"| {src_name} | **{r_type_id}** | {tgt_name} |")
 
         if not rows:
             return "No relationships found for these criteria."
 
         # Сборка таблицы
-        header = "| Source Entity | Relation Type | Target Entity |\n|---|---|---|\n"
-        return header + "\n".join(rows)
+        header = f"Found {len(rows)} relations"
+        if min_age is not None: header += f" (Age {min_age}-{max_age if max_age else 'Now'})"
+        if include_tags: header += f" (Tags: {include_tags})"
+        
+        table_md = "| Source Entity | Relation Type | Target Entity |\n|---|---|---|\n" + "\n".join(rows)
+        return f"{header}\n{table_md}"
 
     def update_tags(self, entity_id: str, add_tags: List[str], remove_tags: List[str]):
         entity = self.get_entity(entity_id)
