@@ -67,7 +67,7 @@ export async function loadWorldData() {
         }
     } else {
         // Дефолт при первой загрузке
-        excludeParams = '?exclude_tags=dead&exclude_tags=inactive'; 
+        excludeParams = '?exclude_tags=dead&exclude_tags=inactive&exclude_tags=absorbed&exclude_tags=minor&exclude_tags=average'; 
     }
 
     try {
@@ -205,7 +205,7 @@ function renderLegend(parentContainer) {
         
         <div class="mb-3 p-2 bg-light border rounded">
             <label class="form-label small fw-bold mb-1">Исключить теги (Server):</label>
-            <input type="text" id="server-filter-tags" class="form-control form-control-sm mb-2" value="dead, inactive, historical">
+            <input type="text" id="server-filter-tags" class="form-control form-control-sm mb-2" value="dead, inactive, absorbed, minor, average">
             <button id="btn-reload-server" class="btn btn-primary btn-sm w-100">
                 <i class="fas fa-sync-alt"></i> Обновить граф
             </button>

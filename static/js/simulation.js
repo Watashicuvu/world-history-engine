@@ -418,6 +418,18 @@ export async function initSimulation() {
     }
 
     await loadBiomeOptions();
+
+    if (api.isStatic) {
+        console.log("Static mode detected. Auto-loading world...");
+        // Скрываем или переименовываем кнопку Build, чтобы не путать
+        const btnBuild = document.getElementById('btn-build-world');
+        if (btnBuild) {
+            btnBuild.innerHTML = '<i class="fas fa-sync"></i> Reload Data';
+            btnBuild.classList.replace('btn-primary', 'btn-secondary');
+        }
+        // Запускаем "сборку" (загрузку) сразу
+        await handleBuild();
+    }
 }
 
 export function onTabActive() {
@@ -431,13 +443,20 @@ export function onTabActive() {
 }
 
 async function handleBuild() {
-    updateStatus("Генерация...", true);
+    updateStatus("Generation...", true);
     try {
-        const w = parseInt(document.getElementById('map-width')?.value || 8);
-        const h = parseInt(document.getElementById('map-height')?.value || 6);
-        const biomes = getSelectedBiomes();
+        if (!api.isStatic) {
+            const w = parseInt(document.getElementById('map-width')?.value || 8);
+            const h = parseInt(document.getElementById('map-height')?.value || 6);
+            const biomes = getSelectedBiomes();
+            await api.post('/api/simulation/build', { width: w, height: h, biome_ids: biomes });
+        }
 
-        await api.post('/api/simulation/build', { width: w, height: h, biome_ids: biomes });
+        // const w = parseInt(document.getElementById('map-width')?.value || 8);
+        // const h = parseInt(document.getElementById('map-height')?.value || 6);
+        // const biomes = getSelectedBiomes();
+
+        // await api.post('/api/simulation/build', { width: w, height: h, biome_ids: biomes });
         
         const layoutRes = await api.get('/api/simulation/latest_layout');
         const entRes = await api.get('/api/simulation/latest_entities');
@@ -447,7 +466,16 @@ async function handleBuild() {
         currentEpoch = 0;
         maxEpoch = 0;
         updateSlider(0, 0);
-        updateStatus("Мир готов", false);
+
+        if (api.isStatic) {
+             const logRes = await api.get('/api/simulation/history_logs');
+             if (logRes.logs && logRes.logs.length > 0) {
+                 maxEpoch = renderer.loadHistory(logRes.logs);
+                 updateSlider(maxEpoch, 0);
+             }
+        }
+
+        updateStatus(api.isStatic ? "Demo" : "Creating comleted", false);
 
     } catch (e) {
         console.error(e);
@@ -456,15 +484,18 @@ async function handleBuild() {
 }
 
 async function handleRun() {
-    if (!renderer.layout) return alert("Сначала создайте мир!");
+    if (!renderer.layout) return alert("Create world at first!!");
     
+    const epochsInput = parseInt(document.getElementById('sim-epochs')?.value || 50);
     const epochs = parseInt(document.getElementById('sim-epochs')?.value || 50);
     const btn = document.getElementById('btn-run-sim');
     if(btn) btn.disabled = true;
 
     try {
-        updateStatus("Симуляция...", true);
-        await api.post('/api/simulation/run', { epochs });
+        updateStatus("Simulation...", true);
+        if (!api.isStatic) {
+            await api.post('/api/simulation/run', { epochs: epochsInput });
+        }
         
         const logs = await pollLogs(epochs);
         maxEpoch = renderer.loadHistory(logs);
@@ -477,14 +508,14 @@ async function handleRun() {
         }
 
         updateSlider(maxEpoch, currentEpoch);
-        updateStatus("Воспроизведение...", false);
+        updateStatus("Playing...", false);
         
         await playMovie();
-        updateStatus("Готово", false);
+        updateStatus("Complete", false);
 
     } catch (e) {
         console.error(e);
-        updateStatus("Ошибка симуляции", false, true);
+        updateStatus("Sim error", false, true);
     } finally {
         if(btn) btn.disabled = false;
     }
@@ -554,6 +585,11 @@ function getSelectedBiomes() {
 }
 
 async function pollLogs(target) {
+    if (api.isStatic) {
+        const res = await api.get('/api/simulation/history_logs');
+        return res.logs || [];
+    }
+
     let tries = 0;
     while(tries++ < 600) {
         await new Promise(r => setTimeout(r, 1000));
